@@ -27,7 +27,7 @@
     }
 
     .timeline {
-      width: min(650px, 100%);
+      width: min(700px, 100%);
       border-left: 1px solid #2f3336;
       border-right: 1px solid #2f3336;
       min-height: 100vh;
@@ -40,7 +40,7 @@
       position: sticky;
       top: 0;
       z-index: 10;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid #2f3336;
       padding: 0.75rem 1rem;
@@ -180,11 +180,18 @@
       color: #e7e9ea;
     }
 
-    .feed {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
+    .thread {
+      border-bottom: 1px solid #2f3336;
+    }
+
+    .main-tweet-container {
+      padding: 0.85rem 1rem 0.5rem;
+      border-bottom: 1px solid #2f3336;
+    }
+
+    .tweet.main {
+      padding: 0;
+      border-bottom: none;
     }
 
     .tweet {
@@ -208,14 +215,14 @@
       flex-shrink: 0;
     }
 
-    .avatar.community {
-      border-color: #f91880;
-      color: #f91880;
-    }
-
     .avatar.company {
       border-color: #1d9bf0;
       color: #1d9bf0;
+    }
+
+    .avatar.community {
+      border-color: #f91880;
+      color: #f91880;
     }
 
     .avatar.coach {
@@ -252,9 +259,64 @@
 
     .tweet-text {
       margin-top: 0.25rem;
-      font-size: 0.9rem;
+      font-size: 1rem;
       white-space: pre-wrap;
       word-wrap: break-word;
+    }
+
+    .tweet-text.small {
+      font-size: 0.9rem;
+    }
+
+    .tweet-actions {
+      display: flex;
+      gap: 1.8rem;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #71767b;
+    }
+
+    .tweet-actions span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: default;
+    }
+
+    .tweet-actions span::before {
+      content: "●";
+      font-size: 0.4rem;
+    }
+
+    .replies-label {
+      padding: 0.45rem 1rem;
+      font-size: 0.78rem;
+      color: #71767b;
+      border-bottom: 1px solid #2f3336;
+    }
+
+    .tweet.reply {
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .tweet.reply::before {
+      content: "";
+      position: absolute;
+      left: 31px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #1f2933;
+      opacity: 0.8;
+    }
+
+    .tweet.reply:first-child::before {
+      top: 20px;
+    }
+
+    .tweet.reply:last-child::before {
+      bottom: 24px;
     }
 
     .composer {
@@ -323,6 +385,13 @@
       font-size: 0.7rem;
       color: #9ca3af;
     }
+
+    .scenario-text {
+      font-size: 0.8rem;
+      color: #71767b;
+      margin-top: 0.35rem;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
@@ -360,16 +429,22 @@
         <div>Intensität: <span id="intensityText">–</span></div>
       </div>
 
-      <div class="feed" id="feed"></div>
+      <div class="thread">
+        <div class="main-tweet-container">
+          <div id="mainTweet"></div>
+        </div>
+        <div class="replies-label">Antworten der Community</div>
+        <div id="replies"></div>
+      </div>
 
       <div class="composer disabled" id="composer">
         <div class="avatar company">@</div>
         <div class="tweet-body">
-          <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
+          <textarea id="answerInput" placeholder="Veröffentliche dein offizielles Statement …" disabled></textarea>
         </div>
         <div class="composer-footer">
           <div class="composer-hint">
-            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
+            Deine Antwort wirkt wie ein offizieller Post des Unternehmens. Die Community reagiert darauf in den Kommentaren.
           </div>
           <button class="btn-primary" id="sendBtn" disabled>Posten</button>
         </div>
@@ -386,17 +461,17 @@
 
   <script>
     // ===================== KONFIGURATION ===========================
-    // HIER ANPASSEN:
-    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-    const API_KEY = "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";                                // LangSmith Key oder leer
+    const BASE_URL = "https://DEIN-LANGGRAPH-SERVER";  // z.B. "https://xyz.eu.langgraph.app"
+    const ASSISTANT_ID = "shitstorm";                  // Name aus langgraph.json
+    const API_KEY = "";                                // LangSmith Key oder leer
 
     // ===================== STATE & DOM =============================
     let threadId = null;
     let waitingForAnswer = false;
     let finished = false;
 
-    const feedEl = document.getElementById("feed");
+    const mainTweetEl = document.getElementById("mainTweet");
+    const repliesEl = document.getElementById("replies");
     const composerEl = document.getElementById("composer");
     const answerInputEl = document.getElementById("answerInput");
     const sendBtn = document.getElementById("sendBtn");
@@ -432,8 +507,9 @@
       }
     }
 
-    function resetFeed() {
-      feedEl.innerHTML = "";
+    function resetThread() {
+      repliesEl.innerHTML = "";
+      mainTweetEl.innerHTML = "";
       roundTextEl.textContent = "–";
       intensityTextEl.textContent = "–";
       debugOutputEl.textContent = "";
@@ -441,11 +517,106 @@
       waitingForAnswer = false;
       finished = false;
       setComposerEnabled(false);
+
+      // Placeholder für Unternehmens-Post
+      const company = companyInputEl.value.trim() || "Dein Unternehmen";
+      const cause = causeInputEl.value.trim() || "nicht näher beschriebene Ursache";
+      renderMainTweet(company, "", { cause, round: 0, intensity: 70 });
     }
 
-    function appendTweet(role, text, opts = {}) {
+    function slugifyHandle(name) {
+      return name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "")
+        .slice(0, 12) || "brand";
+    }
+
+    function renderMainTweet(companyName, text, opts = {}) {
+      const handle = slugifyHandle(companyName);
+      const round = opts.round ?? null;
+      const intensity = typeof opts.intensity === "number" ? opts.intensity : null;
+      const cause = opts.cause || null;
+
+      mainTweetEl.innerHTML = "";
+
       const tweet = document.createElement("div");
-      tweet.className = "tweet";
+      tweet.classList.add("tweet", "main");
+
+      const avatar = document.createElement("div");
+      avatar.classList.add("avatar", "company");
+      avatar.textContent = companyName.trim().charAt(0).toUpperCase() || "U";
+
+      const body = document.createElement("div");
+      body.classList.add("tweet-body");
+
+      const header = document.createElement("div");
+      header.classList.add("tweet-header");
+
+      const name = document.createElement("span");
+      name.classList.add("tweet-name");
+      name.textContent = companyName;
+
+      const handleEl = document.createElement("span");
+      handleEl.classList.add("tweet-handle");
+      handleEl.textContent = " @" + handle;
+
+      const meta = document.createElement("span");
+      meta.classList.add("tweet-meta");
+      const pieces = [];
+      if (round !== null && round !== undefined && round > 0) {
+        pieces.push("Runde " + round);
+      }
+      if (intensity !== null && intensity !== undefined) {
+        pieces.push("Intensität " + intensity.toFixed(1) + "/100");
+      }
+      meta.textContent = pieces.join(" · ");
+
+      header.appendChild(name);
+      header.appendChild(handleEl);
+      if (meta.textContent) header.appendChild(meta);
+
+      const textEl = document.createElement("div");
+      textEl.classList.add("tweet-text");
+      if (text && text.trim()) {
+        textEl.textContent = text;
+      } else {
+        textEl.classList.add("small");
+        textEl.textContent =
+          "Noch kein offizielles Statement veröffentlicht. Formuliere unten deinen ersten Post als Unternehmen.";
+      }
+
+      body.appendChild(header);
+      body.appendChild(textEl);
+
+      if (cause) {
+        const scenario = document.createElement("div");
+        scenario.classList.add("scenario-text");
+        scenario.textContent = `Shitstorm-Thema: ${cause}`;
+        body.appendChild(scenario);
+      }
+
+      // Dummy-Actions-Leiste wie bei X
+      const actions = document.createElement("div");
+      actions.classList.add("tweet-actions");
+      const replies = document.createElement("span");
+      replies.textContent = "Kommentare";
+      const retweets = document.createElement("span");
+      retweets.textContent = "Retweets";
+      const likes = document.createElement("span");
+      likes.textContent = "Likes";
+      actions.appendChild(replies);
+      actions.appendChild(retweets);
+      actions.appendChild(likes);
+      body.appendChild(actions);
+
+      tweet.appendChild(avatar);
+      tweet.appendChild(body);
+      mainTweetEl.appendChild(tweet);
+    }
+
+    function appendReply(role, text, opts = {}) {
+      const tweet = document.createElement("div");
+      tweet.className = "tweet reply";
 
       const avatar = document.createElement("div");
       avatar.classList.add("avatar");
@@ -466,24 +637,20 @@
       meta.classList.add("tweet-meta");
 
       const textEl = document.createElement("div");
-      textEl.classList.add("tweet-text");
+      textEl.classList.add("tweet-text", "small");
       textEl.textContent = text;
 
       const round = opts.round ?? "";
-      const intensityVal = typeof opts.intensity === "number"
-        ? opts.intensity.toFixed(1) + "/100"
-        : "";
+      const intensityVal =
+        typeof opts.intensity === "number"
+          ? opts.intensity.toFixed(1) + "/100"
+          : "";
 
       if (role === "community") {
         avatar.classList.add("community");
         avatar.textContent = "C";
-        name.textContent = "Community";
+        name.textContent = "Community-Mitglied";
         handle.textContent = " @user";
-      } else if (role === "company") {
-        avatar.classList.add("company");
-        avatar.textContent = "U";
-        name.textContent = opts.company_name || "Unternehmen";
-        handle.textContent = " @" + (opts.company_handle || "brand");
       } else if (role === "coach") {
         avatar.classList.add("coach");
         avatar.textContent = "★";
@@ -504,11 +671,12 @@
 
       body.appendChild(header);
       body.appendChild(textEl);
+
       tweet.appendChild(avatar);
       tweet.appendChild(body);
 
-      feedEl.appendChild(tweet);
-      feedEl.scrollTop = feedEl.scrollHeight;
+      repliesEl.appendChild(tweet);
+      repliesEl.scrollTop = repliesEl.scrollHeight;
     }
 
     async function createThread() {
@@ -597,10 +765,21 @@
         intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
       }
 
+      const company = companyInputEl.value.trim() || "Dein Unternehmen";
+
+      // Aktuellen Unternehmens-Post als Haupt-Tweet darstellen
+      if (state.last_company_response && state.last_company_response.trim()) {
+        renderMainTweet(company, state.last_company_response, {
+          round: state.round,
+          intensity: state.intensity,
+          cause: state.cause,
+        });
+      }
+
       // Community-Kommentare
       if (Array.isArray(state.last_community_comments) && state.last_community_comments.length) {
         state.last_community_comments.forEach((c) =>
-          appendTweet("community", String(c), {
+          appendReply("community", String(c), {
             round: state.round,
             intensity: state.intensity,
           })
@@ -612,7 +791,7 @@
         const coachEntries = state.history.filter((h) => h.actor === "coach");
         if (coachEntries.length) {
           const last = coachEntries[coachEntries.length - 1];
-          appendTweet("coach", last.content || "", {
+          appendReply("coach", last.content || "", {
             round: last.round,
             intensity: state.intensity,
           });
@@ -631,9 +810,9 @@
         } else {
           msg = "Die Simulation wurde beendet.";
         }
-        appendTweet("system", msg, { round: state.round, intensity: state.intensity });
+        appendReply("system", msg, { round: state.round, intensity: state.intensity });
         if (state.summary) {
-          appendTweet("coach", state.summary, { round: state.round, intensity: state.intensity });
+          appendReply("coach", state.summary, { round: state.round, intensity: state.intensity });
         }
         setStatus("beendet");
         return;
@@ -653,15 +832,17 @@
     }
 
     async function startSimulation() {
-      resetFeed();
+      resetThread();
       setStatus("startet …");
 
       const company = companyInputEl.value.trim() || "Dein Unternehmen";
       const cause = causeInputEl.value.trim() || "nicht näher beschriebene Ursache";
 
-      appendTweet(
+      // Intro als kleine System-Reply
+      appendReply(
         "system",
-        `Shitstorm auf X / Twitter gegen "${company}" wegen: ${cause}\nZiel: Intensität von 70 unter 10 drücken, bevor sie über 90 steigt.`
+        `Shitstorm auf X / Twitter gegen "${company}" wegen: ${cause}\nZiel: Intensität von 70 unter 10 drücken, bevor sie über 90 steigt.`,
+        { round: 0, intensity: 70 }
       );
 
       const initialState = {
@@ -684,7 +865,7 @@
         const result = await runWait({ input: initialState });
         handleResult(result);
       } catch (err) {
-        appendTweet("system", "Fehler beim Starten der Simulation: " + err.message);
+        appendReply("system", "Fehler beim Starten der Simulation: " + err.message);
         setStatus("Fehler");
       }
     }
@@ -695,7 +876,11 @@
       if (!answer) return;
 
       const company = companyInputEl.value.trim() || "Dein Unternehmen";
-      appendTweet("company", answer, { company_name: company });
+
+      // Zeige den Unternehmens-Post sofort als Haupt-Tweet
+      renderMainTweet(company, answer, {
+        cause: causeInputEl.value.trim() || "nicht näher beschriebene Ursache",
+      });
 
       answerInputEl.value = "";
       setComposerEnabled(false);
@@ -706,7 +891,7 @@
         const result = await runWait({ command: { resume: answer } });
         handleResult(result);
       } catch (err) {
-        appendTweet("system", "Fehler beim Fortsetzen der Simulation: " + err.message);
+        appendReply("system", "Fehler beim Fortsetzen der Simulation: " + err.message);
         setStatus("Fehler");
         setComposerEnabled(false);
       }
@@ -722,6 +907,30 @@
       if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
         ev.preventDefault();
         sendAnswer();
+      }
+    });
+
+    // === Parameter aus index.html übernehmen & auto-starten ===
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const companyParam = params.get("company");
+      const causeParam = params.get("cause");
+      const auto = params.get("auto");
+
+      if (companyParam) {
+        companyInputEl.value = companyParam;
+      }
+      if (causeParam) {
+        causeInputEl.value = causeParam;
+      }
+
+      // Platzhalter-Main-Tweet direkt rendern
+      resetThread();
+
+      if (auto === "1") {
+        setTimeout(() => {
+          startSimulation();
+        }, 0);
       }
     });
   </script>
