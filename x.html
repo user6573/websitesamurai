@@ -36,6 +36,7 @@
       background: #000;
     }
 
+    /* Header: eine Zeile mit X-Symbol + Text */
     .timeline-header {
       position: sticky;
       top: 0;
@@ -46,123 +47,35 @@
       padding: 0.75rem 1rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.6rem;
     }
 
     .x-logo {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 999px;
       border: 1px solid #2f3336;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
 
-    .timeline-header-title {
-      display: flex;
-      flex-direction: column;
-      gap: 0.05rem;
-    }
-
-    .timeline-header-title h1 {
-      margin: 0;
+    .header-title {
       font-size: 1.05rem;
       font-weight: 700;
     }
 
-    .timeline-header-title span {
-      font-size: 0.78rem;
-      color: #71767b;
-    }
-
-    .pill {
-      border-radius: 999px;
-      border: 1px solid #2f3336;
-      padding: 0.1rem 0.6rem;
-      font-size: 0.75rem;
-      color: #cfd3d7;
+    .status-pill {
       margin-left: auto;
-      white-space: nowrap;
-    }
-
-    .setup {
-      border-bottom: 1px solid #2f3336;
-      padding: 0.75rem 1rem 0.8rem;
-    }
-
-    .setup-label {
-      font-size: 0.78rem;
-      color: #71767b;
-      margin-bottom: 0.4rem;
-    }
-
-    .setup-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .field {
-      flex: 1 1 180px;
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .field span {
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       color: #71767b;
     }
 
-    .field input {
-      background: #000;
-      border-radius: 999px;
-      border: 1px solid #2f3336;
+    .status-pill span {
       color: #e7e9ea;
-      padding: 0.4rem 0.7rem;
-      font: inherit;
-      font-size: 0.85rem;
-      outline: none;
-    }
-
-    .field input:focus {
-      border-color: #1d9bf0;
-      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
-    }
-
-    .setup-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin-top: 0.2rem;
-      font-size: 0.76rem;
-      color: #71767b;
-    }
-
-    .btn-primary {
-      border-radius: 999px;
-      border: none;
-      background: #1d9bf0;
-      color: #fff;
-      font-weight: 600;
-      padding: 0.45rem 0.9rem;
-      font-size: 0.86rem;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: #1a8cd8;
+      font-weight: 500;
     }
 
     .status-bar {
@@ -213,6 +126,9 @@
       font-size: 0.8rem;
       color: #cfd3d7;
       flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
     }
 
     .avatar.company {
@@ -288,8 +204,47 @@
       font-size: 0.4rem;
     }
 
+    .scenario-text {
+      font-size: 0.8rem;
+      color: #71767b;
+      margin-top: 0.35rem;
+      white-space: pre-wrap;
+    }
+
+    .replies-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.4rem 0 0;
+      font-size: 0.78rem;
+      color: #71767b;
+    }
+
+    .btn-toggle {
+      border-radius: 999px;
+      border: 1px solid #2f3336;
+      background: transparent;
+      color: #e7e9ea;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.7rem;
+      cursor: pointer;
+    }
+
+    .btn-toggle:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .btn-toggle:hover:not(:disabled) {
+      background: #111827;
+    }
+
+    .replies-section.hidden {
+      display: none;
+    }
+
     .replies-label {
-      padding: 0.45rem 1rem;
+      padding: 0.45rem 1rem 0.2rem;
       font-size: 0.78rem;
       color: #71767b;
       border-bottom: 1px solid #2f3336;
@@ -364,6 +319,27 @@
       text-align: right;
     }
 
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      background: #1d9bf0;
+      color: #fff;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.86rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #1a8cd8;
+    }
+
     .debug-card {
       border-top: 1px solid #2f3336;
       padding: 0.5rem 1rem 0.6rem;
@@ -385,13 +361,6 @@
       font-size: 0.7rem;
       color: #9ca3af;
     }
-
-    .scenario-text {
-      font-size: 0.8rem;
-      color: #71767b;
-      margin-top: 0.35rem;
-      white-space: pre-wrap;
-    }
   </style>
 </head>
 <body>
@@ -399,28 +368,9 @@
     <div class="timeline">
       <div class="timeline-header">
         <div class="x-logo">X</div>
-        <div class="timeline-header-title">
-          <h1>Shitstorm-Simulation</h1>
-          <span>Auf X / Twitter trainieren</span>
-        </div>
-        <div class="pill" id="statusPill">Status: bereit</div>
-      </div>
-
-      <div class="setup">
-        <div class="setup-label">Ausgangslage</div>
-        <div class="setup-row">
-          <div class="field">
-            <span>Unternehmen</span>
-            <input id="companyInput" placeholder="Dein Unternehmen" value="Dein Unternehmen" />
-          </div>
-          <div class="field">
-            <span>Ursache des Shitstorms</span>
-            <input id="causeInput" placeholder="z.B. missglückte Kampagne" value="Unangemessene Werbekampagne" />
-          </div>
-        </div>
-        <div class="setup-footer">
-          <span>Start bei 70/100. Ziel: unter 10, bevor es über 90 eskaliert.</span>
-          <button class="btn-primary" id="startBtn">Simulation starten</button>
+        <div class="header-title">X-Simulation</div>
+        <div class="status-pill">
+          Status: <span id="statusPill">bereit</span>
         </div>
       </div>
 
@@ -432,19 +382,28 @@
       <div class="thread">
         <div class="main-tweet-container">
           <div id="mainTweet"></div>
+          <div class="replies-header-row">
+            <div id="scenarioShort"></div>
+            <button id="toggleRepliesBtn" class="btn-toggle" disabled>
+              Kommentare anzeigen (0)
+            </button>
+          </div>
         </div>
-        <div class="replies-label">Antworten der Community</div>
-        <div id="replies"></div>
+
+        <div id="repliesSection" class="replies-section hidden">
+          <div class="replies-label">Antworten der Community</div>
+          <div id="replies"></div>
+        </div>
       </div>
 
       <div class="composer disabled" id="composer">
-        <div class="avatar company">@</div>
+        <div class="avatar company" id="composerAvatar">@</div>
         <div class="tweet-body">
           <textarea id="answerInput" placeholder="Veröffentliche dein offizielles Statement …" disabled></textarea>
         </div>
         <div class="composer-footer">
           <div class="composer-hint">
-            Deine Antwort wirkt wie ein offizieller Post des Unternehmens. Die Community reagiert darauf in den Kommentaren.
+            Deine Antwort erscheint oben als offizieller Post des Unternehmens. Die Community reagiert in den Kommentaren.
           </div>
           <button class="btn-primary" id="sendBtn" disabled>Posten</button>
         </div>
@@ -465,23 +424,43 @@
     const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
     const API_KEY = "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";                                // LangSmith Key oder leer
 
+    // Optionale Avatare für Community-User – hier kannst du deine Bilder eintragen.
+    // Lege z.B. Dateien unter /avatars/ ab und passe die Pfade an.
+    const COMMUNITY_USERS = [
+      { name: "Lena", handle: "@lenaleise", avatar: "avatars/user-lena.png" },
+      { name: "Tom", handle: "@tom_talks", avatar: "avatars/user-tom.png" },
+      { name: "Ali", handle: "@ali_opinion", avatar: "avatars/user-ali.png" },
+      { name: "Mia", handle: "@mia_media", avatar: "avatars/user-mia.png" },
+      { name: "Jonas", handle: "@jonas_crit", avatar: "avatars/user-jonas.png" },
+      { name: "Sara", handle: "@saracomment", avatar: "avatars/user-sara.png" }
+    ];
+
+    let communityUserIndex = 0;
+
     // ===================== STATE & DOM =============================
     let threadId = null;
     let waitingForAnswer = false;
     let finished = false;
+    let commentsVisible = false;
+    let replyCount = 0;
+    let startedOnce = false;
 
     const mainTweetEl = document.getElementById("mainTweet");
     const repliesEl = document.getElementById("replies");
+    const repliesSectionEl = document.getElementById("repliesSection");
+    const toggleRepliesBtn = document.getElementById("toggleRepliesBtn");
     const composerEl = document.getElementById("composer");
+    const composerAvatarEl = document.getElementById("composerAvatar");
     const answerInputEl = document.getElementById("answerInput");
     const sendBtn = document.getElementById("sendBtn");
-    const startBtn = document.getElementById("startBtn");
-    const companyInputEl = document.getElementById("companyInput");
-    const causeInputEl = document.getElementById("causeInput");
     const statusPillEl = document.getElementById("statusPill");
     const roundTextEl = document.getElementById("roundText");
     const intensityTextEl = document.getElementById("intensityText");
     const debugOutputEl = document.getElementById("debugOutput");
+    const scenarioShortEl = document.getElementById("scenarioShort");
+
+    let companyNameGlobal = "Dein Unternehmen";
+    let causeGlobal = "nicht näher beschriebene Ursache";
 
     function buildHeaders() {
       const h = { "Content-Type": "application/json" };
@@ -492,7 +471,7 @@
     }
 
     function setStatus(text) {
-      statusPillEl.textContent = "Status: " + text;
+      statusPillEl.textContent = text;
     }
 
     function setComposerEnabled(on) {
@@ -507,35 +486,49 @@
       }
     }
 
+    function slugifyHandle(name) {
+      return (
+        name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "")
+          .slice(0, 12) || "brand"
+      );
+    }
+
     function resetThread() {
       repliesEl.innerHTML = "";
       mainTweetEl.innerHTML = "";
+      debugOutputEl.textContent = "";
       roundTextEl.textContent = "–";
       intensityTextEl.textContent = "–";
-      debugOutputEl.textContent = "";
       threadId = null;
       waitingForAnswer = false;
       finished = false;
+      commentsVisible = false;
+      replyCount = 0;
+      startedOnce = false;
       setComposerEnabled(false);
 
-      // Placeholder für Unternehmens-Post
-      const company = companyInputEl.value.trim() || "Dein Unternehmen";
-      const cause = causeInputEl.value.trim() || "nicht näher beschriebene Ursache";
-      renderMainTweet(company, "", { cause, round: 0, intensity: 70 });
+      toggleRepliesBtn.disabled = true;
+      toggleRepliesBtn.textContent = "Kommentare anzeigen (0)";
+      repliesSectionEl.classList.add("hidden");
+
+      scenarioShortEl.textContent = `Thema: ${causeGlobal}`;
+      renderMainTweet(companyNameGlobal, "", { cause: causeGlobal, round: 0, intensity: 70 });
+      updateComposerAvatar(companyNameGlobal);
     }
 
-    function slugifyHandle(name) {
-      return name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "")
-        .slice(0, 12) || "brand";
+    function updateComposerAvatar(companyName) {
+      const initial = (companyName.trim()[0] || "U").toUpperCase();
+      composerAvatarEl.textContent = initial;
+      composerAvatarEl.style.backgroundImage = "";
     }
 
     function renderMainTweet(companyName, text, opts = {}) {
       const handle = slugifyHandle(companyName);
       const round = opts.round ?? null;
       const intensity = typeof opts.intensity === "number" ? opts.intensity : null;
-      const cause = opts.cause || null;
+      const cause = opts.cause || causeGlobal;
 
       mainTweetEl.innerHTML = "";
 
@@ -544,7 +537,7 @@
 
       const avatar = document.createElement("div");
       avatar.classList.add("avatar", "company");
-      avatar.textContent = companyName.trim().charAt(0).toUpperCase() || "U";
+      avatar.textContent = (companyName.trim()[0] || "U").toUpperCase();
 
       const body = document.createElement("div");
       body.classList.add("tweet-body");
@@ -595,7 +588,6 @@
         body.appendChild(scenario);
       }
 
-      // Dummy-Actions-Leiste wie bei X
       const actions = document.createElement("div");
       actions.classList.add("tweet-actions");
       const replies = document.createElement("span");
@@ -612,6 +604,19 @@
       tweet.appendChild(avatar);
       tweet.appendChild(body);
       mainTweetEl.appendChild(tweet);
+    }
+
+    function pickCommunityUser() {
+      if (COMMUNITY_USERS.length === 0) {
+        return {
+          name: "User",
+          handle: "@user",
+          avatar: ""
+        };
+      }
+      const user = COMMUNITY_USERS[communityUserIndex % COMMUNITY_USERS.length];
+      communityUserIndex++;
+      return user;
     }
 
     function appendReply(role, text, opts = {}) {
@@ -647,10 +652,14 @@
           : "";
 
       if (role === "community") {
+        const user = pickCommunityUser();
         avatar.classList.add("community");
-        avatar.textContent = "C";
-        name.textContent = "Community-Mitglied";
-        handle.textContent = " @user";
+        avatar.textContent = (user.name[0] || "U").toUpperCase();
+        if (user.avatar) {
+          avatar.style.backgroundImage = `url('${user.avatar}')`;
+        }
+        name.textContent = user.name;
+        handle.textContent = " " + (user.handle || "@user");
       } else if (role === "coach") {
         avatar.classList.add("coach");
         avatar.textContent = "★";
@@ -677,6 +686,31 @@
 
       repliesEl.appendChild(tweet);
       repliesEl.scrollTop = repliesEl.scrollHeight;
+
+      replyCount++;
+      toggleRepliesBtn.disabled = false;
+      updateRepliesToggleLabel();
+      if (!commentsVisible) {
+        // beim ersten Kommentar automatisch anzeigen
+        commentsVisible = true;
+        repliesSectionEl.classList.remove("hidden");
+      }
+    }
+
+    function updateRepliesToggleLabel() {
+      const verb = commentsVisible ? "Kommentare ausblenden" : "Kommentare anzeigen";
+      toggleRepliesBtn.textContent = `${verb} (${replyCount})`;
+    }
+
+    function toggleReplies() {
+      if (toggleRepliesBtn.disabled) return;
+      commentsVisible = !commentsVisible;
+      if (commentsVisible) {
+        repliesSectionEl.classList.remove("hidden");
+      } else {
+        repliesSectionEl.classList.add("hidden");
+      }
+      updateRepliesToggleLabel();
     }
 
     async function createThread() {
@@ -750,7 +784,6 @@
     }
 
     function handleResult(result) {
-      // Interrupt herausziehen (falls vorhanden)
       let interruptValue = null;
       if (Array.isArray(result.__interrupt__) && result.__interrupt__.length) {
         interruptValue = result.__interrupt__[0].value;
@@ -765,9 +798,13 @@
         intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
       }
 
-      const company = companyInputEl.value.trim() || "Dein Unternehmen";
+      if (state.cause) {
+        causeGlobal = state.cause;
+        scenarioShortEl.textContent = `Thema: ${causeGlobal}`;
+      }
 
-      // Aktuellen Unternehmens-Post als Haupt-Tweet darstellen
+      const company = companyNameGlobal;
+
       if (state.last_company_response && state.last_company_response.trim()) {
         renderMainTweet(company, state.last_company_response, {
           round: state.round,
@@ -776,7 +813,6 @@
         });
       }
 
-      // Community-Kommentare
       if (Array.isArray(state.last_community_comments) && state.last_community_comments.length) {
         state.last_community_comments.forEach((c) =>
           appendReply("community", String(c), {
@@ -786,7 +822,6 @@
         );
       }
 
-      // Coach-Bewertungen aus history
       if (Array.isArray(state.history) && state.history.length) {
         const coachEntries = state.history.filter((h) => h.actor === "coach");
         if (coachEntries.length) {
@@ -798,7 +833,6 @@
         }
       }
 
-      // Fertig?
       if (state.status && state.status !== "running") {
         finished = true;
         setComposerEnabled(false);
@@ -818,7 +852,6 @@
         return;
       }
 
-      // Warten wir auf deine Antwort?
       if (interruptValue) {
         waitingForAnswer = true;
         setComposerEnabled(true);
@@ -832,23 +865,17 @@
     }
 
     async function startSimulation() {
-      resetThread();
+      if (startedOnce) {
+        // neu starten
+        resetThread();
+      }
+      startedOnce = true;
       setStatus("startet …");
-
-      const company = companyInputEl.value.trim() || "Dein Unternehmen";
-      const cause = causeInputEl.value.trim() || "nicht näher beschriebene Ursache";
-
-      // Intro als kleine System-Reply
-      appendReply(
-        "system",
-        `Shitstorm auf X / Twitter gegen "${company}" wegen: ${cause}\nZiel: Intensität von 70 unter 10 drücken, bevor sie über 90 steigt.`,
-        { round: 0, intensity: 70 }
-      );
 
       const initialState = {
         platform: "X/Twitter",
-        cause,
-        company_name: company,
+        cause: causeGlobal,
+        company_name: companyNameGlobal,
         round: 0,
         history: [],
         last_company_response: "",
@@ -865,7 +892,10 @@
         const result = await runWait({ input: initialState });
         handleResult(result);
       } catch (err) {
-        appendReply("system", "Fehler beim Starten der Simulation: " + err.message);
+        appendReply("system", "Fehler beim Starten der Simulation: " + err.message, {
+          round: 0,
+          intensity: 70,
+        });
         setStatus("Fehler");
       }
     }
@@ -875,11 +905,8 @@
       const answer = answerInputEl.value.trim();
       if (!answer) return;
 
-      const company = companyInputEl.value.trim() || "Dein Unternehmen";
-
-      // Zeige den Unternehmens-Post sofort als Haupt-Tweet
-      renderMainTweet(company, answer, {
-        cause: causeInputEl.value.trim() || "nicht näher beschriebene Ursache",
+      renderMainTweet(companyNameGlobal, answer, {
+        cause: causeGlobal,
       });
 
       answerInputEl.value = "";
@@ -898,11 +925,13 @@
     }
 
     // ===================== EVENTS =================================
-    startBtn.addEventListener("click", startSimulation);
+    toggleRepliesBtn.addEventListener("click", toggleReplies);
+
     sendBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
       sendAnswer();
     });
+
     answerInputEl.addEventListener("keydown", (ev) => {
       if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
         ev.preventDefault();
@@ -918,19 +947,23 @@
       const auto = params.get("auto");
 
       if (companyParam) {
-        companyInputEl.value = companyParam;
+        companyNameGlobal = companyParam;
       }
       if (causeParam) {
-        causeInputEl.value = causeParam;
+        causeGlobal = causeParam;
       }
 
-      // Platzhalter-Main-Tweet direkt rendern
       resetThread();
 
       if (auto === "1") {
         setTimeout(() => {
           startSimulation();
         }, 0);
+      } else {
+        // Wenn kein auto=1, darf der User direkt anfangen zu tippen und dann manuell starten.
+        // Wir aktivieren den Composer, damit er seinen ersten Post vorbereiten kann.
+        setComposerEnabled(true);
+        setStatus("bereit");
       }
     });
   </script>
