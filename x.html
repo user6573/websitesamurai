@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <title>Shitstorm-Simulation · X / Twitter</title>
+  <title>X – Shitstorm-Simulation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -12,9 +12,7 @@
 
     body {
       margin: 0;
-      background:
-        radial-gradient(circle at 0% 0%, #0f172a 0, #020617 40%, #000 75%),
-        radial-gradient(circle at 100% 100%, #020617 0, #000 55%);
+      background: #000;
       color: #e7e9ea;
       display: flex;
       justify-content: center;
@@ -26,87 +24,151 @@
       justify-content: center;
       width: 100%;
       max-width: 1100px;
-      padding: 1.25rem 0.75rem;
-      box-sizing: border-box;
     }
 
     .timeline {
       width: min(700px, 100%);
-      border-radius: 1.25rem;
-      overflow: hidden;
-      border: 1px solid #1f2933;
-      min-height: calc(100vh - 2.5rem);
+      border-left: 1px solid #2f3336;
+      border-right: 1px solid #2f3336;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: rgba(0, 0, 0, 0.96);
-      box-shadow:
-        0 18px 60px rgba(0, 0, 0, 0.6),
-        0 0 0 1px rgba(15, 23, 42, 0.8);
+      background: #000;
     }
 
-    /* Header: X-Symbol + X-Simulation + Status rechts */
     .timeline-header {
       position: sticky;
       top: 0;
       z-index: 10;
-      background: rgba(0, 0, 0, 0.92);
-      backdrop-filter: blur(16px);
+      background: rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid #2f3336;
       padding: 0.75rem 1rem;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.75rem;
     }
 
     .x-logo {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       border-radius: 999px;
       border: 1px solid #2f3336;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 1rem;
-      letter-spacing: 0.02em;
-      background: radial-gradient(circle at 30% 0%, #0b1120, #020617);
+      font-size: 1.1rem;
     }
 
-    .header-title {
+    .timeline-header-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .timeline-header-title h1 {
+      margin: 0;
       font-size: 1.05rem;
       font-weight: 700;
     }
 
-    .header-sub {
+    .timeline-header-title span {
       font-size: 0.78rem;
       color: #71767b;
-      margin-top: 0.08rem;
     }
 
-    .header-text {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .status-pill {
-      margin-left: auto;
-      font-size: 0.75rem;
-      color: #71767b;
-      padding: 0.2rem 0.6rem;
+    .pill {
       border-radius: 999px;
       border: 1px solid #2f3336;
-      background: rgba(15, 23, 42, 0.7);
+      padding: 0.1rem 0.6rem;
+      font-size: 0.75rem;
+      color: #cfd3d7;
+      margin-left: auto;
+      white-space: nowrap;
     }
 
-    .status-pill span {
+    .setup {
+      border-bottom: 1px solid #2f3336;
+      padding: 0.7rem 1rem 0.8rem;
+    }
+
+    .setup-label {
+      font-size: 0.78rem;
+      color: #71767b;
+      margin-bottom: 0.4rem;
+    }
+
+    .setup-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .field {
+      flex: 1 1 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .field span {
+      font-size: 0.74rem;
+      color: #71767b;
+    }
+
+    .field input {
+      background: #000;
+      border-radius: 999px;
+      border: 1px solid #2f3336;
       color: #e7e9ea;
-      font-weight: 500;
+      padding: 0.4rem 0.7rem;
+      font: inherit;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: #1d9bf0;
+      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
+    }
+
+    .setup-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.2rem;
+      font-size: 0.76rem;
+      color: #71767b;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      background: #1d9bf0;
+      color: #fff;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.86rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #1a8cd8;
     }
 
     .status-bar {
       font-size: 0.75rem;
       color: #71767b;
-      padding: 0.3rem 1rem 0.45rem;
+      padding: 0.1rem 1rem 0.4rem;
       border-bottom: 1px solid #2f3336;
       display: flex;
       justify-content: space-between;
@@ -118,74 +180,47 @@
       color: #e7e9ea;
     }
 
-    .status-bar-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
-    }
-
-    .thread {
-      border-bottom: 1px solid #2f3336;
-    }
-
-    .main-tweet-container {
-      padding: 0.9rem 1rem 0.35rem;
-      border-bottom: 1px solid #2f3336;
-      background: radial-gradient(circle at 0% 0%, #020617, #020617 60%, #000 100%);
-    }
-
-    .tweet.main {
-      padding: 0;
-      border-bottom: none;
+    .feed {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
     }
 
     .tweet {
       display: flex;
       padding: 0.75rem 1rem;
-      border-bottom: 1px solid #16181c;
+      border-bottom: 1px solid #2f3336;
       gap: 0.6rem;
-      transition: background-color 0.12s ease, border-color 0.12s ease;
-    }
-
-    .tweet.reply:hover {
-      background: rgba(15, 23, 42, 0.65);
     }
 
     .avatar {
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       border-radius: 999px;
-      background: #020617;
+      background: #000;
       border: 1px solid #2f3336;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.83rem;
+      font-size: 0.8rem;
       color: #cfd3d7;
       flex-shrink: 0;
-      background-size: cover;
-      background-position: center;
-      overflow: hidden;
-      text-transform: uppercase;
     }
 
-    .avatar.company {
-      border-color: #1d9bf0;
-      color: #1d9bf0;
-      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.3);
+    .avatar.origin {
+      border-color: #4b5563;
+      color: #e5e7eb;
     }
 
     .avatar.community {
       border-color: #f91880;
       color: #f91880;
+    }
+
+    .avatar.company {
+      border-color: #1d9bf0;
+      color: #1d9bf0;
     }
 
     .avatar.coach {
@@ -202,7 +237,7 @@
       display: flex;
       align-items: baseline;
       gap: 0.35rem;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
     }
 
     .tweet-name {
@@ -221,175 +256,109 @@
     }
 
     .tweet-text {
-      margin-top: 0.3rem;
-      font-size: 1.03rem;
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
       white-space: pre-wrap;
       word-wrap: break-word;
-      line-height: 1.45;
     }
 
-    .tweet-text.small {
-      font-size: 0.9rem;
-      color: #9ca3af;
-    }
-
-    .scenario-text {
-      font-size: 0.8rem;
-      color: #a1a1aa;
+    .metrics {
       margin-top: 0.4rem;
-      white-space: pre-wrap;
-    }
-
-    .tweet-actions {
-      display: flex;
-      gap: 1.4rem;
-      margin-top: 0.6rem;
-      font-size: 0.8rem;
-      color: #71767b;
-    }
-
-    .tweet-actions span {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      cursor: default;
-    }
-
-    .tweet-actions span::before {
-      font-family: system-ui, sans-serif;
-      opacity: 0.75;
-      font-size: 0.9rem;
-    }
-
-    .tweet-actions span[data-type="reply"]::before {
-      content: "💬";
-    }
-    .tweet-actions span[data-type="retweet"]::before {
-      content: "🔁";
-    }
-    .tweet-actions span[data-type="like"]::before {
-      content: "❤";
-    }
-
-    .replies-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.35rem 0 0.45rem;
       font-size: 0.78rem;
-      color: #71767b;
+      color: #9ca3af;
+      display: flex;
+      flex-wrap: wrap;
       gap: 0.5rem;
     }
 
-    #scenarioShort {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      max-width: 65%;
-    }
-
-    .btn-toggle {
+    .metric-label {
       border-radius: 999px;
       border: 1px solid #2f3336;
-      background: #020617;
-      color: #e7e9ea;
-      font-size: 0.75rem;
-      padding: 0.25rem 0.8rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.05s ease;
+      padding: 0.1rem 0.5rem;
+      background: rgba(15, 23, 42, 0.8);
     }
 
-    .btn-toggle span.chevron {
+    .delta-good {
+      color: #4ade80;
+      border-color: #16a34a;
+    }
+
+    .delta-bad {
+      color: #f97373;
+      border-color: #b91c1c;
+    }
+
+    .reaction-good {
+      color: #4ade80;
+    }
+
+    .reaction-bad {
+      color: #f97373;
+    }
+
+    .likes {
+      margin-top: 0.3rem;
       font-size: 0.8rem;
-      opacity: 0.8;
+      color: #f97373;
     }
 
-    .btn-toggle:disabled {
-      opacity: 0.45;
-      cursor: default;
+    .comments {
+      margin-top: 0.5rem;
+      font-size: 0.82rem;
     }
 
-    .btn-toggle:hover:not(:disabled) {
-      background: #0b1120;
-      border-color: #374151;
-      transform: translateY(-0.5px);
+    .comments summary {
+      cursor: pointer;
+      list-style: none;
+      color: #60a5fa;
     }
 
-    .replies-section.hidden {
+    .comments summary::-webkit-details-marker {
       display: none;
     }
 
-    .replies-label {
-      padding: 0.45rem 1rem 0.2rem;
-      font-size: 0.78rem;
-      color: #71767b;
-      border-top: 1px solid #16181c;
-      border-bottom: 1px solid #16181c;
-      background: #020617;
+    .comment {
+      margin-top: 0.35rem;
+      border-left: 2px solid #2f3336;
+      padding-left: 0.5rem;
+      font-size: 0.85rem;
+      color: #e5e7eb;
     }
 
-    .tweet.reply {
-      position: relative;
-      padding-left: 1.2rem;
-    }
-
-    .tweet.reply::before {
-      content: "";
-      position: absolute;
-      left: 32px;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: rgba(51, 65, 85, 0.85);
-    }
-
-    .tweet.reply:first-child::before {
-      top: 20px;
-    }
-
-    .tweet.reply:last-child::before {
-      bottom: 24px;
+    .comment-muted {
+      color: #6b7280;
+      border-left-style: dashed;
     }
 
     .composer {
       border-top: 1px solid #2f3336;
-      padding: 0.6rem 1rem 0.85rem;
+      padding: 0.6rem 1rem 0.8rem;
       display: flex;
       gap: 0.6rem;
       align-items: flex-start;
-      background: rgba(0, 0, 0, 0.98);
     }
 
     .composer.disabled {
-      opacity: 0.6;
+      opacity: 0.5;
     }
 
     .composer textarea {
       flex: 1;
-      border-radius: 0.9rem;
+      border-radius: 0.75rem;
       border: 1px solid #2f3336;
-      background: #020617;
+      background: #000;
       color: #e7e9ea;
       font: inherit;
       font-size: 0.9rem;
-      padding: 0.5rem 0.7rem;
+      padding: 0.45rem 0.6rem;
       min-height: 60px;
       resize: vertical;
       outline: none;
-      transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
-    }
-
-    .composer textarea::placeholder {
-      color: #6b7280;
     }
 
     .composer textarea:focus {
       border-color: #1d9bf0;
-      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.45);
-      background-color: #020617;
+      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
     }
 
     .composer-footer {
@@ -406,32 +375,6 @@
       text-align: right;
     }
 
-    .btn-primary {
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #1d9bf0, #38bdf8);
-      color: #fff;
-      font-weight: 600;
-      padding: 0.42rem 1.1rem;
-      font-size: 0.85rem;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.7);
-      transition: transform 0.08s ease, box-shadow 0.12s ease, filter 0.06s ease;
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.55;
-      cursor: default;
-      box-shadow: none;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      filter: brightness(1.05);
-      transform: translateY(-1px);
-      box-shadow: 0 12px 30px rgba(15, 118, 178, 0.55);
-    }
-
     .debug-card {
       border-top: 1px solid #2f3336;
       padding: 0.5rem 1rem 0.6rem;
@@ -439,36 +382,10 @@
       color: #71767b;
       max-height: 160px;
       overflow: hidden;
-      background: #020617;
     }
 
     .debug-card details {
       cursor: pointer;
-    }
-
-    .debug-card details[open] {
-      border-radius: 0.75rem;
-      border: 1px solid #1f2937;
-      padding: 0.2rem 0.45rem 0.35rem;
-      background: #020617;
-    }
-
-    .debug-card summary {
-      list-style: none;
-    }
-
-    .debug-card summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .debug-card summary::before {
-      content: "▸ ";
-      font-size: 0.7rem;
-      opacity: 0.7;
-    }
-
-    .debug-card details[open] summary::before {
-      content: "▾ ";
     }
 
     .debug-card pre {
@@ -479,6 +396,34 @@
       font-size: 0.7rem;
       color: #9ca3af;
     }
+
+    .final-card {
+      border-top: 2px solid #4b5563;
+      border-bottom: 1px solid #2f3336;
+      padding-top: 0.9rem;
+      margin-top: 0.4rem;
+    }
+
+    .final-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .final-good {
+      color: #4ade80;
+    }
+
+    .final-bad {
+      color: #f97373;
+    }
+
+    .final-summary {
+      font-size: 0.85rem;
+      color: #d1d5db;
+      margin-top: 0.2rem;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
@@ -486,49 +431,46 @@
     <div class="timeline">
       <div class="timeline-header">
         <div class="x-logo">X</div>
-        <div class="header-text">
-          <div class="header-title">X-Simulation</div>
-          <div class="header-sub">Trainiere deine Krisenkommunikation</div>
+        <div class="timeline-header-title">
+          <h1>X – Shitstorm-Simulation</h1>
+          <span>Trainiere deine Krisenkommunikation</span>
         </div>
-        <div class="status-pill">
-          Status: <span id="statusPill">bereit</span>
+        <div class="pill" id="statusPill">Status: bereit</div>
+      </div>
+
+      <div class="setup">
+        <div class="setup-label">Ausgangslage</div>
+        <div class="setup-row">
+          <div class="field">
+            <span>Unternehmen</span>
+            <input id="companyInput" placeholder="Dein Unternehmen" value="Dein Unternehmen" />
+          </div>
+          <div class="field">
+            <span>Ursache des Shitstorms</span>
+            <input id="causeInput" placeholder="z.B. missglückte Kampagne" value="Unangemessene Werbekampagne" />
+          </div>
+        </div>
+        <div class="setup-footer">
+          <span>Start bei Intensität 70/100. Ziel: unter 10, bevor sie über 90 eskaliert.</span>
+          <button class="btn-primary" id="startBtn">Simulation starten</button>
         </div>
       </div>
 
       <div class="status-bar">
-        <div class="status-bar-label">
-          <span class="status-dot"></span>
-          Runde: <span id="roundText">–</span>
-        </div>
+        <div>Runde: <span id="roundText">–</span></div>
         <div>Intensität: <span id="intensityText">–</span></div>
       </div>
 
-      <div class="thread">
-        <div class="main-tweet-container">
-          <div id="mainTweet"></div>
-          <div class="replies-header-row">
-            <div id="scenarioShort"></div>
-            <button id="toggleRepliesBtn" class="btn-toggle" disabled>
-              <span class="chevron">▾</span>
-              Kommentare anzeigen (0)
-            </button>
-          </div>
-        </div>
-
-        <div id="repliesSection" class="replies-section hidden">
-          <div class="replies-label">Antworten der Community</div>
-          <div id="replies"></div>
-        </div>
-      </div>
+      <div class="feed" id="feed"></div>
 
       <div class="composer disabled" id="composer">
-        <div class="avatar company" id="composerAvatar">@</div>
+        <div class="avatar company">@</div>
         <div class="tweet-body">
-          <textarea id="answerInput" placeholder="Veröffentliche dein offizielles Statement …" disabled></textarea>
+          <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
         </div>
         <div class="composer-footer">
           <div class="composer-hint">
-            Deine Antwort erscheint oben als offizieller Post des Unternehmens. Die Community reagiert in den Kommentaren.
+            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
           </div>
           <button class="btn-primary" id="sendBtn" disabled>Posten</button>
         </div>
@@ -545,46 +487,39 @@
 
   <script>
     // ===================== KONFIGURATION ===========================
-    const BASE_URL = "https://DEIN-LANGGRAPH-SERVER";  // z.B. "https://xyz.eu.langgraph.app"
-    const ASSISTANT_ID = "shitstorm";                  // Name aus langgraph.json
-    const API_KEY = "";                                // LangSmith Key oder leer
-
-    // Optionale Avatare für Community-User – hier kannst du deine Bilder eintragen.
-    const COMMUNITY_USERS = [
-      { name: "Lena", handle: "@lenaleise", avatar: "avatars/user-lena.png" },
-      { name: "Tom", handle: "@tom_talks", avatar: "avatars/user-tom.png" },
-      { name: "Ali", handle: "@ali_opinion", avatar: "avatars/user-ali.png" },
-      { name: "Mia", handle: "@mia_media", avatar: "avatars/user-mia.png" },
-      { name: "Jonas", handle: "@jonas_crit", avatar: "avatars/user-jonas.png" },
-      { name: "Sara", handle: "@saracomment", avatar: "avatars/user-sara.png" }
-    ];
-
-    let communityUserIndex = 0;
+    // HIER ANPASSEN:
+const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
+const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
+const API_KEY = "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";                               // LangSmith Key oder leer
 
     // ===================== STATE & DOM =============================
     let threadId = null;
     let waitingForAnswer = false;
     let finished = false;
-    let commentsVisible = false;
-    let replyCount = 0;
-    let startedOnce = false;
 
-    const mainTweetEl = document.getElementById("mainTweet");
-    const repliesEl = document.getElementById("replies");
-    const repliesSectionEl = document.getElementById("repliesSection");
-    const toggleRepliesBtn = document.getElementById("toggleRepliesBtn");
+    const feedEl = document.getElementById("feed");
     const composerEl = document.getElementById("composer");
-    const composerAvatarEl = document.getElementById("composerAvatar");
     const answerInputEl = document.getElementById("answerInput");
     const sendBtn = document.getElementById("sendBtn");
+    const startBtn = document.getElementById("startBtn");
+    const companyInputEl = document.getElementById("companyInput");
+    const causeInputEl = document.getElementById("causeInput");
     const statusPillEl = document.getElementById("statusPill");
     const roundTextEl = document.getElementById("roundText");
     const intensityTextEl = document.getElementById("intensityText");
     const debugOutputEl = document.getElementById("debugOutput");
-    const scenarioShortEl = document.getElementById("scenarioShort");
 
-    let companyNameGlobal = "Dein Unternehmen";
-    let causeGlobal = "nicht näher beschriebene Ursache";
+    const simulation = {
+      company: "",
+      cause: "",
+      initialIntensity: 70,
+      initialComments: [],
+      responses: [], // { id, answer, comments, politeness, responsibility, overall, feedback, intensityAfter, deltaIntensity }
+      finalOutcome: "",
+      finalSummary: "",
+    };
+
+    let prevIntensity = simulation.initialIntensity;
 
     function buildHeaders() {
       const h = { "Content-Type": "application/json" };
@@ -595,7 +530,7 @@
     }
 
     function setStatus(text) {
-      statusPillEl.textContent = text;
+      statusPillEl.textContent = "Status: " + text;
     }
 
     function setComposerEnabled(on) {
@@ -610,245 +545,281 @@
       }
     }
 
-    function slugifyHandle(name) {
-      return (
-        name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "")
-          .slice(0, 12) || "brand"
-      );
-    }
+    function resetSimulation() {
+      simulation.company = "";
+      simulation.cause = "";
+      simulation.initialIntensity = 70;
+      simulation.initialComments = [];
+      simulation.responses = [];
+      simulation.finalOutcome = "";
+      simulation.finalSummary = "";
+      prevIntensity = simulation.initialIntensity;
 
-    function resetThread() {
-      repliesEl.innerHTML = "";
-      mainTweetEl.innerHTML = "";
-      debugOutputEl.textContent = "";
+      feedEl.innerHTML = "";
       roundTextEl.textContent = "–";
       intensityTextEl.textContent = "–";
+      debugOutputEl.textContent = "";
+
       threadId = null;
       waitingForAnswer = false;
       finished = false;
-      commentsVisible = false;
-      replyCount = 0;
-      startedOnce = false;
       setComposerEnabled(false);
-
-      toggleRepliesBtn.disabled = true;
-      toggleRepliesBtn.querySelector(".chevron").textContent = "▾";
-      toggleRepliesBtn.textContent = "";
-      toggleRepliesBtn.appendChild(document.createElement("span")).className = "chevron";
-      toggleRepliesBtn.firstChild.textContent = "▾";
-      toggleRepliesBtn.appendChild(document.createTextNode(" Kommentare anzeigen (0)"));
-
-      repliesSectionEl.classList.add("hidden");
-
-      scenarioShortEl.textContent = `Thema: ${causeGlobal}`;
-      renderMainTweet(companyNameGlobal, "", { cause: causeGlobal, round: 0, intensity: 70 });
-      updateComposerAvatar(companyNameGlobal);
     }
 
-    function updateComposerAvatar(companyName) {
-      const initial = (companyName.trim()[0] || "U").toUpperCase();
-      composerAvatarEl.textContent = initial;
-      composerAvatarEl.style.backgroundImage = "";
+    // ===================== RENDERING ===============================
+
+    function clampLikes(n) {
+      return Math.max(3, Math.min(999, Math.round(n)));
     }
 
-    function renderMainTweet(companyName, text, opts = {}) {
-      const handle = slugifyHandle(companyName);
-      const round = opts.round ?? null;
-      const intensity = typeof opts.intensity === "number" ? opts.intensity : null;
-      const cause = opts.cause || causeGlobal;
+    function likesForCause(intensity) {
+      const base = 30;
+      const scaled = typeof intensity === "number" ? intensity * 1.5 : 70;
+      return clampLikes(base + scaled);
+    }
 
-      mainTweetEl.innerHTML = "";
+    function likesForResponse(resp) {
+      const intensity = typeof resp.intensityAfter === "number" ? resp.intensityAfter : prevIntensity;
+      const overall = typeof resp.overall === "number" ? resp.overall : 50;
+      const delta = typeof resp.deltaIntensity === "number" ? resp.deltaIntensity : 0;
+      // Viel Deeskalation + hoher Score -> viele Likes
+      const score = overall + (delta < 0 ? -delta * 2 : -delta);
+      const base = 15 + (100 - intensity) * 0.3;
+      return clampLikes(base + score / 3);
+    }
 
-      const tweet = document.createElement("div");
-      tweet.classList.add("tweet", "main");
+    function classifyOverall(overall) {
+      if (typeof overall !== "number") return "Noch keine Bewertung verfügbar.";
+      if (overall >= 80) return "Sehr gute Reaktion – starke Deeskalation.";
+      if (overall >= 65) return "Gute Reaktion – der Shitstorm beruhigt sich.";
+      if (overall >= 50) return "Durchwachsene Reaktion – leichte Entspannung.";
+      if (overall >= 35) return "Problematische Reaktion – die Lage bleibt kritisch.";
+      return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
+    }
 
-      const avatar = document.createElement("div");
-      avatar.classList.add("avatar", "company");
-      avatar.textContent = (companyName.trim()[0] || "U").toUpperCase();
+    function createCommentsBlock(comments, label) {
+      const details = document.createElement("details");
+      details.className = "comments";
 
-      const body = document.createElement("div");
-      body.classList.add("tweet-body");
-
-      const header = document.createElement("div");
-      header.classList.add("tweet-header");
-
-      const name = document.createElement("span");
-      name.classList.add("tweet-name");
-      name.textContent = companyName;
-
-      const handleEl = document.createElement("span");
-      handleEl.classList.add("tweet-handle");
-      handleEl.textContent = " @" + handle;
-
-      const meta = document.createElement("span");
-      meta.classList.add("tweet-meta");
-      const pieces = [];
-      if (round !== null && round !== undefined && round > 0) {
-        pieces.push("Runde " + round);
-      }
-      if (intensity !== null && intensity !== undefined) {
-        pieces.push("Intensität " + intensity.toFixed(1) + "/100");
-      }
-      meta.textContent = pieces.join(" · ");
-
-      header.appendChild(name);
-      header.appendChild(handleEl);
-      if (meta.textContent) header.appendChild(meta);
-
-      const textEl = document.createElement("div");
-      textEl.classList.add("tweet-text");
-      if (text && text.trim()) {
-        textEl.textContent = text;
+      const summary = document.createElement("summary");
+      if (Array.isArray(comments) && comments.length) {
+        summary.textContent = `${label} anzeigen (${comments.length})`;
       } else {
-        textEl.classList.add("small");
-        textEl.textContent =
-          "Noch kein offizielles Statement veröffentlicht. Formuliere unten deinen ersten Post als Unternehmen.";
+        summary.textContent = `${label} (keine)`;
+      }
+      details.appendChild(summary);
+
+      if (Array.isArray(comments) && comments.length) {
+        comments.forEach((c) => {
+          const div = document.createElement("div");
+          div.className = "comment";
+          div.textContent = c;
+          details.appendChild(div);
+        });
+      } else {
+        const info = document.createElement("div");
+        info.className = "comment comment-muted";
+        info.textContent = "Noch keine Kommentare.";
+        details.appendChild(info);
       }
 
-      body.appendChild(header);
-      body.appendChild(textEl);
-
-      if (cause) {
-        const scenario = document.createElement("div");
-        scenario.classList.add("scenario-text");
-        scenario.textContent = `Shitstorm-Thema: ${cause}`;
-        body.appendChild(scenario);
-      }
-
-      const actions = document.createElement("div");
-      actions.classList.add("tweet-actions");
-      const replies = document.createElement("span");
-      replies.dataset.type = "reply";
-      replies.textContent = "Kommentare";
-      const retweets = document.createElement("span");
-      retweets.dataset.type = "retweet";
-      retweets.textContent = "Retweets";
-      const likes = document.createElement("span");
-      likes.dataset.type = "like";
-      likes.textContent = "Likes";
-      actions.appendChild(replies);
-      actions.appendChild(retweets);
-      actions.appendChild(likes);
-      body.appendChild(actions);
-
-      tweet.appendChild(avatar);
-      tweet.appendChild(body);
-      mainTweetEl.appendChild(tweet);
+      return details;
     }
 
-    function pickCommunityUser() {
-      if (COMMUNITY_USERS.length === 0) {
-        return {
-          name: "User",
-          handle: "@user",
-          avatar: ""
-        };
+    function renderFeed() {
+      feedEl.innerHTML = "";
+
+      if (!simulation.cause) {
+        return;
       }
-      const user = COMMUNITY_USERS[communityUserIndex % COMMUNITY_USERS.length];
-      communityUserIndex++;
-      return user;
-    }
 
-    function appendReply(role, text, opts = {}) {
-      const tweet = document.createElement("div");
-      tweet.className = "tweet reply";
+      // 1) Auslöser-Post (Nutzer)
+      const causeTweet = document.createElement("article");
+      causeTweet.className = "tweet";
 
-      const avatar = document.createElement("div");
-      avatar.classList.add("avatar");
+      const causeAvatar = document.createElement("div");
+      causeAvatar.classList.add("avatar", "origin");
+      causeAvatar.textContent = "N";
 
-      const body = document.createElement("div");
-      body.classList.add("tweet-body");
+      const causeBody = document.createElement("div");
+      causeBody.classList.add("tweet-body");
 
-      const header = document.createElement("div");
-      header.classList.add("tweet-header");
+      const causeHeader = document.createElement("div");
+      causeHeader.classList.add("tweet-header");
 
-      const name = document.createElement("span");
-      name.classList.add("tweet-name");
+      const causeName = document.createElement("span");
+      causeName.classList.add("tweet-name");
+      causeName.textContent = "Random Nutzer";
 
-      const handle = document.createElement("span");
-      handle.classList.add("tweet-handle");
+      const causeHandle = document.createElement("span");
+      causeHandle.classList.add("tweet-handle");
+      causeHandle.textContent = " @user123";
 
-      const meta = document.createElement("span");
-      meta.classList.add("tweet-meta");
+      const causeMeta = document.createElement("span");
+      causeMeta.classList.add("tweet-meta");
+      causeMeta.textContent = "Auslöser des Shitstorms";
 
-      const textEl = document.createElement("div");
-      textEl.classList.add("tweet-text", "small");
-      textEl.textContent = text;
+      causeHeader.appendChild(causeName);
+      causeHeader.appendChild(causeHandle);
+      causeHeader.appendChild(causeMeta);
 
-      const round = opts.round ?? "";
-      const intensityVal =
-        typeof opts.intensity === "number"
-          ? opts.intensity.toFixed(1) + "/100"
-          : "";
+      const causeText = document.createElement("div");
+      causeText.classList.add("tweet-text");
+      causeText.textContent = simulation.cause;
 
-      if (role === "community") {
-        const user = pickCommunityUser();
-        avatar.classList.add("community");
-        avatar.textContent = (user.name[0] || "U").toUpperCase();
-        if (user.avatar) {
-          avatar.style.backgroundImage = `url('${user.avatar}')`;
+      const causeLikes = document.createElement("div");
+      causeLikes.className = "likes";
+      causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
+
+      causeBody.appendChild(causeHeader);
+      causeBody.appendChild(causeText);
+      causeBody.appendChild(causeLikes);
+
+      if (simulation.initialComments && simulation.initialComments.length) {
+        const commentsBlock = createCommentsBlock(
+          simulation.initialComments,
+          "Kommentare zur ursprünglichen Beschwerde"
+        );
+        causeBody.appendChild(commentsBlock);
+      }
+
+      causeTweet.appendChild(causeAvatar);
+      causeTweet.appendChild(causeBody);
+      feedEl.appendChild(causeTweet);
+
+      // 2) Für jede Unternehmensreaktion eine Runde
+      simulation.responses.forEach((resp, index) => {
+        const roundNumber = index + 1;
+
+        const tweet = document.createElement("article");
+        tweet.className = "tweet";
+
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "company");
+        avatar.textContent = "U";
+
+        const body = document.createElement("div");
+        body.classList.add("tweet-body");
+
+        const header = document.createElement("div");
+        header.classList.add("tweet-header");
+
+        const name = document.createElement("span");
+        name.classList.add("tweet-name");
+        name.textContent = simulation.company || "Unternehmen";
+
+        const handle = document.createElement("span");
+        handle.classList.add("tweet-handle");
+        handle.textContent = " @" + (simulation.company || "brand").replace(/\s+/g, "").toLowerCase();
+
+        const meta = document.createElement("span");
+        meta.classList.add("tweet-meta");
+        meta.textContent = `Reaktion · Runde ${roundNumber}`;
+
+        header.appendChild(name);
+        header.appendChild(handle);
+        header.appendChild(meta);
+
+        const text = document.createElement("div");
+        text.classList.add("tweet-text");
+        text.textContent = resp.answer;
+
+        const metrics = document.createElement("div");
+        metrics.className = "metrics";
+
+        if (typeof resp.intensityAfter === "number") {
+          const intensitySpan = document.createElement("span");
+          intensitySpan.className = "metric-label";
+          intensitySpan.textContent = `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
+          metrics.appendChild(intensitySpan);
         }
-        name.textContent = user.name;
-        handle.textContent = " " + (user.handle || "@user");
-      } else if (role === "coach") {
-        avatar.classList.add("coach");
-        avatar.textContent = "★";
-        name.textContent = "Crisis Coach";
-        handle.textContent = " @coach";
-      } else {
-        name.textContent = "System";
-        handle.textContent = " @sim";
-      }
 
-      if (round || intensityVal) {
-        meta.textContent = `Runde ${round || "?"} · Intensität ${intensityVal || "?"}`;
-      }
+        if (typeof resp.deltaIntensity === "number") {
+          const deltaSpan = document.createElement("span");
+          deltaSpan.className = "metric-label";
+          const delta = resp.deltaIntensity;
+          const deltaText = (delta >= 0 ? "+" : "") + delta.toFixed(1);
+          if (delta < 0) {
+            deltaSpan.classList.add("delta-good");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (entschärft)`;
+          } else if (delta > 0) {
+            deltaSpan.classList.add("delta-bad");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (verschärft)`;
+          } else {
+            deltaSpan.textContent = "Intensitätveränderung: ±0 (unverändert)";
+          }
+          metrics.appendChild(deltaSpan);
+        }
 
-      header.appendChild(name);
-      header.appendChild(handle);
-      if (meta.textContent) header.appendChild(meta);
+        const overallSpan = document.createElement("span");
+        overallSpan.className = "metric-label";
+        const classification = classifyOverall(resp.overall);
+        overallSpan.textContent = classification;
+        if (typeof resp.overall === "number") {
+          if (resp.overall >= 65) {
+            overallSpan.classList.add("reaction-good");
+          } else if (resp.overall < 50) {
+            overallSpan.classList.add("reaction-bad");
+          }
+        }
+        metrics.appendChild(overallSpan);
 
-      body.appendChild(header);
-      body.appendChild(textEl);
+        const likesDiv = document.createElement("div");
+        likesDiv.className = "likes";
+        likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
 
-      tweet.appendChild(avatar);
-      tweet.appendChild(body);
+        body.appendChild(header);
+        body.appendChild(text);
+        body.appendChild(metrics);
+        body.appendChild(likesDiv);
 
-      repliesEl.appendChild(tweet);
-      repliesEl.scrollTop = repliesEl.scrollHeight;
+        const commentsLabel = "Community-Kommentare zu dieser Reaktion";
+        const commentsBlock = createCommentsBlock(resp.comments || [], commentsLabel);
+        body.appendChild(commentsBlock);
 
-      replyCount++;
-      toggleRepliesBtn.disabled = false;
-      updateRepliesToggleLabel();
-      if (!commentsVisible) {
-        commentsVisible = true;
-        repliesSectionEl.classList.remove("hidden");
+        tweet.appendChild(avatar);
+        tweet.appendChild(body);
+
+        feedEl.appendChild(tweet);
+      });
+
+      // 3) Finale Karte
+      if (simulation.finalOutcome) {
+        const finalTweet = document.createElement("article");
+        finalTweet.className = "tweet final-card";
+
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "coach");
+        avatar.textContent = "!";
+
+        const body = document.createElement("div");
+        body.classList.add("tweet-body");
+
+        const title = document.createElement("div");
+        title.classList.add("final-title");
+        if (simulation.finalOutcome.includes("abgeflacht")) {
+          title.classList.add("final-good");
+        } else {
+          title.classList.add("final-bad");
+        }
+        title.textContent = simulation.finalOutcome;
+
+        const summary = document.createElement("div");
+        summary.classList.add("final-summary");
+        summary.textContent = simulation.finalSummary || "";
+
+        body.appendChild(title);
+        if (simulation.finalSummary) {
+          body.appendChild(summary);
+        }
+
+        finalTweet.appendChild(avatar);
+        finalTweet.appendChild(body);
+        feedEl.appendChild(finalTweet);
       }
     }
 
-    function updateRepliesToggleLabel() {
-      const verb = commentsVisible ? "Kommentare ausblenden" : "Kommentare anzeigen";
-      const chevronSpan = toggleRepliesBtn.querySelector(".chevron");
-      if (chevronSpan) {
-        chevronSpan.textContent = commentsVisible ? "▴" : "▾";
-        toggleRepliesBtn.lastChild.nodeValue = ` ${verb} (${replyCount})`;
-      } else {
-        toggleRepliesBtn.textContent = `${verb} (${replyCount})`;
-      }
-    }
-
-    function toggleReplies() {
-      if (toggleRepliesBtn.disabled) return;
-      commentsVisible = !commentsVisible;
-      if (commentsVisible) {
-        repliesSectionEl.classList.remove("hidden");
-      } else {
-        repliesSectionEl.classList.add("hidden");
-      }
-      updateRepliesToggleLabel();
-    }
+    // ===================== HTTP / UTILS ============================
 
     async function createThread() {
       const res = await fetch(`${BASE_URL}/threads`, {
@@ -895,9 +866,8 @@
       return data;
     }
 
-    // ---- State-Finder: sucht rekursiv nach deinem Shitstorm-State ----
     function findState(obj, depth = 0) {
-      if (!obj || typeof obj !== "object" || depth > 5) return null;
+      if (!obj || typeof obj !== "object" || depth > 6) return null;
 
       const hasStateShape =
         Object.prototype.hasOwnProperty.call(obj, "last_community_comments") ||
@@ -920,98 +890,132 @@
       return null;
     }
 
-    function handleResult(result) {
-      let interruptValue = null;
+    function getInterruptValue(result) {
       if (Array.isArray(result.__interrupt__) && result.__interrupt__.length) {
-        interruptValue = result.__interrupt__[0].value;
+        return result.__interrupt__[0].value;
       }
+      return null;
+    }
 
-      const state = findState(result) || {};
+    function extractLastCoachFeedback(history) {
+      if (!Array.isArray(history)) return "";
+      const coachEntries = history.filter((h) => h.actor === "coach");
+      if (!coachEntries.length) return "";
+      return coachEntries[coachEntries.length - 1].content || "";
+    }
 
+    function updateStatusBar(state) {
       if (typeof state.round === "number") {
         roundTextEl.textContent = String(state.round);
       }
       if (typeof state.intensity === "number") {
         intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
       }
+    }
 
-      if (state.cause) {
-        causeGlobal = state.cause;
-        scenarioShortEl.textContent = `Thema: ${causeGlobal}`;
+    // ===================== RESULT-HANDLING =========================
+
+    function processInitialResult(result) {
+      const state = findState(result) || {};
+      simulation.initialIntensity =
+        typeof state.intensity === "number" ? state.intensity : 70;
+      prevIntensity = simulation.initialIntensity;
+
+      if (Array.isArray(state.last_community_comments)) {
+        simulation.initialComments = [...state.last_community_comments];
+      } else {
+        simulation.initialComments = [];
       }
 
-      const company = companyNameGlobal;
+      updateStatusBar(state);
+      renderFeed();
 
-      if (state.last_company_response && state.last_company_response.trim()) {
-        renderMainTweet(company, state.last_company_response, {
-          round: state.round,
-          intensity: state.intensity,
-          cause: state.cause,
-        });
-      }
-
-      if (Array.isArray(state.last_community_comments) && state.last_community_comments.length) {
-        state.last_community_comments.forEach((c) =>
-          appendReply("community", String(c), {
-            round: state.round,
-            intensity: state.intensity,
-          })
-        );
-      }
-
-      if (Array.isArray(state.history) && state.history.length) {
-        const coachEntries = state.history.filter((h) => h.actor === "coach");
-        if (coachEntries.length) {
-          const last = coachEntries[coachEntries.length - 1];
-          appendReply("coach", last.content || "", {
-            round: last.round,
-            intensity: state.intensity,
-          });
-        }
-      }
-
-      if (state.status && state.status !== "running") {
-        finished = true;
-        setComposerEnabled(false);
-        let msg;
-        if (state.status === "user_won") {
-          msg = "Der Shitstorm ist weitgehend abgeklungen.";
-        } else if (state.status === "user_lost") {
-          msg = "Der Shitstorm ist außer Kontrolle geraten.";
-        } else {
-          msg = "Die Simulation wurde beendet.";
-        }
-        appendReply("system", msg, { round: state.round, intensity: state.intensity });
-        if (state.summary) {
-          appendReply("coach", state.summary, { round: state.round, intensity: state.intensity });
-        }
-        setStatus("beendet");
-        return;
-      }
-
-      if (interruptValue) {
+      const interruptValue = getInterruptValue(result);
+      if (interruptValue && state.status === "running") {
         waitingForAnswer = true;
         setComposerEnabled(true);
-        setStatus("deine Antwort ist gefragt");
+        setStatus("erste Antwort ist gefragt");
         answerInputEl.focus();
       } else {
         waitingForAnswer = false;
         setComposerEnabled(false);
-        setStatus("läuft …");
+        setStatus("beendet");
       }
     }
 
-    async function startSimulation() {
-      if (startedOnce) {
-        resetThread();
+    function processResponseResult(result, resp) {
+      const state = findState(result) || {};
+
+      if (typeof state.politeness_score === "number") {
+        resp.politeness = state.politeness_score;
       }
-      startedOnce = true;
+      if (typeof state.responsibility_score === "number") {
+        resp.responsibility = state.responsibility_score;
+      }
+      if (typeof state.reaction_score === "number") {
+        resp.overall = state.reaction_score;
+      }
+
+      if (typeof state.intensity === "number") {
+        resp.intensityAfter = state.intensity;
+        resp.deltaIntensity = state.intensity - prevIntensity;
+        prevIntensity = state.intensity;
+      }
+
+      resp.feedback = extractLastCoachFeedback(state.history) || "";
+
+      // Neue Community-Kommentare nur, wenn der Graph weiterläuft
+      if (state.status === "running" && Array.isArray(state.last_community_comments)) {
+        resp.comments = [...state.last_community_comments];
+      } else {
+        resp.comments = resp.comments || [];
+      }
+
+      updateStatusBar(state);
+
+      if (state.status && state.status !== "running") {
+        finished = true;
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        simulation.finalOutcome =
+          state.status === "user_won"
+            ? "Der Shitstorm ist abgeflacht."
+            : "Der Shitstorm ist außer Kontrolle geraten.";
+        simulation.finalSummary = state.summary || "";
+        setStatus("beendet");
+      } else {
+        const interruptValue = getInterruptValue(result);
+        if (interruptValue) {
+          waitingForAnswer = true;
+          setComposerEnabled(true);
+          setStatus("nächste Antwort ist gefragt");
+          answerInputEl.focus();
+        } else {
+          waitingForAnswer = false;
+          setComposerEnabled(false);
+          setStatus("läuft …");
+        }
+      }
+
+      renderFeed();
+    }
+
+    // ===================== SIMULATION FLOW =========================
+
+    async function startSimulation() {
+      resetSimulation();
       setStatus("startet …");
+
+      simulation.company = companyInputEl.value.trim() || "Dein Unternehmen";
+      simulation.cause =
+        causeInputEl.value.trim() || "nicht näher beschriebene Ursache";
+
+      renderFeed(); // damit Auslöser-Post direkt da ist
 
       const initialState = {
         platform: "X/Twitter",
-        cause: causeGlobal,
-        company_name: companyNameGlobal,
+        cause: simulation.cause,
+        company_name: simulation.company,
         round: 0,
         history: [],
         last_company_response: "",
@@ -1026,12 +1030,9 @@
 
       try {
         const result = await runWait({ input: initialState });
-        handleResult(result);
+        processInitialResult(result);
       } catch (err) {
-        appendReply("system", "Fehler beim Starten der Simulation: " + err.message, {
-          round: 0,
-          intensity: 70,
-        });
+        appendError(err.message);
         setStatus("Fehler");
       }
     }
@@ -1041,9 +1042,19 @@
       const answer = answerInputEl.value.trim();
       if (!answer) return;
 
-      renderMainTweet(companyNameGlobal, answer, {
-        cause: causeGlobal,
-      });
+      const resp = {
+        id: simulation.responses.length + 1,
+        answer,
+        comments: [],
+        politeness: null,
+        responsibility: null,
+        overall: null,
+        feedback: "",
+        intensityAfter: null,
+        deltaIntensity: null,
+      };
+      simulation.responses.push(resp);
+      renderFeed();
 
       answerInputEl.value = "";
       setComposerEnabled(false);
@@ -1052,16 +1063,56 @@
 
       try {
         const result = await runWait({ command: { resume: answer } });
-        handleResult(result);
+        processResponseResult(result, resp);
       } catch (err) {
-        appendReply("system", "Fehler beim Fortsetzen der Simulation: " + err.message);
+        appendError(err.message);
         setStatus("Fehler");
         setComposerEnabled(false);
       }
     }
 
-    // ===================== EVENTS =================================
-    toggleRepliesBtn.addEventListener("click", toggleReplies);
+    function appendError(message) {
+      const tweet = document.createElement("article");
+      tweet.className = "tweet";
+
+      const avatar = document.createElement("div");
+      avatar.classList.add("avatar");
+      avatar.textContent = "!";
+
+      const body = document.createElement("div");
+      body.classList.add("tweet-body");
+
+      const header = document.createElement("div");
+      header.classList.add("tweet-header");
+
+      const name = document.createElement("span");
+      name.classList.add("tweet-name");
+      name.textContent = "Systemfehler";
+
+      const handle = document.createElement("span");
+      handle.classList.add("tweet-handle");
+      handle.textContent = " @sim";
+
+      header.appendChild(name);
+      header.appendChild(handle);
+
+      const text = document.createElement("div");
+      text.classList.add("tweet-text");
+      text.textContent = message;
+
+      body.appendChild(header);
+      body.appendChild(text);
+      tweet.appendChild(avatar);
+      tweet.appendChild(body);
+      feedEl.appendChild(tweet);
+      feedEl.scrollTop = feedEl.scrollHeight;
+    }
+
+    // ===================== EVENTS / AUTOSTART ======================
+
+    startBtn.addEventListener("click", () => {
+      startSimulation();
+    });
 
     sendBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
@@ -1075,7 +1126,6 @@
       }
     });
 
-    // === Parameter aus index.html übernehmen & auto-starten ===
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const companyParam = params.get("company");
@@ -1083,21 +1133,16 @@
       const auto = params.get("auto");
 
       if (companyParam) {
-        companyNameGlobal = companyParam;
+        companyInputEl.value = companyParam;
       }
       if (causeParam) {
-        causeGlobal = causeParam;
+        causeInputEl.value = causeParam;
       }
-
-      resetThread();
 
       if (auto === "1") {
         setTimeout(() => {
           startSimulation();
         }, 0);
-      } else {
-        setComposerEnabled(true);
-        setStatus("bereit");
       }
     });
   </script>
