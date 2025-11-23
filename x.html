@@ -203,29 +203,31 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.8rem;
-      color: #cfd3d7;
       flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      object-fit: cover;
     }
 
     .avatar.origin {
       border-color: #4b5563;
-      color: #e5e7eb;
     }
 
     .avatar.community {
       border-color: #f91880;
-      color: #f91880;
     }
 
     .avatar.company {
       border-color: #1d9bf0;
-      color: #1d9bf0;
     }
 
     .avatar.coach {
       border-color: #facc15;
-      color: #facc15;
     }
 
     .tweet-body {
@@ -318,11 +320,20 @@
     }
 
     .comment {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
       margin-top: 0.35rem;
       border-left: 2px solid #2f3336;
       padding-left: 0.5rem;
       font-size: 0.85rem;
       color: #e5e7eb;
+    }
+
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
     }
 
     .comment-muted {
@@ -464,7 +475,9 @@
       <div class="feed" id="feed"></div>
 
       <div class="composer disabled" id="composer">
-        <div class="avatar company">@</div>
+        <div class="avatar company">
+          <img src="images/company.jpg" alt="Unternehmen" />
+        </div>
         <div class="tweet-body">
           <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
         </div>
@@ -487,9 +500,21 @@
 
   <script>
     // ===================== KONFIGURATION ===========================
-const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                          // LangSmith Key oder leer
+    const BASE_URL = "https://DEIN-LANGGRAPH-SERVER";  // z.B. "https://xyz.eu.langgraph.app"
+    const ASSISTANT_ID = "shitstorm";                  // Name aus langgraph.json
+    const API_KEY = "";                                // LangSmith Key oder leer
+
+    const COMPANY_AVATAR_SRC = "images/company.jpg";
+    const CAUSE_AVATAR_SRC = "images/1.png";
+    const USER_AVATAR_COUNT = 13;
+    let userAvatarIndex = 2; // 2..13 für Kommentare
+
+    function nextUserAvatarSrc() {
+      const src = "images/" + userAvatarIndex + ".png";
+      userAvatarIndex++;
+      if (userAvatarIndex > USER_AVATAR_COUNT) userAvatarIndex = 2;
+      return src;
+    }
 
     // ===================== STATE & DOM =============================
     let threadId = null;
@@ -513,7 +538,7 @@ const API_KEY = "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";          
       cause: "",
       initialIntensity: 70,
       initialComments: [],
-      responses: [], // { id, answer, comments, politeness, responsibility, overall, feedback, intensityAfter, deltaIntensity }
+      responses: [],
       finalOutcome: "",
       finalSummary: ""
     };
@@ -563,6 +588,9 @@ const API_KEY = "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";          
       waitingForAnswer = false;
       finished = false;
       setComposerEnabled(false);
+
+      // Kommentar-Avatare bei neuer Simulation wieder ab 2.png
+      userAvatarIndex = 2;
     }
 
     // ===================== RENDERING ===============================
@@ -601,18 +629,30 @@ const API_KEY = "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";          
 
       const summary = document.createElement("summary");
       if (Array.isArray(comments) && comments.length) {
-        summary.textContent = label + " (" + comments.length + ")";
+        summary.textContent = `${label} (${comments.length})`;
       } else {
-        summary.textContent = label + " (keine)";
+        summary.textContent = `${label} (keine)`;
       }
       details.appendChild(summary);
 
       if (Array.isArray(comments) && comments.length) {
-        comments.forEach(function(c) {
-          const div = document.createElement("div");
-          div.className = "comment";
-          div.textContent = c;
-          details.appendChild(div);
+        comments.forEach((c) => {
+          const row = document.createElement("div");
+          row.className = "comment";
+
+          const av = document.createElement("div");
+          av.classList.add("avatar", "community", "comment-avatar");
+          const img = document.createElement("img");
+          img.src = nextUserAvatarSrc();
+          img.alt = "Community-User";
+          av.appendChild(img);
+
+          const textSpan = document.createElement("span");
+          textSpan.textContent = c;
+
+          row.appendChild(av);
+          row.appendChild(textSpan);
+          details.appendChild(row);
         });
       } else {
         const info = document.createElement("div");
@@ -637,7 +677,10 @@ const API_KEY = "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";          
 
       const causeAvatar = document.createElement("div");
       causeAvatar.classList.add("avatar", "origin");
-      causeAvatar.textContent = "N";
+      const causeImg = document.createElement("img");
+      causeImg.src = CAUSE_AVATAR_SRC;
+      causeImg.alt = "Nutzer";
+      causeAvatar.appendChild(causeImg);
 
       const causeBody = document.createElement("div");
       causeBody.classList.add("tweet-body");
@@ -667,7 +710,7 @@ const API_KEY = "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";          
 
       const causeLikes = document.createElement("div");
       causeLikes.className = "likes";
-      causeLikes.textContent = "❤️ " + likesForCause(simulation.initialIntensity) + " Likes";
+      causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
 
       causeBody.appendChild(causeHeader);
       causeBody.appendChild(causeText);
@@ -686,7 +729,7 @@ const API_KEY = "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";          
       feedEl.appendChild(causeTweet);
 
       // 2) Für jede Unternehmensreaktion eine Runde
-      simulation.responses.forEach(function(resp, index) {
+      simulation.responses.forEach((resp, index) => {
         const roundNumber = index + 1;
 
         const tweet = document.createElement("article");
@@ -694,7 +737,10 @@ const API_KEY = "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";          
 
         const avatar = document.createElement("div");
         avatar.classList.add("avatar", "company");
-        avatar.textContent = "U";
+        const companyImg = document.createElement("img");
+        companyImg.src = COMPANY_AVATAR_SRC;
+        companyImg.alt = "Unternehmen";
+        avatar.appendChild(companyImg);
 
         const body = document.createElement("div");
         body.classList.add("tweet-body");
@@ -709,11 +755,12 @@ const API_KEY = "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";          
         const handle = document.createElement("span");
         handle.classList.add("tweet-handle");
         handle.textContent =
-          " @" + (simulation.company || "brand").replace(/\s+/g, "").toLowerCase();
+          " @" +
+          (simulation.company || "brand").replace(/\s+/g, "").toLowerCase();
 
         const meta = document.createElement("span");
         meta.classList.add("tweet-meta");
-        meta.textContent = "Reaktion · Runde " + roundNumber;
+        meta.textContent = `Reaktion · Runde ${roundNumber}`;
 
         header.appendChild(name);
         header.appendChild(handle);
@@ -729,8 +776,7 @@ const API_KEY = "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";          
         if (typeof resp.intensityAfter === "number") {
           const intensitySpan = document.createElement("span");
           intensitySpan.className = "metric-label";
-          intensitySpan.textContent =
-            "Intensität nach Antwort: " + resp.intensityAfter.toFixed(1) + " / 100";
+          intensitySpan.textContent = `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
           metrics.appendChild(intensitySpan);
         }
 
@@ -738,19 +784,15 @@ const API_KEY = "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";          
           const deltaSpan = document.createElement("span");
           deltaSpan.className = "metric-label";
           const delta = resp.deltaIntensity;
-          const deltaText =
-            (delta >= 0 ? "+" : "") + delta.toFixed(1);
+          const deltaText = (delta >= 0 ? "+" : "") + delta.toFixed(1);
           if (delta < 0) {
             deltaSpan.classList.add("delta-good");
-            deltaSpan.textContent =
-              "Intensitätveränderung: " + deltaText + " (entschärft)";
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (entschärft)`;
           } else if (delta > 0) {
             deltaSpan.classList.add("delta-bad");
-            deltaSpan.textContent =
-              "Intensitätveränderung: " + deltaText + " (verschärft)";
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (verschärft)`;
           } else {
-            deltaSpan.textContent =
-              "Intensitätveränderung: ±0 (unverändert)";
+            deltaSpan.textContent = "Intensitätveränderung: ±0 (unverändert)";
           }
           metrics.appendChild(deltaSpan);
         }
@@ -760,18 +802,14 @@ const API_KEY = "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";          
         const classification = classifyOverall(resp.overall);
         overallSpan.textContent = classification;
         if (typeof resp.overall === "number") {
-          if (resp.overall >= 65) {
-            overallSpan.classList.add("reaction-good");
-          } else if (resp.overall < 50) {
-            overallSpan.classList.add("reaction-bad");
-          }
+          if (resp.overall >= 65) overallSpan.classList.add("reaction-good");
+          else if (resp.overall < 50) overallSpan.classList.add("reaction-bad");
         }
         metrics.appendChild(overallSpan);
 
         const likesDiv = document.createElement("div");
         likesDiv.className = "likes";
-        likesDiv.textContent =
-          "❤️ " + likesForResponse(resp) + " Likes";
+        likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
 
         body.appendChild(header);
         body.appendChild(text);
@@ -798,14 +836,17 @@ const API_KEY = "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";          
 
         const avatar = document.createElement("div");
         avatar.classList.add("avatar", "coach");
-        avatar.textContent = "!";
+        const coachImg = document.createElement("img");
+        coachImg.src = COMPANY_AVATAR_SRC;
+        coachImg.alt = "Coach";
+        avatar.appendChild(coachImg);
 
         const body = document.createElement("div");
         body.classList.add("tweet-body");
 
         const title = document.createElement("div");
         title.classList.add("final-title");
-        if (simulation.finalOutcome.indexOf("abgeflacht") !== -1) {
+        if (simulation.finalOutcome.includes("abgeflacht")) {
           title.classList.add("final-good");
         } else {
           title.classList.add("final-bad");
@@ -817,9 +858,7 @@ const API_KEY = "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";          
         summary.textContent = simulation.finalSummary || "";
 
         body.appendChild(title);
-        if (simulation.finalSummary) {
-          body.appendChild(summary);
-        }
+        if (simulation.finalSummary) body.appendChild(summary);
 
         finalTweet.appendChild(avatar);
         finalTweet.appendChild(body);
@@ -830,14 +869,14 @@ const API_KEY = "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";          
     // ===================== HTTP / UTILS ============================
 
     async function createThread() {
-      const res = await fetch(BASE_URL + "/threads", {
+      const res = await fetch(`${BASE_URL}/threads`, {
         method: "POST",
         headers: buildHeaders(),
         body: "{}"
       });
       if (!res.ok) {
         const txt = await res.text();
-        throw new Error("Thread-Erstellung fehlgeschlagen: " + res.status + " – " + txt);
+        throw new Error(`Thread-Erstellung fehlgeschlagen: ${res.status} – ${txt}`);
       }
       const data = await res.json();
       return data.thread_id || data.id;
@@ -848,7 +887,7 @@ const API_KEY = "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";          
         threadId = await createThread();
       }
 
-      const res = await fetch(BASE_URL + "/threads/" + threadId + "/runs/wait", {
+      const res = await fetch(`${BASE_URL}/threads/${threadId}/runs/wait`, {
         method: "POST",
         headers: buildHeaders(),
         body: JSON.stringify(Object.assign({ assistant_id: ASSISTANT_ID }, body))
@@ -875,26 +914,21 @@ const API_KEY = "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";          
       return data;
     }
 
-    function findState(obj, depth) {
-      if (depth === void 0) depth = 0;
+    function findState(obj, depth = 0) {
       if (!obj || typeof obj !== "object" || depth > 6) return null;
 
-      var hasStateShape =
+      const hasStateShape =
         Object.prototype.hasOwnProperty.call(obj, "last_community_comments") ||
         (Object.prototype.hasOwnProperty.call(obj, "platform") &&
           Object.prototype.hasOwnProperty.call(obj, "cause") &&
           Object.prototype.hasOwnProperty.call(obj, "intensity"));
 
-      if (hasStateShape) {
-        return obj;
-      }
+      if (hasStateShape) return obj;
 
-      var keys = Object.keys(obj);
-      for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        var child = obj[key];
+      for (const key of Object.keys(obj)) {
+        const child = obj[key];
         if (child && typeof child === "object") {
-          var found = findState(child, depth + 1);
+          const found = findState(child, depth + 1);
           if (found) return found;
         }
       }
@@ -906,16 +940,9 @@ const API_KEY = "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";          
       return Array.isArray(result.__interrupt__) && result.__interrupt__.length > 0;
     }
 
-    function getInterruptValue(result) {
-      if (Array.isArray(result.__interrupt__) && result.__interrupt__.length) {
-        return result.__interrupt__[0].value;
-      }
-      return null;
-    }
-
     function extractLastCoachFeedback(history) {
       if (!Array.isArray(history)) return "";
-      var coachEntries = history.filter(function(h) { return h.actor === "coach"; });
+      const coachEntries = history.filter((h) => h.actor === "coach");
       if (!coachEntries.length) return "";
       return coachEntries[coachEntries.length - 1].content || "";
     }
@@ -946,7 +973,6 @@ const API_KEY = "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";          
       updateStatusBar(state);
       renderFeed();
 
-      // WICHTIG: Interrupt entscheidet, ob du antworten darfst – Status nur fürs Ende.
       if (hasInterrupt(result)) {
         waitingForAnswer = true;
         setComposerEnabled(true);
@@ -1026,7 +1052,7 @@ const API_KEY = "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";          
       simulation.cause =
         causeInputEl.value.trim() || "nicht näher beschriebene Ursache";
 
-      renderFeed(); // Auslöser-Post direkt anzeigen
+      renderFeed();
 
       const initialState = {
         platform: "X/Twitter",
@@ -1060,7 +1086,7 @@ const API_KEY = "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";          
 
       const resp = {
         id: simulation.responses.length + 1,
-        answer: answer,
+        answer,
         comments: [],
         politeness: null,
         responsibility: null,
@@ -1093,7 +1119,10 @@ const API_KEY = "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";          
 
       const avatar = document.createElement("div");
       avatar.classList.add("avatar");
-      avatar.textContent = "!";
+      const img = document.createElement("img");
+      img.src = COMPANY_AVATAR_SRC;
+      img.alt = "System";
+      avatar.appendChild(img);
 
       const body = document.createElement("div");
       body.classList.add("tweet-body");
@@ -1126,37 +1155,33 @@ const API_KEY = "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";          
 
     // ===================== EVENTS / AUTOSTART ======================
 
-    startBtn.addEventListener("click", function() {
+    startBtn.addEventListener("click", () => {
       startSimulation();
     });
 
-    sendBtn.addEventListener("click", function(ev) {
+    sendBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
       sendAnswer();
     });
 
-    answerInputEl.addEventListener("keydown", function(ev) {
+    answerInputEl.addEventListener("keydown", (ev) => {
       if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
         ev.preventDefault();
         sendAnswer();
       }
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const companyParam = params.get("company");
       const causeParam = params.get("cause");
       const auto = params.get("auto");
 
-      if (companyParam) {
-        companyInputEl.value = companyParam;
-      }
-      if (causeParam) {
-        causeInputEl.value = causeParam;
-      }
+      if (companyParam) companyInputEl.value = companyParam;
+      if (causeParam) causeInputEl.value = causeParam;
 
       if (auto === "1") {
-        setTimeout(function() {
+        setTimeout(() => {
           startSimulation();
         }, 0);
       }
