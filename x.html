@@ -1,1 +1,695 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Shitstorm-Simulation · X / Twitter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color-scheme: dark;
+    }
 
+    body {
+      margin: 0;
+      background: #000;
+      color: #e7e9ea;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .timeline {
+      width: min(600px, 100%);
+      border-left: 1px solid #2f3336;
+      border-right: 1px solid #2f3336;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #000;
+    }
+
+    .timeline-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #2f3336;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .x-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid #2f3336;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .timeline-header-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.05rem;
+    }
+
+    .timeline-header-title h1 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .timeline-header-title span {
+      font-size: 0.78rem;
+      color: #71767b;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid #2f3336;
+      padding: 0.1rem 0.6rem;
+      font-size: 0.75rem;
+      color: #cfd3d7;
+      margin-left: auto;
+    }
+
+    .setup {
+      border-bottom: 1px solid #2f3336;
+      padding: 0.75rem 1rem 0.8rem;
+    }
+
+    .setup-label {
+      font-size: 0.78rem;
+      color: #71767b;
+      margin-bottom: 0.4rem;
+    }
+
+    .setup-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .field {
+      flex: 1 1 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .field span {
+      font-size: 0.74rem;
+      color: #71767b;
+    }
+
+    .field input {
+      background: #000;
+      border-radius: 999px;
+      border: 1px solid #2f3336;
+      color: #e7e9ea;
+      padding: 0.4rem 0.7rem;
+      font: inherit;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: #1d9bf0;
+      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
+    }
+
+    .setup-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 0.2rem;
+    }
+
+    .setup-footer span {
+      font-size: 0.76rem;
+      color: #71767b;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      background: #1d9bf0;
+      color: #fff;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.86rem;
+      cursor: pointer;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #1a8cd8;
+    }
+
+    .feed {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .tweet {
+      display: flex;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #2f3336;
+      gap: 0.6rem;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: #000;
+      border: 1px solid #2f3336;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #cfd3d7;
+      flex-shrink: 0;
+    }
+
+    .avatar.community {
+      border-color: #f91880;
+      color: #f91880;
+    }
+
+    .avatar.company {
+      border-color: #1d9bf0;
+      color: #1d9bf0;
+    }
+
+    .avatar.coach {
+      border-color: #facc15;
+      color: #facc15;
+    }
+
+    .tweet-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tweet-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+      font-size: 0.82rem;
+    }
+
+    .tweet-name {
+      font-weight: 600;
+    }
+
+    .tweet-handle {
+      color: #71767b;
+      font-size: 0.78rem;
+    }
+
+    .tweet-meta {
+      color: #71767b;
+      font-size: 0.75rem;
+      margin-left: auto;
+    }
+
+    .tweet-text {
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .composer {
+      border-top: 1px solid #2f3336;
+      padding: 0.6rem 1rem 0.8rem;
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+    }
+
+    .composer.disabled {
+      opacity: 0.5;
+    }
+
+    .composer textarea {
+      flex: 1;
+      border-radius: 0.75rem;
+      border: 1px solid #2f3336;
+      background: #000;
+      color: #e7e9ea;
+      font: inherit;
+      font-size: 0.9rem;
+      padding: 0.45rem 0.6rem;
+      min-height: 60px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .composer textarea:focus {
+      border-color: #1d9bf0;
+      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
+    }
+
+    .composer-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      align-items: flex-end;
+    }
+
+    .composer-hint {
+      font-size: 0.72rem;
+      color: #71767b;
+      max-width: 260px;
+      text-align: right;
+    }
+
+    .intensity-pill {
+      border-radius: 999px;
+      border: 1px solid #2f3336;
+      padding: 0.1rem 0.6rem;
+      font-size: 0.72rem;
+      color: #cfd3d7;
+    }
+
+    .status-bar {
+      font-size: 0.75rem;
+      color: #71767b;
+      padding: 0.1rem 1rem 0.4rem;
+      border-bottom: 1px solid #2f3336;
+    }
+
+    .status-bar span {
+      font-weight: 500;
+      color: #e7e9ea;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="timeline">
+      <div class="timeline-header">
+        <div class="x-logo">X</div>
+        <div class="timeline-header-title">
+          <h1>Shitstorm-Simulation</h1>
+          <span>Auf X / Twitter trainieren</span>
+        </div>
+        <div class="pill" id="statusPill">Status: bereit</div>
+      </div>
+
+      <div class="setup">
+        <div class="setup-label">Ausgangslage</div>
+        <div class="setup-row">
+          <div class="field">
+            <span>Unternehmen</span>
+            <input id="companyInput" placeholder="Dein Unternehmen" value="Dein Unternehmen" />
+          </div>
+          <div class="field">
+            <span>Ursache des Shitstorms</span>
+            <input id="causeInput" placeholder="z.B. missglückte Kampagne" value="Unangemessene Werbekampagne" />
+          </div>
+        </div>
+        <div class="setup-footer">
+          <span>Die Simulation startet mit einer Intensität von 70/100. Dein Ziel: unter 10 kommen, bevor es über 90 eskaliert.</span>
+          <button class="btn-primary" id="startBtn">Simulation starten</button>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        Runde: <span id="roundText">–</span> · Intensität: <span id="intensityText">–</span>
+      </div>
+
+      <div class="feed" id="feed"></div>
+
+      <div class="composer disabled" id="composer">
+        <div class="avatar company">@</div>
+        <div class="tweet-body">
+          <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
+        </div>
+        <div class="composer-footer">
+          <div class="composer-hint">
+            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
+          </div>
+          <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===================== KONFIGURATION ANPASSEN ===========================
+    // URL deines LangGraph Servers (kein Slash am Ende)
+    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app"; // z.B. "https://xyz.eu.langgraph.app"
+
+    // Graph-Name / Assistant-ID (aus langgraph.json: "graphs": { "shitstorm": ... })
+    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";
+
+    // Falls dein Server Auth braucht (z.B. LangSmith API-Key):
+    const API_KEY = "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"; // z.B. "lsv2_..." – oder leer lassen, wenn keine Auth
+
+    // ===================== STATE & UI-REFERENZEN ============================
+    let threadId = null;
+    let waitingForAnswer = false;
+    let finished = false;
+
+    const feedEl = document.getElementById("feed");
+    const composerEl = document.getElementById("composer");
+    const answerInputEl = document.getElementById("answerInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const startBtn = document.getElementById("startBtn");
+    const companyInputEl = document.getElementById("companyInput");
+    const causeInputEl = document.getElementById("causeInput");
+    const statusPillEl = document.getElementById("statusPill");
+    const roundTextEl = document.getElementById("roundText");
+    const intensityTextEl = document.getElementById("intensityText");
+
+    function buildHeaders() {
+      const headers = { "Content-Type": "application/json" };
+      if (API_KEY && API_KEY.trim() !== "") {
+        headers["x-api-key"] = API_KEY.trim();
+      }
+      return headers;
+    }
+
+    function setStatus(text) {
+      statusPillEl.textContent = "Status: " + text;
+    }
+
+    function setComposerEnabled(enabled) {
+      if (enabled) {
+        composerEl.classList.remove("disabled");
+        answerInputEl.disabled = false;
+        sendBtn.disabled = false;
+      } else {
+        composerEl.classList.add("disabled");
+        answerInputEl.disabled = true;
+        sendBtn.disabled = true;
+      }
+    }
+
+    function resetFeed() {
+      feedEl.innerHTML = "";
+      roundTextEl.textContent = "–";
+      intensityTextEl.textContent = "–";
+      finished = false;
+      waitingForAnswer = false;
+      threadId = null;
+      setComposerEnabled(false);
+    }
+
+    function appendTweet(role, text, opts = {}) {
+      const tweet = document.createElement("div");
+      tweet.className = "tweet";
+
+      const avatar = document.createElement("div");
+      avatar.classList.add("avatar");
+      const body = document.createElement("div");
+      body.classList.add("tweet-body");
+
+      const header = document.createElement("div");
+      header.classList.add("tweet-header");
+
+      const name = document.createElement("span");
+      name.classList.add("tweet-name");
+      const handle = document.createElement("span");
+      handle.classList.add("tweet-handle");
+      const meta = document.createElement("span");
+      meta.classList.add("tweet-meta");
+
+      const textEl = document.createElement("div");
+      textEl.classList.add("tweet-text");
+      textEl.textContent = text;
+
+      const round = opts.round ?? "";
+      const intensity = typeof opts.intensity === "number" ? opts.intensity.toFixed(1) + "/100" : "";
+
+      if (role === "community") {
+        avatar.classList.add("community");
+        avatar.textContent = "C";
+        name.textContent = "Community";
+        handle.textContent = " @user";
+      } else if (role === "company") {
+        avatar.classList.add("company");
+        avatar.textContent = "U";
+        name.textContent = opts.company_name || "Unternehmen";
+        handle.textContent = " @" + (opts.company_handle || "brand");
+      } else if (role === "coach") {
+        avatar.classList.add("coach");
+        avatar.textContent = "★";
+        name.textContent = "Crisis Coach";
+        handle.textContent = " @coach";
+      } else {
+        name.textContent = "System";
+        handle.textContent = " @sim";
+        meta.textContent = "";
+      }
+
+      if (round || intensity) {
+        meta.textContent = `Runde ${round || "?"} · Intensität ${intensity || "?"}`;
+      }
+
+      header.appendChild(name);
+      header.appendChild(handle);
+      if (meta.textContent) header.appendChild(meta);
+
+      body.appendChild(header);
+      body.appendChild(textEl);
+
+      tweet.appendChild(avatar);
+      tweet.appendChild(body);
+
+      feedEl.appendChild(tweet);
+      feedEl.scrollTop = feedEl.scrollHeight;
+    }
+
+    async function createThread() {
+      const res = await fetch(`${BASE_URL}/threads`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: "{}",
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Thread-Erstellung fehlgeschlagen: ${res.status} – ${text}`);
+      }
+      const data = await res.json();
+      return data.thread_id || data.id;
+    }
+
+    async function runWait({ input, command }) {
+      if (!threadId) {
+        threadId = await createThread();
+      }
+
+      const body = { assistant_id: ASSISTANT_ID };
+      if (input !== undefined && input !== null) {
+        body.input = input;
+      }
+      if (command !== undefined && command !== null) {
+        body.command = command;
+      }
+
+      const res = await fetch(`${BASE_URL}/threads/${threadId}/runs/wait`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: JSON.stringify(body),
+      });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        const text = await res.text();
+        throw new Error(`Antwort keine gültige JSON: ${text}`);
+      }
+
+      if (!res.ok || data.__error__) {
+        const errMsg =
+          (data.__error__ && (data.__error__.message || data.__error__.error)) ||
+          res.statusText;
+        throw new Error("Server-Fehler: " + errMsg);
+      }
+
+      return data;
+    }
+
+    function renderState(state) {
+      if (typeof state.round === "number") {
+        roundTextEl.textContent = String(state.round);
+      }
+      if (typeof state.intensity === "number") {
+        intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
+      }
+
+      if (Array.isArray(state.last_community_comments) && state.last_community_comments.length) {
+        state.last_community_comments.forEach((c) =>
+          appendTweet("community", String(c), {
+            round: state.round,
+            intensity: state.intensity,
+          })
+        );
+      }
+
+      if (Array.isArray(state.history) && state.history.length) {
+        const coachEntries = state.history.filter((h) => h.actor === "coach");
+        if (coachEntries.length) {
+          const last = coachEntries[coachEntries.length - 1];
+          appendTweet("coach", last.content || "", {
+            round: last.round,
+            intensity: state.intensity,
+          });
+        }
+      }
+    }
+
+    function renderFinal(state) {
+      finished = true;
+      setComposerEnabled(false);
+      let msg;
+      if (state.status === "user_won") {
+        msg = "Der Shitstorm ist weitgehend abgeklungen.";
+      } else if (state.status === "user_lost") {
+        msg = "Der Shitstorm ist außer Kontrolle geraten.";
+      } else {
+        msg = "Die Simulation wurde beendet.";
+      }
+      appendTweet("system", msg, { round: state.round, intensity: state.intensity });
+      if (state.summary) {
+        appendTweet("coach", state.summary, { round: state.round, intensity: state.intensity });
+      }
+      setStatus("beendet");
+    }
+
+    async function startSimulation() {
+      resetFeed();
+      setStatus("startet …");
+      const company = companyInputEl.value.trim() || "Dein Unternehmen";
+      const cause = causeInputEl.value.trim() || "nicht näher beschriebene Ursache";
+
+      appendTweet(
+        "system",
+        `Shitstorm auf X / Twitter gegen "${company}" wegen: ${cause}\nZiel: Intensität von 70 unter 10 drücken, bevor sie über 90 steigt.`
+      );
+
+      const initialState = {
+        platform: "X/Twitter",
+        cause,
+        company_name: company,
+        round: 0,
+        history: [],
+        last_company_response: "",
+        last_community_comments: [],
+        politeness_score: 0.0,
+        responsibility_score: 0.0,
+        reaction_score: 0.0,
+        intensity: 70.0,
+        status: "running",
+        summary: "",
+      };
+
+      try {
+        const state = await runWait({ input: initialState, command: null });
+
+        renderState(state);
+
+        if (state.status && state.status !== "running") {
+          renderFinal(state);
+          return;
+        }
+
+        if (state.__interrupt__) {
+          waitingForAnswer = true;
+          setComposerEnabled(true);
+          setStatus("deine Antwort ist gefragt");
+          answerInputEl.focus();
+        } else {
+          setComposerEnabled(false);
+          setStatus("beendet");
+          renderFinal(state);
+        }
+      } catch (err) {
+        appendTweet("system", "Fehler beim Starten der Simulation: " + err.message);
+        setStatus("Fehler");
+      }
+    }
+
+    async function sendAnswer() {
+      if (!waitingForAnswer || finished) return;
+      const answer = answerInputEl.value.trim();
+      if (!answer) return;
+
+      const company = companyInputEl.value.trim() || "Dein Unternehmen";
+      appendTweet("company", answer, {
+        company_name: company,
+        round: "",
+        intensity: "",
+      });
+
+      answerInputEl.value = "";
+      setComposerEnabled(false);
+      waitingForAnswer = false;
+      setStatus("läuft …");
+
+      try {
+        const state = await runWait({ input: null, command: { resume: answer } });
+
+        renderState(state);
+
+        if (state.status && state.status !== "running") {
+          renderFinal(state);
+          return;
+        }
+
+        if (state.__interrupt__) {
+          waitingForAnswer = true;
+          setComposerEnabled(true);
+          setStatus("nächste Antwort ist gefragt");
+          answerInputEl.focus();
+        } else {
+          setComposerEnabled(false);
+          setStatus("beendet");
+          renderFinal(state);
+        }
+      } catch (err) {
+        appendTweet("system", "Fehler beim Fortsetzen der Simulation: " + err.message);
+        setStatus("Fehler");
+        setComposerEnabled(false);
+      }
+    }
+
+    // ===================== Events ==========================================
+    startBtn.addEventListener("click", startSimulation);
+    sendBtn.addEventListener("click", sendAnswer);
+    answerInputEl.addEventListener("keydown", (ev) => {
+      if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
+        ev.preventDefault();
+        sendAnswer();
+      }
+    });
+  </script>
+</body>
+</html>
