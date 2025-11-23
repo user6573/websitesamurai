@@ -12,7 +12,9 @@
 
     body {
       margin: 0;
-      background: #000;
+      background:
+        radial-gradient(circle at 0% 0%, #0f172a 0, #020617 40%, #000 75%),
+        radial-gradient(circle at 100% 100%, #020617 0, #000 55%);
       color: #e7e9ea;
       display: flex;
       justify-content: center;
@@ -24,25 +26,31 @@
       justify-content: center;
       width: 100%;
       max-width: 1100px;
+      padding: 1.25rem 0.75rem;
+      box-sizing: border-box;
     }
 
     .timeline {
       width: min(700px, 100%);
-      border-left: 1px solid #2f3336;
-      border-right: 1px solid #2f3336;
-      min-height: 100vh;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      border: 1px solid #1f2933;
+      min-height: calc(100vh - 2.5rem);
       display: flex;
       flex-direction: column;
-      background: #000;
+      background: rgba(0, 0, 0, 0.96);
+      box-shadow:
+        0 18px 60px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(15, 23, 42, 0.8);
     }
 
-    /* Header: eine Zeile mit X-Symbol + Text */
+    /* Header: X-Symbol + X-Simulation + Status rechts */
     .timeline-header {
       position: sticky;
       top: 0;
       z-index: 10;
       background: rgba(0, 0, 0, 0.92);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid #2f3336;
       padding: 0.75rem 1rem;
       display: flex;
@@ -60,6 +68,8 @@
       justify-content: center;
       font-weight: 700;
       font-size: 1rem;
+      letter-spacing: 0.02em;
+      background: radial-gradient(circle at 30% 0%, #0b1120, #020617);
     }
 
     .header-title {
@@ -67,10 +77,25 @@
       font-weight: 700;
     }
 
+    .header-sub {
+      font-size: 0.78rem;
+      color: #71767b;
+      margin-top: 0.08rem;
+    }
+
+    .header-text {
+      display: flex;
+      flex-direction: column;
+    }
+
     .status-pill {
       margin-left: auto;
       font-size: 0.75rem;
       color: #71767b;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid #2f3336;
+      background: rgba(15, 23, 42, 0.7);
     }
 
     .status-pill span {
@@ -81,7 +106,7 @@
     .status-bar {
       font-size: 0.75rem;
       color: #71767b;
-      padding: 0.1rem 1rem 0.4rem;
+      padding: 0.3rem 1rem 0.45rem;
       border-bottom: 1px solid #2f3336;
       display: flex;
       justify-content: space-between;
@@ -93,13 +118,28 @@
       color: #e7e9ea;
     }
 
+    .status-bar-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+    }
+
     .thread {
       border-bottom: 1px solid #2f3336;
     }
 
     .main-tweet-container {
-      padding: 0.85rem 1rem 0.5rem;
+      padding: 0.9rem 1rem 0.35rem;
       border-bottom: 1px solid #2f3336;
+      background: radial-gradient(circle at 0% 0%, #020617, #020617 60%, #000 100%);
     }
 
     .tweet.main {
@@ -110,30 +150,37 @@
     .tweet {
       display: flex;
       padding: 0.75rem 1rem;
-      border-bottom: 1px solid #2f3336;
+      border-bottom: 1px solid #16181c;
       gap: 0.6rem;
+      transition: background-color 0.12s ease, border-color 0.12s ease;
+    }
+
+    .tweet.reply:hover {
+      background: rgba(15, 23, 42, 0.65);
     }
 
     .avatar {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 999px;
-      background: #000;
+      background: #020617;
       border: 1px solid #2f3336;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.8rem;
+      font-size: 0.83rem;
       color: #cfd3d7;
       flex-shrink: 0;
       background-size: cover;
       background-position: center;
       overflow: hidden;
+      text-transform: uppercase;
     }
 
     .avatar.company {
       border-color: #1d9bf0;
       color: #1d9bf0;
+      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.3);
     }
 
     .avatar.community {
@@ -155,7 +202,7 @@
       display: flex;
       align-items: baseline;
       gap: 0.35rem;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
     }
 
     .tweet-name {
@@ -174,20 +221,29 @@
     }
 
     .tweet-text {
-      margin-top: 0.25rem;
-      font-size: 1rem;
+      margin-top: 0.3rem;
+      font-size: 1.03rem;
       white-space: pre-wrap;
       word-wrap: break-word;
+      line-height: 1.45;
     }
 
     .tweet-text.small {
       font-size: 0.9rem;
+      color: #9ca3af;
+    }
+
+    .scenario-text {
+      font-size: 0.8rem;
+      color: #a1a1aa;
+      margin-top: 0.4rem;
+      white-space: pre-wrap;
     }
 
     .tweet-actions {
       display: flex;
-      gap: 1.8rem;
-      margin-top: 0.5rem;
+      gap: 1.4rem;
+      margin-top: 0.6rem;
       font-size: 0.8rem;
       color: #71767b;
     }
@@ -200,43 +256,66 @@
     }
 
     .tweet-actions span::before {
-      content: "●";
-      font-size: 0.4rem;
+      font-family: system-ui, sans-serif;
+      opacity: 0.75;
+      font-size: 0.9rem;
     }
 
-    .scenario-text {
-      font-size: 0.8rem;
-      color: #71767b;
-      margin-top: 0.35rem;
-      white-space: pre-wrap;
+    .tweet-actions span[data-type="reply"]::before {
+      content: "💬";
+    }
+    .tweet-actions span[data-type="retweet"]::before {
+      content: "🔁";
+    }
+    .tweet-actions span[data-type="like"]::before {
+      content: "❤";
     }
 
     .replies-header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.4rem 0 0;
+      padding: 0.35rem 0 0.45rem;
       font-size: 0.78rem;
       color: #71767b;
+      gap: 0.5rem;
+    }
+
+    #scenarioShort {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 65%;
     }
 
     .btn-toggle {
       border-radius: 999px;
       border: 1px solid #2f3336;
-      background: transparent;
+      background: #020617;
       color: #e7e9ea;
       font-size: 0.75rem;
-      padding: 0.2rem 0.7rem;
+      padding: 0.25rem 0.8rem;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.05s ease;
+    }
+
+    .btn-toggle span.chevron {
+      font-size: 0.8rem;
+      opacity: 0.8;
     }
 
     .btn-toggle:disabled {
-      opacity: 0.4;
+      opacity: 0.45;
       cursor: default;
     }
 
     .btn-toggle:hover:not(:disabled) {
-      background: #111827;
+      background: #0b1120;
+      border-color: #374151;
+      transform: translateY(-0.5px);
     }
 
     .replies-section.hidden {
@@ -247,23 +326,24 @@
       padding: 0.45rem 1rem 0.2rem;
       font-size: 0.78rem;
       color: #71767b;
-      border-bottom: 1px solid #2f3336;
+      border-top: 1px solid #16181c;
+      border-bottom: 1px solid #16181c;
+      background: #020617;
     }
 
     .tweet.reply {
       position: relative;
-      padding-left: 1rem;
+      padding-left: 1.2rem;
     }
 
     .tweet.reply::before {
       content: "";
       position: absolute;
-      left: 31px;
+      left: 32px;
       top: 0;
       bottom: 0;
       width: 2px;
-      background: #1f2933;
-      opacity: 0.8;
+      background: rgba(51, 65, 85, 0.85);
     }
 
     .tweet.reply:first-child::before {
@@ -276,33 +356,40 @@
 
     .composer {
       border-top: 1px solid #2f3336;
-      padding: 0.6rem 1rem 0.8rem;
+      padding: 0.6rem 1rem 0.85rem;
       display: flex;
       gap: 0.6rem;
       align-items: flex-start;
+      background: rgba(0, 0, 0, 0.98);
     }
 
     .composer.disabled {
-      opacity: 0.5;
+      opacity: 0.6;
     }
 
     .composer textarea {
       flex: 1;
-      border-radius: 0.75rem;
+      border-radius: 0.9rem;
       border: 1px solid #2f3336;
-      background: #000;
+      background: #020617;
       color: #e7e9ea;
       font: inherit;
       font-size: 0.9rem;
-      padding: 0.45rem 0.6rem;
+      padding: 0.5rem 0.7rem;
       min-height: 60px;
       resize: vertical;
       outline: none;
+      transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+    }
+
+    .composer textarea::placeholder {
+      color: #6b7280;
     }
 
     .composer textarea:focus {
       border-color: #1d9bf0;
-      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
+      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.45);
+      background-color: #020617;
     }
 
     .composer-footer {
@@ -322,22 +409,27 @@
     .btn-primary {
       border-radius: 999px;
       border: none;
-      background: #1d9bf0;
+      background: linear-gradient(135deg, #1d9bf0, #38bdf8);
       color: #fff;
       font-weight: 600;
-      padding: 0.45rem 0.9rem;
-      font-size: 0.86rem;
+      padding: 0.42rem 1.1rem;
+      font-size: 0.85rem;
       cursor: pointer;
       white-space: nowrap;
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.7);
+      transition: transform 0.08s ease, box-shadow 0.12s ease, filter 0.06s ease;
     }
 
     .btn-primary:disabled {
-      opacity: 0.5;
+      opacity: 0.55;
       cursor: default;
+      box-shadow: none;
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: #1a8cd8;
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(15, 118, 178, 0.55);
     }
 
     .debug-card {
@@ -347,10 +439,36 @@
       color: #71767b;
       max-height: 160px;
       overflow: hidden;
+      background: #020617;
     }
 
     .debug-card details {
       cursor: pointer;
+    }
+
+    .debug-card details[open] {
+      border-radius: 0.75rem;
+      border: 1px solid #1f2937;
+      padding: 0.2rem 0.45rem 0.35rem;
+      background: #020617;
+    }
+
+    .debug-card summary {
+      list-style: none;
+    }
+
+    .debug-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .debug-card summary::before {
+      content: "▸ ";
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+
+    .debug-card details[open] summary::before {
+      content: "▾ ";
     }
 
     .debug-card pre {
@@ -368,14 +486,20 @@
     <div class="timeline">
       <div class="timeline-header">
         <div class="x-logo">X</div>
-        <div class="header-title">X-Simulation</div>
+        <div class="header-text">
+          <div class="header-title">X-Simulation</div>
+          <div class="header-sub">Trainiere deine Krisenkommunikation</div>
+        </div>
         <div class="status-pill">
           Status: <span id="statusPill">bereit</span>
         </div>
       </div>
 
       <div class="status-bar">
-        <div>Runde: <span id="roundText">–</span></div>
+        <div class="status-bar-label">
+          <span class="status-dot"></span>
+          Runde: <span id="roundText">–</span>
+        </div>
         <div>Intensität: <span id="intensityText">–</span></div>
       </div>
 
@@ -385,6 +509,7 @@
           <div class="replies-header-row">
             <div id="scenarioShort"></div>
             <button id="toggleRepliesBtn" class="btn-toggle" disabled>
+              <span class="chevron">▾</span>
               Kommentare anzeigen (0)
             </button>
           </div>
@@ -420,12 +545,11 @@
 
   <script>
     // ===================== KONFIGURATION ===========================
-    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-    const API_KEY = "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";     
+    const BASE_URL = "https://DEIN-LANGGRAPH-SERVER";  // z.B. "https://xyz.eu.langgraph.app"
+    const ASSISTANT_ID = "shitstorm";                  // Name aus langgraph.json
+    const API_KEY = "";                                // LangSmith Key oder leer
 
     // Optionale Avatare für Community-User – hier kannst du deine Bilder eintragen.
-    // Lege z.B. Dateien unter /avatars/ ab und passe die Pfade an.
     const COMMUNITY_USERS = [
       { name: "Lena", handle: "@lenaleise", avatar: "avatars/user-lena.png" },
       { name: "Tom", handle: "@tom_talks", avatar: "avatars/user-tom.png" },
@@ -510,7 +634,12 @@
       setComposerEnabled(false);
 
       toggleRepliesBtn.disabled = true;
-      toggleRepliesBtn.textContent = "Kommentare anzeigen (0)";
+      toggleRepliesBtn.querySelector(".chevron").textContent = "▾";
+      toggleRepliesBtn.textContent = "";
+      toggleRepliesBtn.appendChild(document.createElement("span")).className = "chevron";
+      toggleRepliesBtn.firstChild.textContent = "▾";
+      toggleRepliesBtn.appendChild(document.createTextNode(" Kommentare anzeigen (0)"));
+
       repliesSectionEl.classList.add("hidden");
 
       scenarioShortEl.textContent = `Thema: ${causeGlobal}`;
@@ -591,10 +720,13 @@
       const actions = document.createElement("div");
       actions.classList.add("tweet-actions");
       const replies = document.createElement("span");
+      replies.dataset.type = "reply";
       replies.textContent = "Kommentare";
       const retweets = document.createElement("span");
+      retweets.dataset.type = "retweet";
       retweets.textContent = "Retweets";
       const likes = document.createElement("span");
+      likes.dataset.type = "like";
       likes.textContent = "Likes";
       actions.appendChild(replies);
       actions.appendChild(retweets);
@@ -691,7 +823,6 @@
       toggleRepliesBtn.disabled = false;
       updateRepliesToggleLabel();
       if (!commentsVisible) {
-        // beim ersten Kommentar automatisch anzeigen
         commentsVisible = true;
         repliesSectionEl.classList.remove("hidden");
       }
@@ -699,7 +830,13 @@
 
     function updateRepliesToggleLabel() {
       const verb = commentsVisible ? "Kommentare ausblenden" : "Kommentare anzeigen";
-      toggleRepliesBtn.textContent = `${verb} (${replyCount})`;
+      const chevronSpan = toggleRepliesBtn.querySelector(".chevron");
+      if (chevronSpan) {
+        chevronSpan.textContent = commentsVisible ? "▴" : "▾";
+        toggleRepliesBtn.lastChild.nodeValue = ` ${verb} (${replyCount})`;
+      } else {
+        toggleRepliesBtn.textContent = `${verb} (${replyCount})`;
+      }
     }
 
     function toggleReplies() {
@@ -866,7 +1003,6 @@
 
     async function startSimulation() {
       if (startedOnce) {
-        // neu starten
         resetThread();
       }
       startedOnce = true;
@@ -960,8 +1096,6 @@
           startSimulation();
         }, 0);
       } else {
-        // Wenn kein auto=1, darf der User direkt anfangen zu tippen und dann manuell starten.
-        // Wir aktivieren den Composer, damit er seinen ersten Post vorbereiten kann.
         setComposerEnabled(true);
         setStatus("bereit");
       }
