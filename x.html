@@ -890,12 +890,27 @@ const API_KEY = "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";          
       return null;
     }
 
-    function getInterruptValue(result) {
-      if (Array.isArray(result.__interrupt__) && result.__interrupt__.length) {
-        return result.__interrupt__[0].value;
-      }
-      return null;
-    }
+  const interruptValue = getInterruptValue(result);
+
+  // WICHTIGER FIX:
+  // Wenn ein Interrupt da ist, darf der User antworten – egal ob "status" gesetzt ist.
+  // Nur wenn der Shitstorm ausdrücklich beendet ist, sperren wir das Eingabefeld.
+  if (
+    interruptValue &&
+    state.status !== "user_won" &&
+    state.status !== "user_lost"
+  ) {
+    waitingForAnswer = true;
+    setComposerEnabled(true);
+    setStatus("erste Antwort ist gefragt");
+    answerInputEl.focus();
+  } else {
+    waitingForAnswer = false;
+    setComposerEnabled(false);
+    setStatus(state.status ? "beendet" : "läuft …");
+  }
+}
+
 
     function extractLastCoachFeedback(history) {
       if (!Array.isArray(history)) return "";
