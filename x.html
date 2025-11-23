@@ -85,6 +85,7 @@
       font-size: 0.75rem;
       color: #cfd3d7;
       margin-left: auto;
+      white-space: nowrap;
     }
 
     .setup {
@@ -139,9 +140,6 @@
       justify-content: space-between;
       gap: 0.5rem;
       margin-top: 0.2rem;
-    }
-
-    .setup-footer span {
       font-size: 0.76rem;
       color: #71767b;
     }
@@ -155,6 +153,7 @@
       padding: 0.45rem 0.9rem;
       font-size: 0.86rem;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .btn-primary:disabled {
@@ -164,6 +163,18 @@
 
     .btn-primary:hover:not(:disabled) {
       background: #1a8cd8;
+    }
+
+    .status-bar {
+      font-size: 0.75rem;
+      color: #71767b;
+      padding: 0.1rem 1rem 0.4rem;
+      border-bottom: 1px solid #2f3336;
+    }
+
+    .status-bar span {
+      font-weight: 500;
+      color: #e7e9ea;
     }
 
     .feed {
@@ -287,26 +298,6 @@
       max-width: 260px;
       text-align: right;
     }
-
-    .intensity-pill {
-      border-radius: 999px;
-      border: 1px solid #2f3336;
-      padding: 0.1rem 0.6rem;
-      font-size: 0.72rem;
-      color: #cfd3d7;
-    }
-
-    .status-bar {
-      font-size: 0.75rem;
-      color: #71767b;
-      padding: 0.1rem 1rem 0.4rem;
-      border-bottom: 1px solid #2f3336;
-    }
-
-    .status-bar span {
-      font-weight: 500;
-      color: #e7e9ea;
-    }
   </style>
 </head>
 <body>
@@ -334,7 +325,7 @@
           </div>
         </div>
         <div class="setup-footer">
-          <span>Die Simulation startet mit einer Intensität von 70/100. Dein Ziel: unter 10 kommen, bevor es über 90 eskaliert.</span>
+          <span>Start bei Intensität 70/100. Ziel: unter 10, bevor es über 90 eskaliert.</span>
           <button class="btn-primary" id="startBtn">Simulation starten</button>
         </div>
       </div>
@@ -361,17 +352,12 @@
   </div>
 
   <script>
-    // ===================== KONFIGURATION ANPASSEN ===========================
-    // URL deines LangGraph Servers (kein Slash am Ende)
+    // ===================== KONFIGURATION ===========================
     const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app"; // z.B. "https://xyz.eu.langgraph.app"
+    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Graph-Name aus langgraph.json
+    const API_KEY = "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";                                // z.B. "lsv2_..." oder leer lassen
 
-    // Graph-Name / Assistant-ID (aus langgraph.json: "graphs": { "shitstorm": ... })
-    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";
-
-    // Falls dein Server Auth braucht (z.B. LangSmith API-Key):
-    const API_KEY = "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"; // z.B. "lsv2_..." – oder leer lassen, wenn keine Auth
-
-    // ===================== STATE & UI-REFERENZEN ============================
+    // ===================== STATE & DOM =============================
     let threadId = null;
     let waitingForAnswer = false;
     let finished = false;
@@ -388,19 +374,19 @@
     const intensityTextEl = document.getElementById("intensityText");
 
     function buildHeaders() {
-      const headers = { "Content-Type": "application/json" };
+      const h = { "Content-Type": "application/json" };
       if (API_KEY && API_KEY.trim() !== "") {
-        headers["x-api-key"] = API_KEY.trim();
+        h["x-api-key"] = API_KEY.trim();
       }
-      return headers;
+      return h;
     }
 
     function setStatus(text) {
       statusPillEl.textContent = "Status: " + text;
     }
 
-    function setComposerEnabled(enabled) {
-      if (enabled) {
+    function setComposerEnabled(on) {
+      if (on) {
         composerEl.classList.remove("disabled");
         answerInputEl.disabled = false;
         sendBtn.disabled = false;
@@ -415,9 +401,9 @@
       feedEl.innerHTML = "";
       roundTextEl.textContent = "–";
       intensityTextEl.textContent = "–";
-      finished = false;
-      waitingForAnswer = false;
       threadId = null;
+      waitingForAnswer = false;
+      finished = false;
       setComposerEnabled(false);
     }
 
@@ -445,7 +431,9 @@
       textEl.textContent = text;
 
       const round = opts.round ?? "";
-      const intensity = typeof opts.intensity === "number" ? opts.intensity.toFixed(1) + "/100" : "";
+      const intensity = typeof opts.intensity === "number"
+        ? opts.intensity.toFixed(1) + "/100"
+        : "";
 
       if (role === "community") {
         avatar.classList.add("community");
@@ -465,7 +453,6 @@
       } else {
         name.textContent = "System";
         handle.textContent = " @sim";
-        meta.textContent = "";
       }
 
       if (round || intensity) {
@@ -478,7 +465,6 @@
 
       body.appendChild(header);
       body.appendChild(textEl);
-
       tweet.appendChild(avatar);
       tweet.appendChild(body);
 
@@ -493,38 +479,30 @@
         body: "{}",
       });
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Thread-Erstellung fehlgeschlagen: ${res.status} – ${text}`);
+        const txt = await res.text();
+        throw new Error(`Thread-Erstellung fehlgeschlagen: ${res.status} – ${txt}`);
       }
       const data = await res.json();
       return data.thread_id || data.id;
     }
 
-    async function runWait({ input, command }) {
+    async function runWait(body) {
       if (!threadId) {
         threadId = await createThread();
-      }
-
-      const body = { assistant_id: ASSISTANT_ID };
-      if (input !== undefined && input !== null) {
-        body.input = input;
-      }
-      if (command !== undefined && command !== null) {
-        body.command = command;
       }
 
       const res = await fetch(`${BASE_URL}/threads/${threadId}/runs/wait`, {
         method: "POST",
         headers: buildHeaders(),
-        body: JSON.stringify(body),
+        body: JSON.stringify(Object.assign({ assistant_id: ASSISTANT_ID }, body)),
       });
 
       let data;
       try {
         data = await res.json();
       } catch (e) {
-        const text = await res.text();
-        throw new Error(`Antwort keine gültige JSON: ${text}`);
+        const txt = await res.text();
+        throw new Error("Antwort keine gültige JSON: " + txt);
       }
 
       if (!res.ok || data.__error__) {
@@ -537,7 +515,28 @@
       return data;
     }
 
-    function renderState(state) {
+    function extractState(result) {
+      // Versuche, den eigentlichen State herauszuziehen – robust gegen values/…-Formate
+      if (result && typeof result === "object") {
+        if (result.values && typeof result.values === "object") {
+          const v = result.values;
+          if ("platform" in v || "cause" in v || "intensity" in v) {
+            return { ...v };
+          }
+        }
+        if ("platform" in result || "cause" in result || "intensity" in result) {
+          return { ...result };
+        }
+      }
+      return {};
+    }
+
+    function handleResult(result) {
+      const interrupts = Array.isArray(result.__interrupt__) ? result.__interrupt__ : null;
+      const interruptValue = interrupts && interrupts.length ? interrupts[0].value : null;
+
+      const state = extractState(result);
+
       if (typeof state.round === "number") {
         roundTextEl.textContent = String(state.round);
       }
@@ -545,6 +544,7 @@
         intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
       }
 
+      // Community-Kommentare anzeigen
       if (Array.isArray(state.last_community_comments) && state.last_community_comments.length) {
         state.last_community_comments.forEach((c) =>
           appendTweet("community", String(c), {
@@ -554,6 +554,7 @@
         );
       }
 
+      // Coach-Bewertung (aus history)
       if (Array.isArray(state.history) && state.history.length) {
         const coachEntries = state.history.filter((h) => h.actor === "coach");
         if (coachEntries.length) {
@@ -564,29 +565,44 @@
           });
         }
       }
-    }
 
-    function renderFinal(state) {
-      finished = true;
-      setComposerEnabled(false);
-      let msg;
-      if (state.status === "user_won") {
-        msg = "Der Shitstorm ist weitgehend abgeklungen.";
-      } else if (state.status === "user_lost") {
-        msg = "Der Shitstorm ist außer Kontrolle geraten.";
+      // Fertig?
+      if (state.status && state.status !== "running") {
+        finished = true;
+        setComposerEnabled(false);
+        let msg;
+        if (state.status === "user_won") {
+          msg = "Der Shitstorm ist weitgehend abgeklungen.";
+        } else if (state.status === "user_lost") {
+          msg = "Der Shitstorm ist außer Kontrolle geraten.";
+        } else {
+          msg = "Die Simulation wurde beendet.";
+        }
+        appendTweet("system", msg, { round: state.round, intensity: state.intensity });
+        if (state.summary) {
+          appendTweet("coach", state.summary, { round: state.round, intensity: state.intensity });
+        }
+        setStatus("beendet");
+        return;
+      }
+
+      // Warten wir auf eine Antwort des Users?
+      if (interruptValue) {
+        waitingForAnswer = true;
+        setComposerEnabled(true);
+        setStatus("deine Antwort ist gefragt");
+        answerInputEl.focus();
       } else {
-        msg = "Die Simulation wurde beendet.";
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        setStatus("läuft …");
       }
-      appendTweet("system", msg, { round: state.round, intensity: state.intensity });
-      if (state.summary) {
-        appendTweet("coach", state.summary, { round: state.round, intensity: state.intensity });
-      }
-      setStatus("beendet");
     }
 
     async function startSimulation() {
       resetFeed();
       setStatus("startet …");
+
       const company = companyInputEl.value.trim() || "Dein Unternehmen";
       const cause = causeInputEl.value.trim() || "nicht näher beschriebene Ursache";
 
@@ -612,25 +628,8 @@
       };
 
       try {
-        const state = await runWait({ input: initialState, command: null });
-
-        renderState(state);
-
-        if (state.status && state.status !== "running") {
-          renderFinal(state);
-          return;
-        }
-
-        if (state.__interrupt__) {
-          waitingForAnswer = true;
-          setComposerEnabled(true);
-          setStatus("deine Antwort ist gefragt");
-          answerInputEl.focus();
-        } else {
-          setComposerEnabled(false);
-          setStatus("beendet");
-          renderFinal(state);
-        }
+        const result = await runWait({ input: initialState });
+        handleResult(result);
       } catch (err) {
         appendTweet("system", "Fehler beim Starten der Simulation: " + err.message);
         setStatus("Fehler");
@@ -643,11 +642,7 @@
       if (!answer) return;
 
       const company = companyInputEl.value.trim() || "Dein Unternehmen";
-      appendTweet("company", answer, {
-        company_name: company,
-        round: "",
-        intensity: "",
-      });
+      appendTweet("company", answer, { company_name: company });
 
       answerInputEl.value = "";
       setComposerEnabled(false);
@@ -655,25 +650,8 @@
       setStatus("läuft …");
 
       try {
-        const state = await runWait({ input: null, command: { resume: answer } });
-
-        renderState(state);
-
-        if (state.status && state.status !== "running") {
-          renderFinal(state);
-          return;
-        }
-
-        if (state.__interrupt__) {
-          waitingForAnswer = true;
-          setComposerEnabled(true);
-          setStatus("nächste Antwort ist gefragt");
-          answerInputEl.focus();
-        } else {
-          setComposerEnabled(false);
-          setStatus("beendet");
-          renderFinal(state);
-        }
+        const result = await runWait({ command: { resume: answer } });
+        handleResult(result);
       } catch (err) {
         appendTweet("system", "Fehler beim Fortsetzen der Simulation: " + err.message);
         setStatus("Fehler");
@@ -681,7 +659,7 @@
       }
     }
 
-    // ===================== Events ==========================================
+    // ===================== EVENTS =================================
     startBtn.addEventListener("click", startSimulation);
     sendBtn.addEventListener("click", sendAnswer);
     answerInputEl.addEventListener("keydown", (ev) => {
