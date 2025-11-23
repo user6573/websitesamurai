@@ -6,273 +6,633 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
+      --bg: #020617;
+      --bg-elevated: #020617;
+      --border-subtle: #1f2937;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.15);
+
+      --platform-color: #1877f2;
+      --platform-soft: rgba(24, 119, 242, 0.16);
     }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      padding: 1.5rem;
+      min-height: 100vh;
+      padding: 1.25rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top left, #1d283a 0, transparent 50%),
+        radial-gradient(circle at bottom right, #020617 0, #000 60%);
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.75rem;
     }
-    h1 {
-      margin: 0;
-      font-size: 1.4rem;
+
+    @media (min-width: 1024px) {
+      body {
+        padding: 1.5rem 2rem;
+      }
     }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "header header"
+        "settings settings"
+        "chat chat"
+        "debug debug";
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 1024px) {
+      .layout {
+        grid-template-areas:
+          "header header"
+          "settings chat"
+          ". chat"
+          "debug debug";
+        grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+      }
+    }
+
     .card {
-      background: #020617;
-      border-radius: 0.75rem;
-      padding: 1rem 1.25rem;
-      border: 1px solid #1f2937;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      background: var(--bg-elevated);
+      border-radius: 0.9rem;
+      border: 1px solid var(--border-subtle);
+      padding: 0.9rem 1.1rem;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(18px);
     }
-    .row {
+
+    .header-card {
+      grid-area: header;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .header-top {
       display: flex;
       flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
       gap: 0.75rem;
-      align-items: center;
     }
-    label {
-      font-size: 0.8rem;
-      color: #9ca3af;
+
+    h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      letter-spacing: 0.01em;
       display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-    input, select, textarea {
-      background: #020617;
-      border: 1px solid #374151;
-      color: #e5e7eb;
-      border-radius: 0.5rem;
-      padding: 0.4rem 0.5rem;
-      font: inherit;
-      min-width: 0;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
-    }
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 0.5rem 0.9rem;
-      font: inherit;
-      cursor: pointer;
-      background: linear-gradient(135deg, #22c55e, #0ea5e9);
-      color: #020617;
-      font-weight: 600;
-      display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      white-space: nowrap;
+      gap: 0.4rem;
     }
-    button[disabled] {
-      opacity: 0.5;
-      cursor: default;
+
+    h1 span.logo-emoji {
+      font-size: 1.35rem;
     }
-    #status {
-      font-size: 0.8rem;
-      color: #9ca3af;
-    }
-    #status span {
-      font-weight: 600;
-    }
-    #chat {
+
+    .status-row {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: 0.5rem;
-      max-height: 55vh;
-      overflow-y: auto;
-      padding-right: 0.25rem;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--text-muted);
     }
-    .msg {
-      padding: 0.5rem 0.75rem;
-      border-radius: 0.6rem;
-      max-width: 80%;
-      font-size: 0.85rem;
-      line-height: 1.35;
-      white-space: pre-wrap;
-    }
-    .msg.system {
-      align-self: center;
-      background: rgba(15, 23, 42, 0.9);
-      color: #9ca3af;
-      max-width: 100%;
-      border: 1px dashed #374151;
-    }
-    .msg.community {
-      align-self: flex-start;
-      background: #111827;
-      border: 1px solid #1f2937;
-    }
-    .msg.company {
-      align-self: flex-end;
-      background: #22c55e;
-      color: #022c22;
-    }
-    .msg.coach {
-      align-self: flex-start;
-      background: #0f172a;
-      border: 1px solid #3730a3;
-    }
-    .badge {
+
+    .chip {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
       border-radius: 999px;
-      padding: 0.1rem 0.55rem;
-      font-size: 0.75rem;
+      padding: 0.15rem 0.7rem;
+      border: 1px solid var(--border-subtle);
+      font-size: 0.78rem;
       background: rgba(15, 23, 42, 0.9);
-      border: 1px solid #1f2937;
-      color: #9ca3af;
     }
-    .badge strong {
-      color: #e5e7eb;
+
+    .chip strong {
+      font-weight: 600;
+      color: var(--text-main);
     }
-    #answerForm {
+
+    .chip-platform {
+      border-color: var(--platform-color);
+      background: var(--platform-soft);
+    }
+
+    .chip-platform span.emoji {
+      font-size: 1rem;
+    }
+
+    .chip-status {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .tagline {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .settings-card {
+      grid-area: settings;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
+      gap: 0.75rem;
     }
-    #answerForm.disabled {
-      opacity: 0.4;
-      pointer-events: none;
+
+    .settings-grid {
+      display: grid;
+      gap: 0.75rem;
     }
+
+    @media (min-width: 768px) {
+      .settings-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    input,
+    select,
+    textarea {
+      background: #020617;
+      border-radius: 0.55rem;
+      border: 1px solid #374151;
+      padding: 0.4rem 0.55rem;
+      font: inherit;
+      color: var(--text-main);
+      min-width: 0;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5);
+    }
+
     textarea {
       resize: vertical;
       min-height: 70px;
     }
-    #debug {
-      max-height: 180px;
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 0.55rem 1.0rem;
+      font: inherit;
+      cursor: pointer;
+      background-image: linear-gradient(135deg, #22c55e, #0ea5e9);
+      color: #020617;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
+      transition: transform 0.06s ease, box-shadow 0.06s ease, filter 0.06s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.02);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.55);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .btn-start {
+      align-self: flex-start;
+      margin-top: 0.25rem;
+    }
+
+    .main-card {
+      grid-area: chat;
+      display: flex;
+      flex-direction: column;
+      min-height: 260px;
+      gap: 0.6rem;
+    }
+
+    .main-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    #chat {
+      flex: 1;
+      min-height: 160px;
+      max-height: 55vh;
       overflow-y: auto;
-      background: #020617;
-      border-radius: 0.5rem;
-      padding: 0.5rem 0.75rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 0.72rem;
-      color: #6b7280;
+      padding-right: 0.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      scroll-behavior: smooth;
+    }
+
+    .msg {
+      padding: 0.48rem 0.75rem;
+      border-radius: 0.75rem;
+      max-width: 78%;
+      font-size: 0.86rem;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      position: relative;
+    }
+
+    .msg.system {
+      align-self: center;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px dashed #4b5563;
+      max-width: 100%;
+      color: var(--text-muted);
+    }
+
+    .msg.community {
+      align-self: flex-start;
+      background: #111827;
+      border-radius: 0.9rem 0.9rem 0.9rem 0.3rem;
       border: 1px solid #1f2937;
     }
+
+    .msg.company {
+      align-self: flex-end;
+      background: var(--accent);
+      border-radius: 0.9rem 0.9rem 0.3rem 0.9rem;
+      color: #022c22;
+    }
+
+    .msg.coach {
+      align-self: flex-start;
+      background: #020617;
+      border-radius: 0.9rem;
+      border: 1px solid #4f46e5;
+    }
+
+    .avatar-dot {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      top: -9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    }
+
+    .msg.community .avatar-dot {
+      left: -9px;
+      background: var(--platform-color);
+    }
+
+    .msg.company .avatar-dot {
+      right: -9px;
+      background: #16a34a;
+      color: #ecfdf5;
+    }
+
+    .msg.coach .avatar-dot {
+      left: -9px;
+      background: #4f46e5;
+      color: #e0e7ff;
+    }
+
+    #answerForm {
+      border-top: 1px dashed #1f2937;
+      margin-top: 0.4rem;
+      padding-top: 0.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    #answerForm.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .debug-card {
+      grid-area: debug;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    #debug {
+      max-height: 200px;
+      overflow-y: auto;
+      background: #020617;
+      border-radius: 0.55rem;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid #1f2937;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.72rem;
+    }
+
     #debug summary {
       cursor: pointer;
-      color: #9ca3af;
-      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    #debugContent {
+      margin: 0;
+      padding: 0.25rem 0 0;
+      white-space: pre;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="row" style="justify-content: space-between; align-items: baseline;">
-      <h1>Shitstorm-Simulation (LangGraph)</h1>
-      <span class="badge">
-        <strong>Status:</strong>
-        <span id="statusText">noch nicht gestartet</span>
-      </span>
-    </div>
-    <div class="row" style="margin-top: 0.75rem;">
-      <label style="flex: 2 1 220px;">
-        LangGraph Server URL
-        <input id="baseUrl" value="https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app" />
-      </label>
-      <label style="flex: 1 1 160px;">
-        Assistant / Graph ID
-        <!-- Wenn dein graph in langgraph.json z.B. "shitstorm" heißt, dann hier "shitstorm" -->
-        <input id="assistantId" value="6d8594ea-8b76-5f28-bdfc-948df3e6d711" />
-      </label>
-      <button id="startBtn" type="button">Simulation starten</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="row" style="margin-bottom: 0.75rem;">
-      <label style="flex: 1 1 120px;">
-        Plattform
-        <select id="platform">
-          <option>Facebook</option>
-          <option>Instagram</option>
-          <option>X/Twitter</option>
-          <option>TikTok</option>
-          <option>LinkedIn</option>
-          <option>YouTube</option>
-        </select>
-      </label>
-      <label style="flex: 1 1 160px;">
-        Unternehmen
-        <input id="companyName" value="Dein Unternehmen">
-      </label>
-      <label style="flex: 2 1 240px;">
-        Ursache des Shitstorms
-        <input id="cause" value="Unangemessene Werbekampagne">
-      </label>
-    </div>
-    <div style="font-size: 0.8rem; color: #9ca3af;">
-      1. Simulation starten → 2. Community-Kommentare lesen → 3. Deine Antwort als Unternehmen schreiben →  
-      4. So lange wiederholen, bis der Shitstorm abgeklungen ist oder eskaliert.
-    </div>
-  </div>
-
-  <div class="card" style="flex: 1 1 auto; min-height: 200px;">
-    <div id="chat"></div>
-    <form id="answerForm">
-      <label>
-        Deine Antwort als Unternehmen
-        <textarea id="answerInput" placeholder="Formuliere hier deine öffentliche Reaktion auf die Kommentare …"></textarea>
-      </label>
-      <div class="row" style="justify-content: space-between; align-items: center;">
-        <span style="font-size: 0.78rem; color: #9ca3af;">
-          Tipp: Empathie zeigen, Verantwortung übernehmen, konkrete Schritte anbieten.
-        </span>
-        <button type="submit">Antwort senden &amp; nächste Runde</button>
+  <div class="layout">
+    <!-- Header -->
+    <section class="card header-card">
+      <div class="header-top">
+        <h1>
+          <span class="logo-emoji">🔥</span>
+          <span>Shitstorm-Simulation</span>
+        </h1>
+        <div class="chip chip-status">
+          <span>Status:</span>
+          <strong id="statusText">noch nicht gestartet</strong>
+        </div>
       </div>
-    </form>
-  </div>
+      <div class="status-row">
+        <div class="chip chip-platform">
+          <span class="emoji" id="platformEmoji">📘</span>
+          <span id="platformLabel">Facebook</span>
+        </div>
+        <div class="tagline" id="platformTagline">
+          Klassische Kommentarspalte mit langen Threads und Stammkund:innen.
+        </div>
+      </div>
+    </section>
 
-  <div class="card">
-    <details id="debug">
-      <summary>Debug-Infos vom Server anzeigen</summary>
-      <pre id="debugContent"></pre>
-    </details>
+    <!-- Settings -->
+    <section class="card settings-card">
+      <div class="settings-grid">
+        <label>
+          LangGraph Server URL
+          <input id="baseUrl" value="https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app" />
+        </label>
+        <label>
+          Assistant / Graph ID
+          <input id="assistantId" value="6d8594ea-8b76-5f28-bdfc-948df3e6d711" />
+        </label>
+        <label>
+          Plattform
+          <select id="platform">
+            <option>Facebook</option>
+            <option>Instagram</option>
+            <option>X/Twitter</option>
+            <option>TikTok</option>
+            <option>LinkedIn</option>
+            <option>YouTube</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="settings-grid" style="margin-top: 0.75rem;">
+        <label>
+          Unternehmen
+          <input id="companyName" value="Dein Unternehmen" />
+        </label>
+        <label>
+          Ursache des Shitstorms
+          <input id="cause" value="Unangemessene Werbekampagne" />
+        </label>
+      </div>
+
+      <button id="startBtn" type="button" class="btn-start">
+        <span>Simulation starten</span> <span>▶</span>
+      </button>
+    </section>
+
+    <!-- Chat & Antwort -->
+    <section class="card main-card">
+      <div class="main-header-row">
+        <div class="chip-group">
+          <div class="chip">
+            <span>Runde</span>
+            <strong id="roundChip">–</strong>
+          </div>
+          <div class="chip">
+            <span>Intensität</span>
+            <strong id="intensityChip">–</strong>
+          </div>
+        </div>
+        <span id="hintText" style="font-size: 0.8rem;">
+          Ziel: Intensität unter 10 bringen – ab 90 ist der Shitstorm außer Kontrolle.
+        </span>
+      </div>
+
+      <div id="chat"></div>
+
+      <form id="answerForm">
+        <label>
+          Deine Antwort als Unternehmen
+          <textarea
+            id="answerInput"
+            placeholder="Formuliere hier deine öffentliche Reaktion auf die Kommentare …"
+          ></textarea>
+        </label>
+        <div class="main-header-row">
+          <span style="font-size: 0.78rem; color: var(--text-muted);" id="answerTip">
+            Tipp: Empathie zeigen, Verantwortung übernehmen, konkrete Schritte anbieten.
+          </span>
+          <button type="submit">
+            <span>Antwort senden &amp; nächste Runde</span> <span>↩</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Debug -->
+    <section class="card debug-card">
+      <details id="debug">
+        <summary>Debug-Infos vom LangGraph-Server</summary>
+        <pre id="debugContent"></pre>
+      </details>
+    </section>
   </div>
 
   <script>
-    // === Einstellbare Konstanten ============================================
-    // Wenn du einen API-Key brauchst (z.B. bei Cloud-Deployment), hier eintragen.
-    const API_KEY = "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"; // z.B. "lg-xxx". Leer lassen, wenn lokal ohne Auth.
+    // === API-Key (falls Cloud-Deployment mit Auth) ==========================
+    // Für lokale Nutzung mit `langgraph dev` meist leer lassen.
+    const API_KEY = "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"; // z.B. "lsv2_..."
 
-    // === UI-Hilfsfunktionen =================================================
+    // === Plattform-Themes: Farbe, Emoji, Tagline, Text-Hints =================
+    const PLATFORM_THEMES = {
+      "Facebook": {
+        emoji: "📘",
+        label: "Facebook",
+        color: "#1877F2",
+        soft: "rgba(24,119,242,0.16)",
+        tagline: "Lange Kommentar-Threads, Stammkund:innen und öffentliche Diskussion.",
+        answerPlaceholder: "Formuliere ein längeres Facebook-Statement, das Situation und Maßnahmen erklärt …",
+        answerTip:
+          "Facebook: ausführlich, transparent und wertschätzend. Hol die Community inhaltlich ab."
+      },
+      "Instagram": {
+        emoji: "📸",
+        label: "Instagram",
+        color: "#E1306C",
+        soft: "rgba(225,48,108,0.18)",
+        tagline: "Visuelles Format, kurze Captions, Kommentare unter Posts & Reels.",
+        answerPlaceholder: "Beschreibe dein Statement für einen Instagram-Post inkl. Caption …",
+        answerTip:
+          "Instagram: kurze, klare Botschaft – Emotion und Haltung sind wichtiger als Details."
+      },
+      "X/Twitter": {
+        emoji: "🐦",
+        label: "X / Twitter",
+        color: "#1DA1F2",
+        soft: "rgba(29,161,242,0.18)",
+        tagline: "Schnelles, zugespitztes Format, viele Re-Posts und Zitate.",
+        answerPlaceholder:
+          "Formuliere ein prägnantes Statement im Stil eines Tweets (kurz, klar, ohne Floskeln) …",
+        answerTip:
+          "X: kurz, präzise, ohne PR-Sprech. Jede Formulierung kann zitiert werden – Klarheit vor Länge."
+      },
+      "TikTok": {
+        emoji: "🎵",
+        label: "TikTok",
+        color: "#22d3ee",
+        soft: "rgba(34,211,238,0.2)",
+        tagline: "Video-Statements, schnelle Reaktionen, viele Duette und Stitchs.",
+        answerPlaceholder:
+          "Beschreibe dein TikTok-Video-Statement (Kernaussage, Ton, Call-to-Action) und die Caption …",
+        answerTip:
+          "TikTok: authentisch, persönlich, direkt in die Kamera. Kein Corporate-Hochglanz – lieber klar & menschlich."
+      },
+      "LinkedIn": {
+        emoji: "💼",
+        label: "LinkedIn",
+        color: "#0A66C2",
+        soft: "rgba(10,102,194,0.2)",
+        tagline: "Business-Perspektive, Stakeholder, Mitarbeitende und Partner lesen mit.",
+        answerPlaceholder:
+          "Formuliere ein professionelles LinkedIn-Statement mit klarer Verantwortungsübernahme …",
+        answerTip:
+          "LinkedIn: sachlich, verantwortungsvoll, mit Fokus auf Stakeholder, Mitarbeitende und langfristige Maßnahmen."
+      },
+      "YouTube": {
+        emoji: "▶️",
+        label: "YouTube",
+        color: "#ef4444",
+        soft: "rgba(239,68,68,0.2)",
+        tagline: "Längere Videos, Kommentare unter dem Video, Creator-Rolle im Fokus.",
+        answerPlaceholder:
+          "Beschreibe dein YouTube-Video-Statement (Struktur, Kernaussage, evtl. angepinnter Kommentar) …",
+        answerTip:
+          "YouTube: erkläre Hintergründe und Maßnahmen strukturiert, mit klarem Anfang, Mitte und Schluss."
+      }
+    };
+
+    // === DOM-Referenzen =====================================================
     const chatEl = document.getElementById("chat");
     const statusTextEl = document.getElementById("statusText");
     const debugContentEl = document.getElementById("debugContent");
     const answerFormEl = document.getElementById("answerForm");
     const answerInputEl = document.getElementById("answerInput");
     const startBtn = document.getElementById("startBtn");
+    const baseUrlInput = document.getElementById("baseUrl");
+    const assistantIdInput = document.getElementById("assistantId");
+    const platformSelect = document.getElementById("platform");
+    const companyInput = document.getElementById("companyName");
+    const causeInput = document.getElementById("cause");
+    const platformEmojiEl = document.getElementById("platformEmoji");
+    const platformLabelEl = document.getElementById("platformLabel");
+    const platformTaglineEl = document.getElementById("platformTagline");
+    const hintTextEl = document.getElementById("hintText");
+    const answerTipEl = document.getElementById("answerTip");
+    const roundChipEl = document.getElementById("roundChip");
+    const intensityChipEl = document.getElementById("intensityChip");
 
+    // === State ==============================================================
     let threadId = null;
     let waitingForAnswer = false;
     let finished = false;
 
+    // === UI Helpers =========================================================
     function setStatus(text) {
       statusTextEl.textContent = text;
     }
 
-    function appendMessage(role, text) {
+    function appendMessage(role, text, platformEmoji = "") {
       const div = document.createElement("div");
       div.classList.add("msg");
+
       if (role === "community") div.classList.add("community");
       else if (role === "company") div.classList.add("company");
       else if (role === "coach") div.classList.add("coach");
       else div.classList.add("system");
 
-      let prefix = "";
-      if (role === "community") prefix = "Community: ";
-      if (role === "company") prefix = "Unternehmen: ";
-      if (role === "coach") prefix = "Coach: ";
+      const avatar = document.createElement("div");
+      avatar.classList.add("avatar-dot");
+      if (role === "community") {
+        avatar.textContent = platformEmoji || "👥";
+      } else if (role === "company") {
+        avatar.textContent = "🏢";
+      } else if (role === "coach") {
+        avatar.textContent = "🧠";
+      } else {
+        avatar.textContent = "ℹ";
+      }
+      div.appendChild(avatar);
 
-      div.textContent = prefix + text;
+      const prefix =
+        role === "community"
+          ? "Community: "
+          : role === "company"
+          ? "Unternehmen: "
+          : role === "coach"
+          ? "Coach: "
+          : "";
+
+      const textNode = document.createTextNode(prefix + text);
+      div.appendChild(textNode);
+
       chatEl.appendChild(div);
       chatEl.scrollTop = chatEl.scrollHeight;
     }
@@ -291,7 +651,21 @@
       debugContentEl.textContent = JSON.stringify(data, null, 2);
     }
 
-    // === HTTP-Helper ========================================================
+    function applyPlatformTheme(platformName) {
+      const cfg = PLATFORM_THEMES[platformName] || PLATFORM_THEMES["Facebook"];
+
+      document.documentElement.style.setProperty("--platform-color", cfg.color);
+      document.documentElement.style.setProperty("--platform-soft", cfg.soft);
+
+      platformEmojiEl.textContent = cfg.emoji;
+      platformLabelEl.textContent = cfg.label;
+      platformTaglineEl.textContent = cfg.tagline;
+
+      answerInputEl.placeholder = cfg.answerPlaceholder;
+      answerTipEl.textContent = cfg.answerTip;
+    }
+
+    // === HTTP Helpers =======================================================
     function buildHeaders() {
       const headers = { "Content-Type": "application/json" };
       if (API_KEY && API_KEY.trim() !== "") {
@@ -304,21 +678,19 @@
       const res = await fetch(baseUrl + "/threads", {
         method: "POST",
         headers: buildHeaders(),
-        body: "{}",
+        body: "{}"
       });
       if (!res.ok) {
         const text = await res.text();
-        throw new Error("Thread-Erstellung fehlgeschlagen: " + res.status + " – " + text);
+        throw new Error(
+          "Thread-Erstellung fehlgeschlagen: " + res.status + " – " + text
+        );
       }
       const data = await res.json();
-      return data.thread_id;
+      // Offizielle API: { "thread_id": "..." }
+      return data.thread_id || data.id;
     }
 
-    /**
-     * Run/Resume den Graphen.
-     * - Beim ersten Aufruf: input = initialer ShitstormState, command = null
-     * - Bei weiteren Runden: input = null, command = { resume: "<Antwort>" }
-     */
     async function runWait({ baseUrl, assistantId, input, command }) {
       if (!threadId) {
         threadId = await createThread(baseUrl);
@@ -335,7 +707,7 @@
       const res = await fetch(`${baseUrl}/threads/${threadId}/runs/wait`, {
         method: "POST",
         headers: buildHeaders(),
-        body: JSON.stringify(body),
+        body: JSON.stringify(body)
       });
 
       let data;
@@ -349,7 +721,10 @@
       showDebug(data);
 
       if (!res.ok || data.__error__) {
-        const err = data && data.__error__ ? (data.__error__.message || data.__error__.error) : res.statusText;
+        const err =
+          data && data.__error__
+            ? data.__error__.message || data.__error__.error
+            : res.statusText;
         throw new Error("Server-Fehler: " + err);
       }
 
@@ -357,23 +732,43 @@
     }
 
     // === Shitstorm-spezifische Logik ========================================
+    function updateMetaChips(state) {
+      if (typeof state.round === "number") {
+        roundChipEl.textContent = String(state.round);
+      }
+      if (typeof state.intensity === "number") {
+        intensityChipEl.textContent = `${state.intensity.toFixed(1)} / 100`;
+      }
+    }
 
     function renderStateAfterCommunity(state) {
-      // Community-Kommentare anzeigen, falls vorhanden
-      if (Array.isArray(state.last_community_comments) && state.last_community_comments.length) {
-        appendMessage("system", `Runde ${state.round} · Intensität: ${state.intensity.toFixed(1)} / 100`);
-        appendMessage("system", "Die Community kommentiert:");
+      updateMetaChips(state);
+      const platformName = platformSelect.value;
+      const cfg = PLATFORM_THEMES[platformName] || PLATFORM_THEMES["Facebook"];
+      const emoji = cfg.emoji || "👥";
+
+      if (
+        Array.isArray(state.last_community_comments) &&
+        state.last_community_comments.length
+      ) {
+        appendMessage(
+          "system",
+          `Runde ${state.round} · Intensität: ${state.intensity.toFixed(
+            1
+          )} / 100`,
+          emoji
+        );
+        appendMessage("system", "Die Community kommentiert:", emoji);
         state.last_community_comments.forEach((c) =>
-          appendMessage("community", String(c))
+          appendMessage("community", String(c), emoji)
         );
       }
 
-      // Falls es eine Coach-Bewertung in der History gibt, die letzte anzeigen
       if (Array.isArray(state.history) && state.history.length) {
         const coachEntries = state.history.filter((h) => h.actor === "coach");
         if (coachEntries.length) {
           const last = coachEntries[coachEntries.length - 1];
-          appendMessage("coach", last.content || "");
+          appendMessage("coach", last.content || "", "🧠");
         }
       }
     }
@@ -381,6 +776,7 @@
     function renderFinalSummary(state) {
       finished = true;
       setAnswerFormEnabled(false);
+      updateMetaChips(state);
 
       let outcomeText;
       if (state.status === "user_won") {
@@ -391,27 +787,33 @@
         outcomeText = "Die Simulation wurde beendet.";
       }
 
-      appendMessage("system", `Simulation beendet · Endgültige Intensität: ${state.intensity.toFixed(1)} / 100`);
+      appendMessage(
+        "system",
+        `Simulation beendet · Endgültige Intensität: ${state.intensity.toFixed(
+          1
+        )} / 100`
+      );
       appendMessage("system", outcomeText);
 
       if (state.summary) {
-        appendMessage("coach", state.summary);
+        appendMessage("coach", state.summary, "🧠");
       }
     }
 
     async function startSimulation() {
-      const baseUrl = document.getElementById("baseUrl").value.trim().replace(/\/+$/, "");
-      const assistantId = document.getElementById("assistantId").value.trim();
-      const platform = document.getElementById("platform").value;
-      const cause = document.getElementById("cause").value.trim() || "nicht näher beschriebene Ursache";
-      const companyName = document.getElementById("companyName").value.trim() || "Dein Unternehmen";
+      const baseUrl = baseUrlInput.value.trim().replace(/\/+$/, "");
+      const assistantId = assistantIdInput.value.trim();
+      const platform = platformSelect.value;
+      const cause =
+        causeInput.value.trim() || "nicht näher beschriebene Ursache";
+      const companyName =
+        companyInput.value.trim() || "Dein Unternehmen";
 
       if (!baseUrl || !assistantId) {
         alert("Bitte Server-URL und Assistant/Graph-ID ausfüllen.");
         return;
       }
 
-      // UI zurücksetzen
       chatEl.innerHTML = "";
       debugContentEl.textContent = "";
       threadId = null;
@@ -419,11 +821,16 @@
       finished = false;
       setAnswerFormEnabled(false);
       setStatus("Simulation wird gestartet …");
+      roundChipEl.textContent = "–";
+      intensityChipEl.textContent = "–";
 
       appendMessage("system", `Plattform: ${platform}`);
       appendMessage("system", `Unternehmen: ${companyName}`);
       appendMessage("system", `Ursache des Shitstorms: ${cause}`);
-      appendMessage("system", "Ziel: Bringe die Intensität durch gute Antworten unter 10. Steigt sie über 90, ist der Shitstorm außer Kontrolle.");
+      appendMessage(
+        "system",
+        "Ziel: Intensität durch gute Antworten unter 10 bringen – ab 90 ist der Shitstorm außer Kontrolle."
+      );
 
       const initialState = {
         platform: platform,
@@ -438,7 +845,7 @@
         reaction_score: 0.0,
         intensity: 70.0,
         status: "running",
-        summary: "",
+        summary: ""
       };
 
       try {
@@ -446,7 +853,7 @@
           baseUrl,
           assistantId,
           input: initialState,
-          command: null,
+          command: null
         });
 
         renderStateAfterCommunity(state);
@@ -463,7 +870,6 @@
           setAnswerFormEnabled(true);
           answerInputEl.focus();
         } else {
-          // Kein Interrupt – Graph läuft komplett durch (z.B. Auto-Simulation)
           waitingForAnswer = false;
           setAnswerFormEnabled(false);
           setStatus("Simulation beendet");
@@ -472,7 +878,10 @@
       } catch (err) {
         console.error(err);
         setStatus("Fehler beim Starten der Simulation");
-        appendMessage("system", "Fehler beim Starten der Simulation: " + err.message);
+        appendMessage(
+          "system",
+          "Fehler beim Starten der Simulation: " + err.message
+        );
         setAnswerFormEnabled(false);
       }
     }
@@ -481,13 +890,13 @@
       event.preventDefault();
       if (!waitingForAnswer || finished) return;
 
-      const baseUrl = document.getElementById("baseUrl").value.trim().replace(/\/+$/, "");
-      const assistantId = document.getElementById("assistantId").value.trim();
+      const baseUrl = baseUrlInput.value.trim().replace(/\/+$/, "");
+      const assistantId = assistantIdInput.value.trim();
       const answer = answerInputEl.value.trim();
 
       if (!answer) return;
 
-      appendMessage("company", answer);
+      appendMessage("company", answer, "🏢");
       answerInputEl.value = "";
       setAnswerFormEnabled(false);
       waitingForAnswer = false;
@@ -498,7 +907,7 @@
           baseUrl,
           assistantId,
           input: null,
-          command: { resume: answer },
+          command: { resume: answer }
         });
 
         renderStateAfterCommunity(state);
@@ -522,15 +931,24 @@
         }
       } catch (err) {
         console.error(err);
-        appendMessage("system", "Fehler beim Fortsetzen der Simulation: " + err.message);
+        appendMessage(
+          "system",
+          "Fehler beim Fortsetzen der Simulation: " + err.message
+        );
         setStatus("Fehler");
         setAnswerFormEnabled(false);
       }
     }
 
-    // === Event-Listener =====================================================
+    // === Event-Listener & Init =============================================
     startBtn.addEventListener("click", startSimulation);
     answerFormEl.addEventListener("submit", sendCompanyAnswer);
+    platformSelect.addEventListener("change", (e) =>
+      applyPlatformTheme(e.target.value)
+    );
+
+    // Initiales Theme setzen
+    applyPlatformTheme(platformSelect.value);
   </script>
 </body>
 </html>
