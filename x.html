@@ -88,83 +88,6 @@
       white-space: nowrap;
     }
 
-    .setup {
-      border-bottom: 1px solid #2f3336;
-      padding: 0.7rem 1rem 0.8rem;
-    }
-
-    .setup-label {
-      font-size: 0.78rem;
-      color: #71767b;
-      margin-bottom: 0.4rem;
-    }
-
-    .setup-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .field {
-      flex: 1 1 180px;
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .field span {
-      font-size: 0.74rem;
-      color: #71767b;
-    }
-
-    .field input {
-      background: #000;
-      border-radius: 999px;
-      border: 1px solid #2f3336;
-      color: #e7e9ea;
-      padding: 0.4rem 0.7rem;
-      font: inherit;
-      font-size: 0.85rem;
-      outline: none;
-    }
-
-    .field input:focus {
-      border-color: #1d9bf0;
-      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
-    }
-
-    .setup-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin-top: 0.2rem;
-      font-size: 0.76rem;
-      color: #71767b;
-    }
-
-    .btn-primary {
-      border-radius: 999px;
-      border: none;
-      background: #1d9bf0;
-      color: #fff;
-      font-weight: 600;
-      padding: 0.45rem 0.9rem;
-      font-size: 0.86rem;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: #1a8cd8;
-    }
-
     .status-bar {
       font-size: 0.75rem;
       color: #71767b;
@@ -446,25 +369,7 @@
           <h1>X – Shitstorm-Simulation</h1>
           <span>Trainiere deine Krisenkommunikation</span>
         </div>
-        <div class="pill" id="statusPill">Status: bereit</div>
-      </div>
-
-      <div class="setup">
-        <div class="setup-label">Ausgangslage</div>
-        <div class="setup-row">
-          <div class="field">
-            <span>Unternehmen</span>
-            <input id="companyInput" placeholder="Dein Unternehmen" value="Dein Unternehmen" />
-          </div>
-          <div class="field">
-            <span>Ursache des Shitstorms</span>
-            <input id="causeInput" placeholder="z.B. missglückte Kampagne" value="Unangemessene Werbekampagne" />
-          </div>
-        </div>
-        <div class="setup-footer">
-          <span>Start bei Intensität 70/100. Ziel: unter 10, bevor sie über 90 eskaliert.</span>
-          <button class="btn-primary" id="startBtn">Simulation starten</button>
-        </div>
+        <div class="pill" id="statusPill">Status: lädt …</div>
       </div>
 
       <div class="status-bar">
@@ -498,11 +403,33 @@
     </div>
   </div>
 
+  <style>
+    /* kleiner Style-Block nach unten verschoben, damit button nicht fehlt */
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      background: #1d9bf0;
+      color: #fff;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.86rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: #1a8cd8;
+    }
+  </style>
+
   <script>
     // ===================== KONFIGURATION ===========================
-    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-    const API_KEY = "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";                              // LangSmith Key oder leer
+const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
+const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
+const API_KEY = "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";                                    // LangSmith Key oder leer
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -525,9 +452,6 @@
     const composerEl = document.getElementById("composer");
     const answerInputEl = document.getElementById("answerInput");
     const sendBtn = document.getElementById("sendBtn");
-    const startBtn = document.getElementById("startBtn");
-    const companyInputEl = document.getElementById("companyInput");
-    const causeInputEl = document.getElementById("causeInput");
     const statusPillEl = document.getElementById("statusPill");
     const roundTextEl = document.getElementById("roundText");
     const intensityTextEl = document.getElementById("intensityText");
@@ -588,8 +512,6 @@
       waitingForAnswer = false;
       finished = false;
       setComposerEnabled(false);
-
-      // Kommentar-Avatare bei neuer Simulation wieder ab 2.png
       userAvatarIndex = 2;
     }
 
@@ -1044,15 +966,14 @@
 
     // ===================== SIMULATION FLOW =========================
 
-    async function startSimulation() {
+    async function startSimulation(companyParam, causeParam) {
       resetSimulation();
-      setStatus("startet …");
-
-      simulation.company = companyInputEl.value.trim() || "Dein Unternehmen";
+      simulation.company = (companyParam || "Dein Unternehmen").trim();
       simulation.cause =
-        causeInputEl.value.trim() || "nicht näher beschriebene Ursache";
+        (causeParam || "Unangemessene Werbekampagne").trim();
 
-      renderFeed();
+      setStatus("startet …");
+      renderFeed(); // Auslöser-Post direkt anzeigen
 
       const initialState = {
         platform: "X/Twitter",
@@ -1155,10 +1076,6 @@
 
     // ===================== EVENTS / AUTOSTART ======================
 
-    startBtn.addEventListener("click", () => {
-      startSimulation();
-    });
-
     sendBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
       sendAnswer();
@@ -1173,18 +1090,14 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
-      const companyParam = params.get("company");
-      const causeParam = params.get("cause");
-      const auto = params.get("auto");
+      const companyParam = params.get("company") || "Dein Unternehmen";
+      const causeParam =
+        params.get("cause") || "Unangemessene Werbekampagne";
 
-      if (companyParam) companyInputEl.value = companyParam;
-      if (causeParam) causeInputEl.value = causeParam;
-
-      if (auto === "1") {
-        setTimeout(() => {
-          startSimulation();
-        }, 0);
-      }
+      // Immer automatisch starten (Einstellungen kommen ja von index.html)
+      setTimeout(() => {
+        startSimulation(companyParam, causeParam);
+      }, 0);
     });
   </script>
 </body>
