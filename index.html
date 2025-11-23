@@ -1,125 +1,227 @@
 <!doctype html>
 <html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <title>Plattform wählen</title>
-    <style>
-      :root {
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
-        color-scheme: dark;
-      }
+<head>
+  <meta charset="utf-8" />
+  <title>Shitstorm-Simulation · Plattform wählen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      color-scheme: dark;
+    }
 
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: radial-gradient(circle at top, #1d4ed8, #020617 55%);
-      }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #1d4ed8, #020617 55%);
+      color: #e5e7eb;
+    }
 
-      .card {
-        background: rgba(15, 23, 42, 0.9);
-        border-radius: 1rem;
-        padding: 1.5rem 1.75rem;
-        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(148, 163, 184, 0.3);
-        backdrop-filter: blur(10px);
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        min-width: 260px;
-      }
+    .card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 1rem;
+      padding: 1.5rem 1.75rem;
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: min(480px, 100% - 2rem);
+    }
 
-      .card-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #e5e7eb;
-        text-align: center;
-      }
+    .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+    }
 
-      .card-sub {
-        font-size: 0.8rem;
-        color: #94a3b8;
-        text-align: center;
-      }
+    .subtitle {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      text-align: center;
+    }
 
-      label {
-        font-size: 0.8rem;
-        color: #9ca3af;
-        margin-bottom: 0.35rem;
-        display: block;
-      }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
 
-      .select-wrapper {
-        position: relative;
-      }
+    label {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
 
-      select {
-        width: 100%;
-        padding: 0.6rem 2.3rem 0.6rem 0.7rem;
-        border-radius: 999px;
-        border: 1px solid #4b5563;
-        background: #020617;
-        color: #e5e7eb;
-        font-size: 0.95rem;
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        outline: none;
-        transition: border-color 0.12s ease, box-shadow 0.12s ease,
-          background 0.12s ease, transform 0.05s ease;
-      }
+    select,
+    input,
+    textarea {
+      border-radius: 0.75rem;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 0.5rem 0.7rem;
+      font: inherit;
+      font-size: 0.9rem;
+      resize: vertical;
+      outline: none;
+    }
 
-      select:hover {
-        border-color: #60a5fa;
-        background: #020617;
-      }
+    select:focus,
+    input:focus,
+    textarea:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
+    }
 
-      select:focus {
-        border-color: #60a5fa;
-        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
-        transform: translateY(-1px);
-      }
+    textarea {
+      min-height: 70px;
+    }
 
-      .select-arrow {
-        position: absolute;
-        right: 0.8rem;
-        top: 50%;
-        transform: translateY(-50%);
-        pointer-events: none;
-        font-size: 0.75rem;
-        color: #64748b;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <div class="card-title">Plattform auswählen</div>
-      <div class="card-sub">Wohin soll die Simulation starten?</div>
+    .row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
 
-      <label for="platform">Social-Media-Plattform</label>
-      <div class="select-wrapper">
-        <select id="platform">
-          <option value="">Bitte wählen …</option>
-          <option value="x.html">X / Twitter</option>
-          <option value="instagram.html">Instagram</option>
-          <option value="facebook.html">Facebook</option>
-          <option value="youtube.html">YouTube</option>
-        </select>
-        <div class="select-arrow">▾</div>
+    .row > label {
+      flex: 1 1 160px;
+    }
+
+    button {
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 999px;
+      padding: 0.55rem 0.9rem;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #22c55e, #0ea5e9);
+      color: #020617;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+    }
+
+    button:hover {
+      filter: brightness(1.05);
+    }
+
+    .help {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div>
+      <div class="title">Shitstorm-Simulation starten</div>
+      <div class="subtitle">
+        Wähle die Plattform und die Ausgangslage. Auf der nächsten Seite startet die Simulation direkt.
       </div>
     </div>
 
-    <script>
-      const select = document.getElementById("platform");
+    <form id="setupForm">
+      <label>
+        Plattform
+        <select id="platformSelect" required>
+          <option value="">Bitte wählen …</option>
+          <option value="x">X / Twitter</option>
+          <option value="instagram">Instagram</option>
+          <option value="facebook">Facebook</option>
+          <option value="youtube">YouTube</option>
+        </select>
+      </label>
 
-      select.addEventListener("change", () => {
-        const target = select.value;
-        if (!target) return; // "Bitte wählen …"
-        window.location.href = target;
-      });
-    </script>
-  </body>
+      <div class="row">
+        <label>
+          Unternehmen
+          <input
+            id="companyInput"
+            placeholder="z.B. Dein Unternehmen GmbH"
+            value="Dein Unternehmen"
+          />
+        </label>
+
+        <label>
+          Ursache des Shitstorms
+          <input
+            id="causeInput"
+            placeholder="z.B. missglückte Kampagne, Produktfehler …"
+            value="Unangemessene Werbekampagne"
+          />
+        </label>
+      </div>
+
+      <button type="submit">
+        Simulation starten
+      </button>
+    </form>
+
+    <div class="help">
+      Hinweis: Für Instagram, Facebook und YouTube brauchst du später eigene Seiten
+      (<code>instagram.html</code>, <code>facebook.html</code>, <code>youtube.html</code>).
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("setupForm");
+    const platformSelect = document.getElementById("platformSelect");
+    const companyInput = document.getElementById("companyInput");
+    const causeInput = document.getElementById("causeInput");
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const platform = platformSelect.value;
+      if (!platform) {
+        alert("Bitte eine Plattform wählen.");
+        return;
+      }
+
+      const company = companyInput.value.trim();
+      const cause = causeInput.value.trim();
+
+      let target;
+      switch (platform) {
+        case "x":
+          target = "x.html";
+          break;
+        case "instagram":
+          target = "instagram.html";
+          break;
+        case "facebook":
+          target = "facebook.html";
+          break;
+        case "youtube":
+          target = "youtube.html";
+          break;
+        default:
+          alert("Unbekannte Plattform.");
+          return;
+      }
+
+      const params = new URLSearchParams();
+      if (company) params.set("company", company);
+      if (cause) params.set("cause", cause);
+      // auto=1 bedeutet: auf der Zielseite direkt Simulation starten
+      params.set("auto", "1");
+
+      const url = params.toString() ? `${target}?${params.toString()}` : target;
+      window.location.href = url;
+    });
+  </script>
+</body>
 </html>
