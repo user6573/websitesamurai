@@ -276,8 +276,27 @@
       opacity: 0.5;
     }
 
-    .composer textarea {
+    /* NEU: Hauptbereich neben Avatar */
+    .composer-main {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      min-width: 0;
+    }
+
+    /* NEU: Zeile mit Textfeld + Button */
+    .composer-row {
+      display: flex;
+      gap: 0.45rem;
+      align-items: flex-start;
+    }
+
+    .composer-row textarea {
+      flex: 1;
+    }
+
+    .composer textarea {
       border-radius: 0.75rem;
       border: 1px solid #2f3336;
       background: #000;
@@ -285,9 +304,12 @@
       font: inherit;
       font-size: 0.9rem;
       padding: 0.45rem 0.6rem;
-      min-height: 60px;
-      resize: vertical;
+      min-height: 40px;
+      max-height: 200px;
+      resize: none;        /* Höhe machen wir per JS */
+      overflow-y: auto;    /* scrollen, falls max-height erreicht */
       outline: none;
+      box-sizing: border-box;
     }
 
     .composer textarea:focus {
@@ -295,17 +317,10 @@
       box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
     }
 
-    .composer-footer {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      align-items: flex-end;
-    }
-
     .composer-hint {
       font-size: 0.72rem;
       color: #71767b;
-      max-width: 260px;
+      max-width: 100%;
       text-align: right;
     }
 
@@ -379,18 +394,19 @@
 
       <div class="feed" id="feed"></div>
 
+      <!-- NEU: Composer-Struktur mit textarea + Button in einer Zeile -->
       <div class="composer disabled" id="composer">
         <div class="avatar company">
           <img src="images/company.jpg" alt="Unternehmen" />
         </div>
-        <div class="tweet-body">
-          <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
-        </div>
-        <div class="composer-footer">
+        <div class="composer-main">
+          <div class="composer-row">
+            <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
+            <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+          </div>
           <div class="composer-hint">
             Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
           </div>
-          <button class="btn-primary" id="sendBtn" disabled>Posten</button>
         </div>
       </div>
 
@@ -404,7 +420,6 @@
   </div>
 
   <style>
-    /* kleiner Style-Block nach unten verschoben, damit button nicht fehlt */
     .btn-primary {
       border-radius: 999px;
       border: none;
@@ -429,7 +444,7 @@
     // ===================== KONFIGURATION ===========================
 const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
 const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                                    // LangSmith Key oder leer
+const API_KEY = "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";                                     // LangSmith Key oder leer
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -486,6 +501,7 @@ const API_KEY = "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";          
         composerEl.classList.remove("disabled");
         answerInputEl.disabled = false;
         sendBtn.disabled = false;
+        autoResizeAnswer();
       } else {
         composerEl.classList.add("disabled");
         answerInputEl.disabled = true;
@@ -513,6 +529,19 @@ const API_KEY = "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";          
       finished = false;
       setComposerEnabled(false);
       userAvatarIndex = 2;
+
+      answerInputEl.value = "";
+      autoResizeAnswer();
+    }
+
+    // =============== Auto-Resize für Company-Textfeld ==============
+    function autoResizeAnswer() {
+      const el = answerInputEl;
+      if (!el) return;
+      const max = 200; // muss zu max-height in CSS passen
+      el.style.height = "auto";
+      const newHeight = Math.min(el.scrollHeight, max);
+      el.style.height = newHeight + "px";
     }
 
     // ===================== RENDERING ===============================
@@ -900,6 +929,7 @@ const API_KEY = "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";          
         setComposerEnabled(true);
         setStatus("erste Antwort ist gefragt");
         answerInputEl.focus();
+        autoResizeAnswer();
       } else {
         waitingForAnswer = false;
         setComposerEnabled(false);
@@ -955,6 +985,7 @@ const API_KEY = "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";          
         setComposerEnabled(true);
         setStatus("nächste Antwort ist gefragt");
         answerInputEl.focus();
+        autoResizeAnswer();
       } else {
         waitingForAnswer = false;
         setComposerEnabled(false);
@@ -1020,6 +1051,8 @@ const API_KEY = "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";          
       renderFeed();
 
       answerInputEl.value = "";
+      autoResizeAnswer();
+
       setComposerEnabled(false);
       waitingForAnswer = false;
       setStatus("läuft …");
@@ -1088,11 +1121,16 @@ const API_KEY = "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";          
       }
     });
 
+    // Auto-Resize beim Tippen
+    answerInputEl.addEventListener("input", autoResizeAnswer);
+
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const companyParam = params.get("company") || "Dein Unternehmen";
       const causeParam =
         params.get("cause") || "Unangemessene Werbekampagne";
+
+      autoResizeAnswer();
 
       // Immer automatisch starten (Einstellungen kommen ja von index.html)
       setTimeout(() => {
