@@ -1,296 +1,536 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <title>Shitstorm-Simulation</title>
+  <meta charset="UTF-8" />
+  <title>Shitstorm-Simulation · LangGraph</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      margin: 0;
-      padding: 0;
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #0f172a;
       color: #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
     }
-    header {
-      padding: 0.75rem 1.25rem;
-      background: #020617;
-      border-bottom: 1px solid #1f2937;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    header h1 {
+    body {
       margin: 0;
-      font-size: 1.1rem;
-    }
-    main {
-      display: flex;
-      flex: 1;
-      gap: 1rem;
-      padding: 1rem;
-      box-sizing: border-box;
-    }
-    .sidebar {
-      width: 260px;
-      border-radius: 0.75rem;
-      padding: 1rem;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid #1f2937;
-      box-sizing: border-box;
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
+      gap: 1rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+    .card {
+      background: #020617;
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid #1f2937;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
       gap: 0.75rem;
+      align-items: center;
     }
     label {
       font-size: 0.8rem;
       color: #9ca3af;
-      display: block;
-      margin-bottom: 0.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
     }
-    input, select, textarea, button {
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 0.5rem;
-      border: 1px solid #374151;
+    input, select, textarea {
       background: #020617;
+      border: 1px solid #374151;
       color: #e5e7eb;
-      padding: 0.4rem 0.55rem;
-      font-family: inherit;
-      font-size: 0.85rem;
+      border-radius: 0.5rem;
+      padding: 0.4rem 0.5rem;
+      font: inherit;
+      min-width: 0;
     }
-    textarea {
-      min-height: 80px;
-      resize: vertical;
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
     }
     button {
-      background: #22c55e;
       border: none;
-      font-weight: 600;
+      border-radius: 999px;
+      padding: 0.5rem 0.9rem;
+      font: inherit;
       cursor: pointer;
-      transition: background 0.1s ease, transform 0.05s ease;
+      background: linear-gradient(135deg, #22c55e, #0ea5e9);
+      color: #020617;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
     }
-    button:hover:not(:disabled) {
-      background: #16a34a;
-      transform: translateY(-1px);
-    }
-    button:disabled {
+    button[disabled] {
       opacity: 0.5;
       cursor: default;
     }
-    .primary {
-      margin-top: 0.5rem;
+    #status {
+      font-size: 0.8rem;
+      color: #9ca3af;
     }
-    .chat {
-      flex: 1;
+    #status span {
+      font-weight: 600;
+    }
+    #chat {
       display: flex;
       flex-direction: column;
-      border-radius: 0.75rem;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid #1f2937;
-      padding: 0.75rem;
-      box-sizing: border-box;
-    }
-    .chat-log {
-      flex: 1;
+      gap: 0.5rem;
+      max-height: 55vh;
       overflow-y: auto;
-      padding-right: 0.5rem;
+      padding-right: 0.25rem;
     }
     .msg {
-      margin-bottom: 0.6rem;
       padding: 0.5rem 0.75rem;
       border-radius: 0.6rem;
-      font-size: 0.85rem;
-      line-height: 1.4;
       max-width: 80%;
+      font-size: 0.85rem;
+      line-height: 1.35;
       white-space: pre-wrap;
     }
     .msg.system {
-      background: rgba(31, 41, 55, 0.9);
-      border-left: 3px solid #64748b;
+      align-self: center;
+      background: rgba(15, 23, 42, 0.9);
+      color: #9ca3af;
+      max-width: 100%;
+      border: 1px dashed #374151;
     }
     .msg.community {
-      background: rgba(248, 113, 113, 0.08);
-      border-left: 3px solid #f97373;
+      align-self: flex-start;
+      background: #111827;
+      border: 1px solid #1f2937;
     }
     .msg.company {
-      background: rgba(34, 197, 94, 0.08);
-      border-right: 3px solid #22c55e;
-      margin-left: auto;
+      align-self: flex-end;
+      background: #22c55e;
+      color: #022c22;
     }
-    .status-bar {
-      font-size: 0.8rem;
-      color: #9ca3af;
-      margin-bottom: 0.4rem;
-      display: flex;
-      justify-content: space-between;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+    .msg.coach {
+      align-self: flex-start;
+      background: #0f172a;
+      border: 1px solid #3730a3;
     }
-    .answer-box {
-      border-top: 1px solid #1f2937;
-      padding-top: 0.5rem;
-      margin-top: 0.5rem;
-    }
-    .row {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.35rem;
-    }
-    .row button {
-      width: auto;
-      padding-inline: 0.9rem;
-      white-space: nowrap;
-    }
-    .tag {
+    .badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.25rem;
-      padding: 0.1rem 0.45rem;
+      gap: 0.35rem;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid #374151;
+      padding: 0.1rem 0.55rem;
       font-size: 0.75rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1f2937;
+      color: #9ca3af;
+    }
+    .badge strong {
+      color: #e5e7eb;
+    }
+    #answerForm {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    #answerForm.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+    #debug {
+      max-height: 180px;
+      overflow-y: auto;
+      background: #020617;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.72rem;
+      color: #6b7280;
+      border: 1px solid #1f2937;
+    }
+    #debug summary {
+      cursor: pointer;
+      color: #9ca3af;
+      margin-bottom: 0.25rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🔥 Shitstorm-Simulation (LangGraph)</h1>
-    <span style="font-size:0.8rem;color:#9ca3af;">Demo – nicht produktionsreif (API-Key & CORS beachten)</span>
-  </header>
+  <div class="card">
+    <div class="row" style="justify-content: space-between; align-items: baseline;">
+      <h1>Shitstorm-Simulation (LangGraph)</h1>
+      <span class="badge">
+        <strong>Status:</strong>
+        <span id="statusText">noch nicht gestartet</span>
+      </span>
+    </div>
+    <div class="row" style="margin-top: 0.75rem;">
+      <label style="flex: 2 1 220px;">
+        LangGraph Server URL
+        <input id="baseUrl" value="https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app" />
+      </label>
+      <label style="flex: 1 1 160px;">
+        Assistant / Graph ID
+        <!-- Wenn dein graph in langgraph.json z.B. "shitstorm" heißt, dann hier "shitstorm" -->
+        <input id="assistantId" value="6d8594ea-8b76-5f28-bdfc-948df3e6d711" />
+      </label>
+      <button id="startBtn" type="button">Simulation starten</button>
+    </div>
+  </div>
 
-  <main>
-    <aside class="sidebar">
-      <form id="startForm">
-        <div>
-          <label for="platform">Plattform</label>
-          <select id="platform">
-            <option>Facebook</option>
-            <option>Instagram</option>
-            <option>X/Twitter</option>
-            <option>TikTok</option>
-            <option>LinkedIn</option>
-            <option>YouTube</option>
-          </select>
-        </div>
+  <div class="card">
+    <div class="row" style="margin-bottom: 0.75rem;">
+      <label style="flex: 1 1 120px;">
+        Plattform
+        <select id="platform">
+          <option>Facebook</option>
+          <option>Instagram</option>
+          <option>X/Twitter</option>
+          <option>TikTok</option>
+          <option>LinkedIn</option>
+          <option>YouTube</option>
+        </select>
+      </label>
+      <label style="flex: 1 1 160px;">
+        Unternehmen
+        <input id="companyName" value="Dein Unternehmen">
+      </label>
+      <label style="flex: 2 1 240px;">
+        Ursache des Shitstorms
+        <input id="cause" value="Unangemessene Werbekampagne">
+      </label>
+    </div>
+    <div style="font-size: 0.8rem; color: #9ca3af;">
+      1. Simulation starten → 2. Community-Kommentare lesen → 3. Deine Antwort als Unternehmen schreiben →  
+      4. So lange wiederholen, bis der Shitstorm abgeklungen ist oder eskaliert.
+    </div>
+  </div>
 
-        <div>
-          <label for="company">Unternehmen</label>
-          <input id="company" placeholder="Dein Unternehmen" />
-        </div>
-
-        <div>
-          <label for="cause">Ursache des Shitstorms</label>
-          <textarea id="cause" placeholder="z.B. missglückte Kampagne, Produktfehler …"></textarea>
-        </div>
-
-        <button type="submit" class="primary">Simulation starten</button>
-      </form>
-
-      <div style="font-size:0.75rem;color:#9ca3af;margin-top:0.75rem;">
-        <strong>Hinweis:</strong><br>
-        Für LangGraph Platform musst du hier im Code deine
-        <code>BASE_URL</code> und einen
-        <code>X-Api-Key</code> eintragen.<br><br>
-        Für „echte“ User solltest du später einen kleinen Backend-Proxy
-        verwenden, damit der API-Key nicht im Browser liegt.
+  <div class="card" style="flex: 1 1 auto; min-height: 200px;">
+    <div id="chat"></div>
+    <form id="answerForm">
+      <label>
+        Deine Antwort als Unternehmen
+        <textarea id="answerInput" placeholder="Formuliere hier deine öffentliche Reaktion auf die Kommentare …"></textarea>
+      </label>
+      <div class="row" style="justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.78rem; color: #9ca3af;">
+          Tipp: Empathie zeigen, Verantwortung übernehmen, konkrete Schritte anbieten.
+        </span>
+        <button type="submit">Antwort senden &amp; nächste Runde</button>
       </div>
-    </aside>
+    </form>
+  </div>
 
-    <section class="chat">
-      <div class="status-bar">
-        <span id="statusText">Status: bereit</span>
-        <span id="intensityText">Intensität: –</span>
-      </div>
-      <div class="chat-log" id="log"></div>
-
-      <div class="answer-box">
-        <label for="answer">Deine Unternehmensantwort</label>
-        <textarea id="answer" placeholder="Formuliere deine Antwort an die Community …" disabled></textarea>
-        <div class="row">
-          <button id="sendAnswer" disabled>Antwort senden</button>
-          <span class="tag">
-            <span id="roundText">Runde: –</span>
-          </span>
-        </div>
-      </div>
-    </section>
-  </main>
+  <div class="card">
+    <details id="debug">
+      <summary>Debug-Infos vom Server anzeigen</summary>
+      <pre id="debugContent"></pre>
+    </details>
+  </div>
 
   <script>
-    // === KONFIGURATION ANPASSEN =======================
+    // === Einstellbare Konstanten ============================================
+    // Wenn du einen API-Key brauchst (z.B. bei Cloud-Deployment), hier eintragen.
+    const API_KEY = ""; // z.B. "lg-xxx". Leer lassen, wenn lokal ohne Auth.
 
-    // Basis-URL deines LangGraph Servers (kein Slash am Ende)
-    // Beispiele:
-    //  - lokal dev: "http://localhost:2024"
-    //  - LangGraph Platform: "https://dein-agent-server-url"
-    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";   // TODO: anpassen
-
-    // Name aus langgraph.json ("graphs" -> Key)
-    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";           // TODO: anpassen falls anders
-
-    // LangSmith / LangGraph Platform API-Key
-    // - lokal mit `langgraph dev` meist leer lassen (keine Auth)
-    // - in der Cloud: hier deinen LangSmith API Key eintragen
-    const API_KEY = "";                         // TODO: Key eintragen (oder leer lassen)
-
-    // =================================================
+    // === UI-Hilfsfunktionen =================================================
+    const chatEl = document.getElementById("chat");
+    const statusTextEl = document.getElementById("statusText");
+    const debugContentEl = document.getElementById("debugContent");
+    const answerFormEl = document.getElementById("answerForm");
+    const answerInputEl = document.getElementById("answerInput");
+    const startBtn = document.getElementById("startBtn");
 
     let threadId = null;
     let waitingForAnswer = false;
     let finished = false;
 
-    const logEl = document.getElementById("log");
-    const answerEl = document.getElementById("answer");
-    const sendBtn = document.getElementById("sendAnswer");
-    const statusText = document.getElementById("statusText");
-    const intensityText = document.getElementById("intensityText");
-    const roundText = document.getElementById("roundText");
-
-    function buildHeaders() {
-      const h = { "Content-Type": "application/json" };
-      if (API_KEY) {
-        h["X-Api-Key"] = API_KEY; // für LangGraph Platform / LangSmith 
-      }
-      return h;
+    function setStatus(text) {
+      statusTextEl.textContent = text;
     }
 
-    function appendMsg(text, role) {
+    function appendMessage(role, text) {
       const div = document.createElement("div");
-      div.className = "msg " + role;
-      div.textContent = text;
-      logEl.appendChild(div);
-      logEl.scrollTop = logEl.scrollHeight;
+      div.classList.add("msg");
+      if (role === "community") div.classList.add("community");
+      else if (role === "company") div.classList.add("company");
+      else if (role === "coach") div.classList.add("coach");
+      else div.classList.add("system");
+
+      let prefix = "";
+      if (role === "community") prefix = "Community: ";
+      if (role === "company") prefix = "Unternehmen: ";
+      if (role === "coach") prefix = "Coach: ";
+
+      div.textContent = prefix + text;
+      chatEl.appendChild(div);
+      chatEl.scrollTop = chatEl.scrollHeight;
     }
 
-    function setWaiting(on) {
-      waitingForAnswer = on;
-      answerEl.disabled = !on;
-      sendBtn.disabled = !on;
-      statusText.textContent = on
-        ? "Status: wartet auf deine Antwort"
-        : finished
-        ? "Status: Simulation beendet"
-        : "Status: läuft …";
+    function setAnswerFormEnabled(enabled) {
+      if (enabled) {
+        answerFormEl.classList.remove("disabled");
+        answerInputEl.disabled = false;
+      } else {
+        answerFormEl.classList.add("disabled");
+        answerInputEl.disabled = true;
+      }
     }
 
-    function resetChat() {
-      logEl.innerHTML = "";
-      intensityText.textContent = "Intensität: –";
-      roundText.textContent = "Runde: –";
-      finished = false;
-      waitingForAnswer = false;
-      threadId = null;
-      setWaiting(false);
+    function showDebug(data) {
+      debugContentEl.textContent = JSON.stringify(data, null, 2);
     }
 
-    async function createThread() {
-      const resp = await fetch(`${BASE_URL}/threads`, {
+    // === HTTP-Helper ========================================================
+    function buildHeaders() {
+      const headers = { "Content-Type": "application/json" };
+      if (API_KEY && API_KEY.trim() !== "") {
+        headers["x-api-key"] = API_KEY.trim();
+      }
+      return headers;
+    }
+
+    async function createThread(baseUrl) {
+      const res = await fetch(baseUrl + "/threads", {
         method: "POST",
         headers: buildHeaders(),
-        body: JSON.stringify({})
+        body: "{}",
       });
-      if (!resp.ok)
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error("Thread-Erstellung fehlgeschlagen: " + res.status + " – " + text);
+      }
+      const data = await res.json();
+      return data.thread_id;
+    }
+
+    /**
+     * Run/Resume den Graphen.
+     * - Beim ersten Aufruf: input = initialer ShitstormState, command = null
+     * - Bei weiteren Runden: input = null, command = { resume: "<Antwort>" }
+     */
+    async function runWait({ baseUrl, assistantId, input, command }) {
+      if (!threadId) {
+        threadId = await createThread(baseUrl);
+      }
+
+      const body = { assistant_id: assistantId };
+      if (input !== null && input !== undefined) {
+        body.input = input;
+      }
+      if (command !== null && command !== undefined) {
+        body.command = command;
+      }
+
+      const res = await fetch(`${baseUrl}/threads/${threadId}/runs/wait`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: JSON.stringify(body),
+      });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        const text = await res.text();
+        throw new Error("Antwort keine gültige JSON: " + text);
+      }
+
+      showDebug(data);
+
+      if (!res.ok || data.__error__) {
+        const err = data && data.__error__ ? (data.__error__.message || data.__error__.error) : res.statusText;
+        throw new Error("Server-Fehler: " + err);
+      }
+
+      return data;
+    }
+
+    // === Shitstorm-spezifische Logik ========================================
+
+    function renderStateAfterCommunity(state) {
+      // Community-Kommentare anzeigen, falls vorhanden
+      if (Array.isArray(state.last_community_comments) && state.last_community_comments.length) {
+        appendMessage("system", `Runde ${state.round} · Intensität: ${state.intensity.toFixed(1)} / 100`);
+        appendMessage("system", "Die Community kommentiert:");
+        state.last_community_comments.forEach((c) =>
+          appendMessage("community", String(c))
+        );
+      }
+
+      // Falls es eine Coach-Bewertung in der History gibt, die letzte anzeigen
+      if (Array.isArray(state.history) && state.history.length) {
+        const coachEntries = state.history.filter((h) => h.actor === "coach");
+        if (coachEntries.length) {
+          const last = coachEntries[coachEntries.length - 1];
+          appendMessage("coach", last.content || "");
+        }
+      }
+    }
+
+    function renderFinalSummary(state) {
+      finished = true;
+      setAnswerFormEnabled(false);
+
+      let outcomeText;
+      if (state.status === "user_won") {
+        outcomeText = "Der Shitstorm ist weitgehend abgeklungen.";
+      } else if (state.status === "user_lost") {
+        outcomeText = "Der Shitstorm ist außer Kontrolle geraten.";
+      } else {
+        outcomeText = "Die Simulation wurde beendet.";
+      }
+
+      appendMessage("system", `Simulation beendet · Endgültige Intensität: ${state.intensity.toFixed(1)} / 100`);
+      appendMessage("system", outcomeText);
+
+      if (state.summary) {
+        appendMessage("coach", state.summary);
+      }
+    }
+
+    async function startSimulation() {
+      const baseUrl = document.getElementById("baseUrl").value.trim().replace(/\/+$/, "");
+      const assistantId = document.getElementById("assistantId").value.trim();
+      const platform = document.getElementById("platform").value;
+      const cause = document.getElementById("cause").value.trim() || "nicht näher beschriebene Ursache";
+      const companyName = document.getElementById("companyName").value.trim() || "Dein Unternehmen";
+
+      if (!baseUrl || !assistantId) {
+        alert("Bitte Server-URL und Assistant/Graph-ID ausfüllen.");
+        return;
+      }
+
+      // UI zurücksetzen
+      chatEl.innerHTML = "";
+      debugContentEl.textContent = "";
+      threadId = null;
+      waitingForAnswer = false;
+      finished = false;
+      setAnswerFormEnabled(false);
+      setStatus("Simulation wird gestartet …");
+
+      appendMessage("system", `Plattform: ${platform}`);
+      appendMessage("system", `Unternehmen: ${companyName}`);
+      appendMessage("system", `Ursache des Shitstorms: ${cause}`);
+      appendMessage("system", "Ziel: Bringe die Intensität durch gute Antworten unter 10. Steigt sie über 90, ist der Shitstorm außer Kontrolle.");
+
+      const initialState = {
+        platform: platform,
+        cause: cause,
+        company_name: companyName,
+        round: 0,
+        history: [],
+        last_company_response: "",
+        last_community_comments: [],
+        politeness_score: 0.0,
+        responsibility_score: 0.0,
+        reaction_score: 0.0,
+        intensity: 70.0,
+        status: "running",
+        summary: "",
+      };
+
+      try {
+        const state = await runWait({
+          baseUrl,
+          assistantId,
+          input: initialState,
+          command: null,
+        });
+
+        renderStateAfterCommunity(state);
+
+        if (state.status && state.status !== "running") {
+          setStatus("Simulation beendet");
+          renderFinalSummary(state);
+          return;
+        }
+
+        if (state.__interrupt__) {
+          waitingForAnswer = true;
+          setStatus("Deine Antwort ist gefragt");
+          setAnswerFormEnabled(true);
+          answerInputEl.focus();
+        } else {
+          // Kein Interrupt – Graph läuft komplett durch (z.B. Auto-Simulation)
+          waitingForAnswer = false;
+          setAnswerFormEnabled(false);
+          setStatus("Simulation beendet");
+          renderFinalSummary(state);
+        }
+      } catch (err) {
+        console.error(err);
+        setStatus("Fehler beim Starten der Simulation");
+        appendMessage("system", "Fehler beim Starten der Simulation: " + err.message);
+        setAnswerFormEnabled(false);
+      }
+    }
+
+    async function sendCompanyAnswer(event) {
+      event.preventDefault();
+      if (!waitingForAnswer || finished) return;
+
+      const baseUrl = document.getElementById("baseUrl").value.trim().replace(/\/+$/, "");
+      const assistantId = document.getElementById("assistantId").value.trim();
+      const answer = answerInputEl.value.trim();
+
+      if (!answer) return;
+
+      appendMessage("company", answer);
+      answerInputEl.value = "";
+      setAnswerFormEnabled(false);
+      waitingForAnswer = false;
+      setStatus("Simulation läuft …");
+
+      try {
+        const state = await runWait({
+          baseUrl,
+          assistantId,
+          input: null,
+          command: { resume: answer },
+        });
+
+        renderStateAfterCommunity(state);
+
+        if (state.status && state.status !== "running") {
+          setStatus("Simulation beendet");
+          renderFinalSummary(state);
+          return;
+        }
+
+        if (state.__interrupt__) {
+          waitingForAnswer = true;
+          setStatus("Nächste Antwort ist gefragt");
+          setAnswerFormEnabled(true);
+          answerInputEl.focus();
+        } else {
+          waitingForAnswer = false;
+          setAnswerFormEnabled(false);
+          setStatus("Simulation beendet");
+          renderFinalSummary(state);
+        }
+      } catch (err) {
+        console.error(err);
+        appendMessage("system", "Fehler beim Fortsetzen der Simulation: " + err.message);
+        setStatus("Fehler");
+        setAnswerFormEnabled(false);
+      }
+    }
+
+    // === Event-Listener =====================================================
+    startBtn.addEventListener("click", startSimulation);
+    answerFormEl.addEventListener("submit", sendCompanyAnswer);
+  </script>
+</body>
+</html>
