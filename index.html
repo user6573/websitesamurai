@@ -2,1231 +2,326 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <title>X – Shitstorm-Simulation</title>
+  <title>Shitstorm-Simulation – Start</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color-scheme: dark;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      color-scheme: light;
     }
 
     body {
       margin: 0;
-      background: #000;
-      color: #e7e9ea;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-    }
-
-    .app {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      max-width: 1100px;
-    }
-
-    /* Zentrale X-Timeline */
-    .timeline {
-      width: min(600px, 100%);
-      border-left: 1px solid #2f3336;
-      border-right: 1px solid #2f3336;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      background: #000;
-    }
-
-    /* HEADER – wie "Home"-Header bei X */
-    .timeline-header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(0, 0, 0, 0.97);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid #2f3336;
-      padding: 0.6rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-    }
-
-    .x-logo {
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      overflow: hidden;
-      flex-shrink: 0;
-      display: flex;
       align-items: center;
       justify-content: center;
+      background: radial-gradient(circle at top, #bfdbfe, #e5e7eb 55%);
+      color: #111827;
     }
 
-    .x-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-
-    .timeline-header-title {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .timeline-header-title h1 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    .timeline-header-title span {
-      font-size: 0.78rem;
-      color: #71767b;
-    }
-
-    .pill {
-      margin-left: auto;
-      font-size: 0.75rem;
-      color: #71767b;
-    }
-
-    /* Kleine Statuszeile (Round & Intensität) */
-    .status-bar {
-      font-size: 0.8rem;
-      color: #71767b;
-      padding: 0.4rem 1rem;
-      border-bottom: 1px solid #2f3336;
-      display: flex;
-      justify-content: space-between;
-      gap: 0.5rem;
-    }
-
-    .status-bar span {
-      font-weight: 500;
-      color: #e7e9ea;
-    }
-
-    .feed {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    .feed::-webkit-scrollbar {
-      width: 6px;
-    }
-    .feed::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .feed::-webkit-scrollbar-thumb {
-      background: #4b5563;
-      border-radius: 999px;
-    }
-
-    /* Tweet-Style – flach wie bei X */
-    .tweet {
-      display: flex;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid #2f3336;
-      gap: 0.6rem;
-    }
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      background: #000;
-      border: 1px solid #2f3336;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      overflow: hidden;
-    }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      border-radius: 999px;
-      object-fit: cover;
-    }
-
-    .avatar.origin {
-      border-color: #d1d5db;
-    }
-
-    .avatar.community {
-      border-color: #f91880;
-    }
-
-    .avatar.company {
-      border-color: #1d9bf0;
-    }
-
-    .avatar.coach {
-      border-color: #facc15;
-    }
-
-    .tweet-body {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .tweet-header {
-      display: flex;
-      align-items: baseline;
-      gap: 0.35rem;
-      font-size: 0.85rem;
-    }
-
-    .tweet-name {
-      font-weight: 600;
-    }
-
-    .tweet-handle {
-      color: #71767b;
-      font-size: 0.8rem;
-    }
-
-    .tweet-meta {
-      color: #71767b;
-      font-size: 0.75rem;
-      margin-left: auto;
-    }
-
-    .tweet-text {
-      margin-top: 0.25rem;
-      font-size: 0.95rem;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .metrics {
-      margin-top: 0.4rem;
-      font-size: 0.78rem;
-      color: #9ca3af;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .metric-label {
-      border-radius: 999px;
-      border: 1px solid #2f3336;
-      padding: 0.1rem 0.55rem;
-    }
-
-    .delta-good {
-      color: #4ade80;
-      border-color: #16a34a;
-    }
-
-    .delta-bad {
-      color: #f97373;
-      border-color: #b91c1c;
-    }
-
-    .reaction-good {
-      color: #4ade80;
-    }
-
-    .reaction-bad {
-      color: #f97373;
-    }
-
-    .likes {
-      margin-top: 0.3rem;
-      font-size: 0.8rem;
-      color: #f91880;
-    }
-
-    /* ====== Kommentare / Replies – X-ähnlicher Look ====== */
-    .comments {
-      margin-top: 0.5rem;
-      font-size: 0.82rem;
-    }
-
-    .comments summary {
-      cursor: pointer;
-      list-style: none;
-      color: #1d9bf0;
-      font-size: 0.8rem;
-    }
-
-    .comments summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .comment {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.45rem;
-      margin-top: 0.45rem;
-      padding-left: 0.5rem;
-      border-left: 2px solid #2f3336;
-    }
-
-    .comment-avatar {
-      width: 28px;
-      height: 28px;
-      flex-shrink: 0;
-    }
-
-    .comment-body {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .comment-header {
-      display: flex;
-      align-items: baseline;
-      gap: 0.3rem;
-      font-size: 0.78rem;
-    }
-
-    .comment-name {
-      font-weight: 600;
-    }
-
-    .comment-handle {
-      color: #71767b;
-      font-size: 0.78rem;
-    }
-
-    .comment-dot {
-      color: #71767b;
-      font-size: 0.8rem;
-    }
-
-    .comment-meta {
-      color: #71767b;
-      font-size: 0.75rem;
-      margin-left: auto;
-    }
-
-    .comment-text {
-      margin-top: 0.15rem;
-      font-size: 0.9rem;
-      color: #e5e7eb;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .comment-muted {
-      color: #6b7280;
-      border-left-style: dashed;
-      padding-left: 0.5rem;
-      margin-top: 0.35rem;
-      font-size: 0.8rem;
-    }
-
-    /* Composer unten – Stil wie Tweet-Composer, aber unten statt oben */
-    .composer {
-      border-top: 1px solid #2f3336;
-      padding: 0.6rem 1rem 0.8rem;
-      display: flex;
-      gap: 0.6rem;
-      align-items: flex-start;
-      background: #000;
-    }
-
-    .composer.disabled {
-      opacity: 0.6;
-    }
-
-    .composer-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-      min-width: 0;
-    }
-
-    .composer-row {
-      display: flex;
-      gap: 0.5rem;
-      align-items: flex-start;
-    }
-
-    .composer-row textarea {
-      flex: 1;
-    }
-
-    .composer textarea {
+    .card {
+      background: #ffffff;
       border-radius: 1rem;
-      border: 1px solid #2f3336;
-      background: #000;
-      color: #e7e9ea;
+      padding: 1.7rem 1.9rem;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+      border: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      width: min(520px, 100% - 2rem);
+    }
+
+    .title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      color: #111827;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #4b5563;
+      text-align: center;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    label {
+      font-size: 0.8rem;
+      color: #4b5563;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    select,
+    input,
+    textarea {
+      border-radius: 0.75rem;
+      border: 1px solid #cbd5f5;
+      background: #f9fafb;
+      color: #111827;
+      padding: 0.55rem 0.75rem;
       font: inherit;
-      font-size: 0.95rem;
-      padding: 0.45rem 0.65rem;
-      min-height: 40px;
-      max-height: 200px;
-      resize: none;
-      overflow-y: auto;
+      font-size: 0.9rem;
       outline: none;
       box-sizing: border-box;
     }
 
-    .composer textarea:focus {
-      border-color: #1d9bf0;
-      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
+    select:focus,
+    input:focus,
+    textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.35);
+      background: #ffffff;
     }
 
-    .composer-hint {
-      font-size: 0.72rem;
-      color: #71767b;
-      max-width: 100%;
-      text-align: right;
+    textarea {
+      resize: none;          /* Höhe steuern wir per JS */
+      min-height: 2.6rem;
+      max-height: 220px;     /* Sicherheitsnetz, echte Höhe per JS */
+      line-height: 1.3;
     }
 
-    .btn-primary {
-      border-radius: 999px;
-      border: none;
-      background: #1d9bf0;
-      color: #fff;
-      font-weight: 600;
-      padding: 0.45rem 0.95rem;
-      font-size: 0.86rem;
-      cursor: pointer;
-      white-space: nowrap;
+    .row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
-    .btn-primary:hover:not(:disabled) {
-      background: #1a8cd8;
+    .row > label {
+      flex: 1 1 160px;
     }
 
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: default;
+    .hint {
+      font-size: 0.78rem;
+      color: #6b7280;
     }
 
-    .debug-card {
-      border-top: 1px solid #2f3336;
-      padding: 0.45rem 1rem 0.6rem;
-      font-size: 0.72rem;
-      color: #71767b;
-      max-height: 150px;
-      overflow: hidden;
-      background: #000;
-    }
-
-    .debug-card details {
-      cursor: pointer;
-    }
-
-    .debug-card pre {
-      margin: 0.25rem 0 0;
-      max-height: 110px;
-      overflow-y: auto;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 0.7rem;
-      color: #9ca3af;
-    }
-
-    .final-card {
-      border-top: 1px solid #2f3336;
-      margin-top: 0.5rem;
-    }
-
-    .final-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 0.3rem;
-    }
-
-    .final-good {
-      color: #4ade80;
-    }
-
-    .final-bad {
-      color: #f97373;
-    }
-
-    .final-summary {
-      font-size: 0.85rem;
-      color: #d1d5db;
+    button {
       margin-top: 0.2rem;
-      white-space: pre-wrap;
+      border: none;
+      border-radius: 999px;
+      padding: 0.6rem 1rem;
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #3b82f6, #22c55e);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+    }
+
+    button:hover {
+      filter: brightness(1.05);
+    }
+
+    .platform-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .platform-row small {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    /* YouTube-Felder: untereinander */
+    .yt-extra {
+      display: none;          /* wird per JS auf "flex" gesetzt */
+      flex-direction: column; /* immer untereinander */
+      gap: 0.75rem;
+    }
+
+    .yt-extra > label {
+      width: 100%;            /* jeweils volle Breite */
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="timeline">
-      <div class="timeline-header">
-        <div class="x-logo">
-          <img src="images/x.png" alt="X Logo" />
-        </div>
-        <div class="timeline-header-title">
-          <h1>Startseite</h1>
-          <span>X – Shitstorm-Simulation</span>
-        </div>
-        <div class="pill" id="statusPill">Status: lädt …</div>
-      </div>
-
-      <div class="status-bar">
-        <div>Runde: <span id="roundText">–</span></div>
-        <div>Intensität: <span id="intensityText">–</span></div>
-      </div>
-
-      <div class="feed" id="feed"></div>
-
-      <div class="composer disabled" id="composer">
-        <div class="avatar company">
-          <img src="images/company.jpg" alt="Unternehmen" />
-        </div>
-        <div class="composer-main">
-          <div class="composer-row">
-            <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
-            <button class="btn-primary" id="sendBtn" disabled>Posten</button>
-          </div>
-          <div class="composer-hint">
-            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
-          </div>
-        </div>
-      </div>
-
-      <div class="debug-card">
-        <details>
-          <summary>Debug-Antwort vom Server anzeigen</summary>
-          <pre id="debugOutput"></pre>
-        </details>
+  <div class="card">
+    <div>
+      <div class="title">Shitstorm-Simulation starten</div>
+      <div class="subtitle">
+        Definiere die Ausgangslage und wähle die Plattform, auf der du trainieren willst.
       </div>
     </div>
+
+    <form id="setupForm">
+      <div class="platform-row">
+        <label>
+          Plattform
+          <select id="platformSelect" required>
+            <option value="">Bitte wählen …</option>
+            <option value="x">Twitter X</option>
+            <option value="instagram">Instagram</option>
+            <option value="facebook">Facebook</option>
+            <option value="youtube">YouTube</option>
+          </select>
+        </label>
+        <small>
+          Je nach Auswahl wirst du auf <code>x.html</code>, <code>instagram.html</code>,
+          <code>facebook.html</code> oder <code>youtube.html</code> geleitet.
+        </small>
+      </div>
+
+      <div class="row">
+        <label>
+          Unternehmen
+          <input
+            id="companyInput"
+            placeholder="z.B. Dein Unternehmen GmbH"
+            value="Dein Unternehmen"
+          />
+        </label>
+      </div>
+
+      <!-- Standard-Fall: Ursache als freier Text (wird zum Auslöser-Post) -->
+      <label id="causeLabel">
+        Ursache des Shitstorms (wird als Post angezeigt)
+        <textarea
+          id="causeInput"
+          placeholder="z.B. &quot;Ich finde es unfassbar, dass ...&quot;"
+          data-autoresize
+        >Unangemessene Werbekampagne</textarea>
+      </label>
+
+      <!-- YouTube-Spezialfall: Video-Titel + Video-Inhalt -->
+      <div class="yt-extra" id="youtubeFields">
+        <label>
+          Titel des Videos
+          <input
+            id="ytTitleInput"
+            placeholder="z.B. &quot;Skandal bei &lt;Unternehmen&gt;&quot;"
+          />
+        </label>
+        <label>
+          Inhalt des Videos (Kurzbeschreibung)
+          <textarea
+            id="ytContentInput"
+            placeholder="Was passiert im Video? Warum sind die Leute wütend?"
+            data-autoresize
+          ></textarea>
+        </label>
+      </div>
+
+      <div class="hint">
+        Die Ursache wird auf der gewählten Plattform als Post dargestellt –
+        bei YouTube als Kombination aus Video-Titel und Video-Inhalt.
+        Die Simulation startet mit Intensität 70/100 und versucht, unter 10 zu kommen,
+        bevor die Lage über 90 explodiert.
+      </div>
+
+      <button type="submit">Simulation starten</button>
+    </form>
   </div>
 
   <script>
-    // ===================== KONFIGURATION ===========================
-const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                                   // LangSmith Key oder leer
+    const form = document.getElementById("setupForm");
+    const platformSelect = document.getElementById("platformSelect");
+    const companyInput = document.getElementById("companyInput");
+    const causeLabel = document.getElementById("causeLabel");
+    const causeInput = document.getElementById("causeInput");
+    const ytFields = document.getElementById("youtubeFields");
+    const ytTitleInput = document.getElementById("ytTitleInput");
+    const ytContentInput = document.getElementById("ytContentInput");
 
-    const COMPANY_AVATAR_SRC = "images/company.jpg";
-    const CAUSE_AVATAR_SRC = "images/1.png";
-    const USER_AVATAR_COUNT = 13;
-    let userAvatarIndex = 2; // 2..13 für Kommentare
-
-    function nextUserAvatarSrc() {
-      const src = "images/" + userAvatarIndex + ".png";
-      userAvatarIndex++;
-      if (userAvatarIndex > USER_AVATAR_COUNT) userAvatarIndex = 2;
-      return src;
-    }
-
-    // ===================== STATE & DOM =============================
-    let threadId = null;
-    let waitingForAnswer = false;
-    let finished = false;
-
-    const feedEl = document.getElementById("feed");
-    const composerEl = document.getElementById("composer");
-    const answerInputEl = document.getElementById("answerInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const statusPillEl = document.getElementById("statusPill");
-    const roundTextEl = document.getElementById("roundText");
-    const intensityTextEl = document.getElementById("intensityText");
-    const debugOutputEl = document.getElementById("debugOutput");
-
-    const simulation = {
-      company: "",
-      cause: "",
-      initialIntensity: 70,
-      initialComments: [],
-      responses: [],
-      finalOutcome: "",
-      finalSummary: ""
-    };
-
-    let prevIntensity = simulation.initialIntensity;
-
-    function buildHeaders() {
-      const h = { "Content-Type": "application/json" };
-      if (API_KEY && API_KEY.trim() !== "") {
-        h["x-api-key"] = API_KEY.trim();
-      }
-      return h;
-    }
-
-    function setStatus(text) {
-      statusPillEl.textContent = "Status: " + text;
-    }
-
-    function setComposerEnabled(on) {
-      if (on) {
-        composerEl.classList.remove("disabled");
-        answerInputEl.disabled = false;
-        sendBtn.disabled = false;
-        autoResizeAnswer();
-      } else {
-        composerEl.classList.add("disabled");
-        answerInputEl.disabled = true;
-        sendBtn.disabled = true;
-      }
-    }
-
-    function resetSimulation() {
-      simulation.company = "";
-      simulation.cause = "";
-      simulation.initialIntensity = 70;
-      simulation.initialComments = [];
-      simulation.responses = [];
-      simulation.finalOutcome = "";
-      simulation.finalSummary = "";
-      prevIntensity = simulation.initialIntensity;
-
-      feedEl.innerHTML = "";
-      roundTextEl.textContent = "–";
-      intensityTextEl.textContent = "–";
-      debugOutputEl.textContent = "";
-
-      threadId = null;
-      waitingForAnswer = false;
-      finished = false;
-      setComposerEnabled(false);
-      userAvatarIndex = 2;
-
-      answerInputEl.value = "";
-      autoResizeAnswer();
-    }
-
-    // =============== Auto-Resize für Company-Textfeld ==============
-    function autoResizeAnswer() {
-      const el = answerInputEl;
-      if (!el) return;
-      const max = 200; // muss zu max-height in CSS passen
+    // ---------- Textareas automatisch an Inhalt anpassen ----------
+    function autoResizeTextarea(el) {
+      const max = parseInt(el.dataset.maxHeight || "220", 10);
       el.style.height = "auto";
       const newHeight = Math.min(el.scrollHeight, max);
       el.style.height = newHeight + "px";
     }
 
-    // ===================== RENDERING ===============================
-
-    function clampLikes(n) {
-      return Math.max(3, Math.min(999, Math.round(n)));
+    function initAutoResize() {
+      document.querySelectorAll("textarea[data-autoresize]").forEach((ta) => {
+        autoResizeTextarea(ta);
+        ta.addEventListener("input", () => autoResizeTextarea(ta));
+      });
     }
 
-    function likesForCause(intensity) {
-      const base = 30;
-      const scaled = typeof intensity === "number" ? intensity * 1.5 : 70;
-      return clampLikes(base + scaled);
-    }
-
-    function likesForResponse(resp) {
-      const intensity = typeof resp.intensityAfter === "number" ? resp.intensityAfter : prevIntensity;
-      const overall = typeof resp.overall === "number" ? resp.overall : 50;
-      const delta = typeof resp.deltaIntensity === "number" ? resp.deltaIntensity : 0;
-      const score = overall + (delta < 0 ? -delta * 2 : -delta);
-      const base = 15 + (100 - intensity) * 0.3;
-      return clampLikes(base + score / 3);
-    }
-
-    function classifyOverall(overall) {
-      if (typeof overall !== "number") return "Noch keine Bewertung verfügbar.";
-      if (overall >= 80) return "Sehr gute Reaktion – starke Deeskalation.";
-      if (overall >= 65) return "Gute Reaktion – der Shitstorm beruhigt sich.";
-      if (overall >= 50) return "Durchwachsene Reaktion – leichte Entspannung.";
-      if (overall >= 35) return "Problematische Reaktion – die Lage bleibt kritisch.";
-      return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
-    }
-
-    // X-ähnliche Replies
-    function createCommentsBlock(comments, label) {
-      const details = document.createElement("details");
-      details.className = "comments";
-
-      const summary = document.createElement("summary");
-      if (Array.isArray(comments) && comments.length) {
-        summary.textContent = `Antworten anzeigen (${comments.length})`;
+    // ---------- Felder je nach Plattform umschalten ----------
+    function updatePlatformFields() {
+      const platform = platformSelect.value;
+      if (platform === "youtube") {
+        causeLabel.style.display = "none";
+        ytFields.style.display = "flex";
       } else {
-        summary.textContent = "Antworten anzeigen (0)";
+        causeLabel.style.display = "flex";
+        ytFields.style.display = "none";
       }
-      details.appendChild(summary);
-
-      if (Array.isArray(comments) && comments.length) {
-        comments.forEach((c, idx) => {
-          const row = document.createElement("div");
-          row.className = "comment";
-
-          const av = document.createElement("div");
-          av.classList.add("avatar", "community", "comment-avatar");
-          const img = document.createElement("img");
-          img.src = nextUserAvatarSrc();
-          img.alt = "Community-User";
-          av.appendChild(img);
-
-          const body = document.createElement("div");
-          body.className = "comment-body";
-
-          const header = document.createElement("div");
-          header.className = "comment-header";
-
-          const name = document.createElement("span");
-          name.className = "comment-name";
-          name.textContent = `User${idx + 1}`;
-
-          const handle = document.createElement("span");
-          handle.className = "comment-handle";
-          handle.textContent = ` @user${idx + 1}`;
-
-          const dot = document.createElement("span");
-          dot.className = "comment-dot";
-          dot.textContent = "·";
-
-          const meta = document.createElement("span");
-          meta.className = "comment-meta";
-          meta.textContent = "Antwort";
-
-          header.appendChild(name);
-          header.appendChild(handle);
-          header.appendChild(dot);
-          header.appendChild(meta);
-
-          const text = document.createElement("div");
-          text.className = "comment-text";
-          text.textContent = c;
-
-          body.appendChild(header);
-          body.appendChild(text);
-
-          row.appendChild(av);
-          row.appendChild(body);
-
-          details.appendChild(row);
-        });
-      } else {
-        const info = document.createElement("div");
-        info.className = "comment-muted";
-        info.textContent = "Noch keine Antworten.";
-        details.appendChild(info);
-      }
-
-      return details;
+      initAutoResize();
     }
 
-    function renderFeed() {
-      feedEl.innerHTML = "";
+    platformSelect.addEventListener("change", updatePlatformFields);
 
-      if (!simulation.cause) {
+    // ---------- Formular-Submit / Navigation ----------
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const platform = platformSelect.value;
+      if (!platform) {
+        alert("Bitte eine Plattform auswählen.");
         return;
       }
 
-      // 1) Auslöser-Post (Nutzer)
-      const causeTweet = document.createElement("article");
-      causeTweet.className = "tweet";
+      const company = companyInput.value.trim();
 
-      const causeAvatar = document.createElement("div");
-      causeAvatar.classList.add("avatar", "origin");
-      const causeImg = document.createElement("img");
-      causeImg.src = CAUSE_AVATAR_SRC;
-      causeImg.alt = "Nutzer";
-      causeAvatar.appendChild(causeImg);
-
-      const causeBody = document.createElement("div");
-      causeBody.classList.add("tweet-body");
-
-      const causeHeader = document.createElement("div");
-      causeHeader.classList.add("tweet-header");
-
-      const causeName = document.createElement("span");
-      causeName.classList.add("tweet-name");
-      causeName.textContent = "Random Nutzer";
-
-      const causeHandle = document.createElement("span");
-      causeHandle.classList.add("tweet-handle");
-      causeHandle.textContent = " @user123";
-
-      const causeMeta = document.createElement("span");
-      causeMeta.classList.add("tweet-meta");
-      causeMeta.textContent = "Auslöser des Shitstorms";
-
-      causeHeader.appendChild(causeName);
-      causeHeader.appendChild(causeHandle);
-      causeHeader.appendChild(causeMeta);
-
-      const causeText = document.createElement("div");
-      causeText.classList.add("tweet-text");
-      causeText.textContent = simulation.cause;
-
-      const causeLikes = document.createElement("div");
-      causeLikes.className = "likes";
-      causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
-
-      causeBody.appendChild(causeHeader);
-      causeBody.appendChild(causeText);
-      causeBody.appendChild(causeLikes);
-
-      if (simulation.initialComments && simulation.initialComments.length) {
-        const commentsBlock = createCommentsBlock(
-          simulation.initialComments,
-          "Kommentare zur ursprünglichen Beschwerde"
-        );
-        causeBody.appendChild(commentsBlock);
+      let target;
+      switch (platform) {
+        case "x":
+          target = "x.html";
+          break;
+        case "instagram":
+          target = "instagram.html";
+          break;
+        case "facebook":
+          target = "facebook.html";
+          break;
+        case "youtube":
+          target = "youtube.html";
+          break;
+        default:
+          alert("Unbekannte Plattform.");
+          return;
       }
 
-      causeTweet.appendChild(causeAvatar);
-      causeTweet.appendChild(causeBody);
-      feedEl.appendChild(causeTweet);
+      const params = new URLSearchParams();
+      if (company) params.set("company", company);
 
-      // 2) Für jede Unternehmensreaktion eine Runde
-      simulation.responses.forEach((resp, index) => {
-        const roundNumber = index + 1;
-
-        const tweet = document.createElement("article");
-        tweet.className = "tweet";
-
-        const avatar = document.createElement("div");
-        avatar.classList.add("avatar", "company");
-        const companyImg = document.createElement("img");
-        companyImg.src = COMPANY_AVATAR_SRC;
-        companyImg.alt = "Unternehmen";
-        avatar.appendChild(companyImg);
-
-        const body = document.createElement("div");
-        body.classList.add("tweet-body");
-
-        const header = document.createElement("div");
-        header.classList.add("tweet-header");
-
-        const name = document.createElement("span");
-        name.classList.add("tweet-name");
-        name.textContent = simulation.company || "Unternehmen";
-
-        const handle = document.createElement("span");
-        handle.classList.add("tweet-handle");
-        handle.textContent =
-          " @" +
-          (simulation.company || "brand").replace(/\s+/g, "").toLowerCase();
-
-        const meta = document.createElement("span");
-        meta.classList.add("tweet-meta");
-        meta.textContent = `Reaktion · Runde ${roundNumber}`;
-
-        header.appendChild(name);
-        header.appendChild(handle);
-        header.appendChild(meta);
-
-        const text = document.createElement("div");
-        text.classList.add("tweet-text");
-        text.textContent = resp.answer;
-
-        const metrics = document.createElement("div");
-        metrics.className = "metrics";
-
-        if (typeof resp.intensityAfter === "number") {
-          const intensitySpan = document.createElement("span");
-          intensitySpan.className = "metric-label";
-          intensitySpan.textContent = `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
-          metrics.appendChild(intensitySpan);
-        }
-
-        if (typeof resp.deltaIntensity === "number") {
-          const deltaSpan = document.createElement("span");
-          deltaSpan.className = "metric-label";
-          const delta = resp.deltaIntensity;
-          const deltaText = (delta >= 0 ? "+" : "") + delta.toFixed(1);
-          if (delta < 0) {
-            deltaSpan.classList.add("delta-good");
-            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (entschärft)`;
-          } else if (delta > 0) {
-            deltaSpan.classList.add("delta-bad");
-            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (verschärft)`;
-          } else {
-            deltaSpan.textContent = "Intensitätveränderung: ±0 (unverändert)";
-          }
-          metrics.appendChild(deltaSpan);
-        }
-
-        const overallSpan = document.createElement("span");
-        overallSpan.className = "metric-label";
-        const classification = classifyOverall(resp.overall);
-        overallSpan.textContent = classification;
-        if (typeof resp.overall === "number") {
-          if (resp.overall >= 65) overallSpan.classList.add("reaction-good");
-          else if (resp.overall < 50) overallSpan.classList.add("reaction-bad");
-        }
-        metrics.appendChild(overallSpan);
-
-        const likesDiv = document.createElement("div");
-        likesDiv.className = "likes";
-        likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
-
-        body.appendChild(header);
-        body.appendChild(text);
-        body.appendChild(metrics);
-        body.appendChild(likesDiv);
-
-        const commentsLabel = "Community-Kommentare zu dieser Reaktion";
-        const commentsBlock = createCommentsBlock(
-          resp.comments || [],
-          commentsLabel
-        );
-        body.appendChild(commentsBlock);
-
-        tweet.appendChild(avatar);
-        tweet.appendChild(body);
-
-        feedEl.appendChild(tweet);
-      });
-
-      // 3) Finale Karte
-      if (simulation.finalOutcome) {
-        const finalTweet = document.createElement("article");
-        finalTweet.className = "tweet final-card";
-
-        const avatar = document.createElement("div");
-        avatar.classList.add("avatar", "coach");
-        const coachImg = document.createElement("img");
-        coachImg.src = COMPANY_AVATAR_SRC;
-        coachImg.alt = "Coach";
-        avatar.appendChild(coachImg);
-
-        const body = document.createElement("div");
-        body.classList.add("tweet-body");
-
-        const title = document.createElement("div");
-        title.classList.add("final-title");
-        if (simulation.finalOutcome.includes("abgeflacht")) {
-          title.classList.add("final-good");
-        } else {
-          title.classList.add("final-bad");
-        }
-        title.textContent = simulation.finalOutcome;
-
-        const summary = document.createElement("div");
-        summary.classList.add("final-summary");
-        summary.textContent = simulation.finalSummary || "";
-
-        body.appendChild(title);
-        if (simulation.finalSummary) body.appendChild(summary);
-
-        finalTweet.appendChild(avatar);
-        finalTweet.appendChild(body);
-        feedEl.appendChild(finalTweet);
-      }
-    }
-
-    // ===================== HTTP / UTILS ============================
-
-    async function createThread() {
-      const res = await fetch(`${BASE_URL}/threads`, {
-        method: "POST",
-        headers: buildHeaders(),
-        body: "{}"
-      });
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(`Thread-Erstellung fehlgeschlagen: ${res.status} – ${txt}`);
-      }
-      const data = await res.json();
-      return data.thread_id || data.id;
-    }
-
-    async function runWait(body) {
-      if (!threadId) {
-        threadId = await createThread();
-      }
-
-      const res = await fetch(`${BASE_URL}/threads/${threadId}/runs/wait`, {
-        method: "POST",
-        headers: buildHeaders(),
-        body: JSON.stringify(Object.assign({ assistant_id: ASSISTANT_ID }, body))
-      });
-
-      let data;
-      try {
-        data = await res.json();
-      } catch (e) {
-        const txt = await res.text();
-        throw new Error("Antwort keine gültige JSON: " + txt);
-      }
-
-      debugOutputEl.textContent = JSON.stringify(data, null, 2);
-
-      if (!res.ok || data.__error__) {
-        const errMsg =
-          data.__error__ && (data.__error__.message || data.__error__.error)
-            ? data.__error__.message || data.__error__.error
-            : res.statusText;
-        throw new Error("Server-Fehler: " + errMsg);
-      }
-
-      return data;
-    }
-
-    function findState(obj, depth = 0) {
-      if (!obj || typeof obj !== "object" || depth > 6) return null;
-
-      const hasStateShape =
-        Object.prototype.hasOwnProperty.call(obj, "last_community_comments") ||
-        (Object.prototype.hasOwnProperty.call(obj, "platform") &&
-          Object.prototype.hasOwnProperty.call(obj, "cause") &&
-          Object.prototype.hasOwnProperty.call(obj, "intensity"));
-
-      if (hasStateShape) return obj;
-
-      for (const key of Object.keys(obj)) {
-        const child = obj[key];
-        if (child && typeof child === "object") {
-          const found = findState(child, depth + 1);
-          if (found) return found;
-        }
-      }
-
-      return null;
-    }
-
-    function hasInterrupt(result) {
-      return Array.isArray(result.__interrupt__) && result.__interrupt__.length > 0;
-    }
-
-    function extractLastCoachFeedback(history) {
-      if (!Array.isArray(history)) return "";
-      const coachEntries = history.filter((h) => h.actor === "coach");
-      if (!coachEntries.length) return "";
-      return coachEntries[coachEntries.length - 1].content || "";
-    }
-
-    function updateStatusBar(state) {
-      if (typeof state.round === "number") {
-        roundTextEl.textContent = String(state.round);
-      }
-      if (typeof state.intensity === "number") {
-        intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
-      }
-    }
-
-    // ===================== RESULT-HANDLING =========================
-
-    function processInitialResult(result) {
-      const state = findState(result) || {};
-      simulation.initialIntensity =
-        typeof state.intensity === "number" ? state.intensity : 70;
-      prevIntensity = simulation.initialIntensity;
-
-      if (Array.isArray(state.last_community_comments)) {
-        simulation.initialComments = state.last_community_comments.slice();
+      if (platform === "youtube") {
+        const title = ytTitleInput.value.trim();
+        const content = ytContentInput.value.trim();
+        const combined = [title, content].filter(Boolean).join(" – ");
+        if (combined) params.set("cause", combined);
+        if (title) params.set("videoTitle", title);
+        if (content) params.set("videoContent", content);
       } else {
-        simulation.initialComments = [];
+        const cause = causeInput.value.trim();
+        if (cause) params.set("cause", cause);
       }
 
-      updateStatusBar(state);
-      renderFeed();
+      params.set("auto", "1");
 
-      if (hasInterrupt(result)) {
-        waitingForAnswer = true;
-        setComposerEnabled(true);
-        setStatus("erste Antwort ist gefragt");
-        answerInputEl.focus();
-        autoResizeAnswer();
-      } else {
-        waitingForAnswer = false;
-        setComposerEnabled(false);
-        if (state.status && state.status !== "running") {
-          setStatus("beendet");
-        } else {
-          setStatus("läuft …");
-        }
-      }
-    }
-
-    function processResponseResult(result, resp) {
-      const state = findState(result) || {};
-
-      if (typeof state.politeness_score === "number") {
-        resp.politeness = state.politeness_score;
-      }
-      if (typeof state.responsibility_score === "number") {
-        resp.responsibility = state.responsibility_score;
-      }
-      if (typeof state.reaction_score === "number") {
-        resp.overall = state.reaction_score;
-      }
-
-      if (typeof state.intensity === "number") {
-        resp.intensityAfter = state.intensity;
-        resp.deltaIntensity = state.intensity - prevIntensity;
-        prevIntensity = state.intensity;
-      }
-
-      resp.feedback = extractLastCoachFeedback(state.history) || "";
-
-      if (Array.isArray(state.last_community_comments)) {
-        resp.comments = state.last_community_comments.slice();
-      } else {
-        resp.comments = resp.comments || [];
-      }
-
-      updateStatusBar(state);
-
-      if (state.status && state.status !== "running") {
-        finished = true;
-        waitingForAnswer = false;
-        setComposerEnabled(false);
-        simulation.finalOutcome =
-          state.status === "user_won"
-            ? "Der Shitstorm ist abgeflacht."
-            : "Der Shitstorm ist außer Kontrolle geraten.";
-        simulation.finalSummary = state.summary || "";
-        setStatus("beendet");
-      } else if (hasInterrupt(result)) {
-        waitingForAnswer = true;
-        setComposerEnabled(true);
-        setStatus("nächste Antwort ist gefragt");
-        answerInputEl.focus();
-        autoResizeAnswer();
-      } else {
-        waitingForAnswer = false;
-        setComposerEnabled(false);
-        setStatus("läuft …");
-      }
-
-      renderFeed();
-    }
-
-    // ===================== SIMULATION FLOW =========================
-
-    async function startSimulation(companyParam, causeParam) {
-      resetSimulation();
-      simulation.company = (companyParam || "Dein Unternehmen").trim();
-      simulation.cause =
-        (causeParam || "Unangemessene Werbekampagne").trim();
-
-      setStatus("startet …");
-      renderFeed();
-
-      const initialState = {
-        platform: "X/Twitter",
-        cause: simulation.cause,
-        company_name: simulation.company,
-        round: 0,
-        history: [],
-        last_company_response: "",
-        last_community_comments: [],
-        politeness_score: 0.0,
-        responsibility_score: 0.0,
-        reaction_score: 0.0,
-        intensity: 70.0,
-        status: "running",
-        summary: ""
-      };
-
-      try {
-        const result = await runWait({ input: initialState });
-        processInitialResult(result);
-      } catch (err) {
-        appendError(err.message);
-        setStatus("Fehler");
-      }
-    }
-
-    async function sendAnswer() {
-      if (!waitingForAnswer || finished) return;
-      const answer = answerInputEl.value.trim();
-      if (!answer) return;
-
-      const resp = {
-        id: simulation.responses.length + 1,
-        answer,
-        comments: [],
-        politeness: null,
-        responsibility: null,
-        overall: null,
-        feedback: "",
-        intensityAfter: null,
-        deltaIntensity: null
-      };
-      simulation.responses.push(resp);
-      renderFeed();
-
-      answerInputEl.value = "";
-      autoResizeAnswer();
-
-      setComposerEnabled(false);
-      waitingForAnswer = false;
-      setStatus("läuft …");
-
-      try {
-        const result = await runWait({ command: { resume: answer } });
-        processResponseResult(result, resp);
-      } catch (err) {
-        appendError(err.message);
-        setStatus("Fehler");
-        setComposerEnabled(false);
-      }
-    }
-
-    function appendError(message) {
-      const tweet = document.createElement("article");
-      tweet.className = "tweet";
-
-      const avatar = document.createElement("div");
-      avatar.classList.add("avatar");
-      const img = document.createElement("img");
-      img.src = COMPANY_AVATAR_SRC;
-      img.alt = "System";
-      avatar.appendChild(img);
-
-      const body = document.createElement("div");
-      body.classList.add("tweet-body");
-
-      const header = document.createElement("div");
-      header.classList.add("tweet-header");
-
-      const name = document.createElement("span");
-      name.classList.add("tweet-name");
-      name.textContent = "Systemfehler";
-
-      const handle = document.createElement("span");
-      handle.classList.add("tweet-handle");
-      handle.textContent = " @sim";
-
-      header.appendChild(name);
-      header.appendChild(handle);
-
-      const text = document.createElement("div");
-      text.classList.add("tweet-text");
-      text.textContent = message;
-
-      body.appendChild(header);
-      body.appendChild(text);
-      tweet.appendChild(avatar);
-      tweet.appendChild(body);
-      feedEl.appendChild(tweet);
-      feedEl.scrollTop = feedEl.scrollHeight;
-    }
-
-    // ===================== EVENTS / AUTOSTART ======================
-
-    sendBtn.addEventListener("click", (ev) => {
-      ev.preventDefault();
-      sendAnswer();
+      const url = params.toString() ? `${target}?${params.toString()}` : target;
+      window.location.href = url;
     });
 
-    answerInputEl.addEventListener("keydown", (ev) => {
-      if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
-        ev.preventDefault();
-        sendAnswer();
-      }
-    });
-
-    answerInputEl.addEventListener("input", autoResizeAnswer);
-
+    // ---------- Initialisierung ----------
     document.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(window.location.search);
-      const companyParam = params.get("company") || "Dein Unternehmen";
-      const causeParam =
-        params.get("cause") || "Unangemessene Werbekampagne";
-
-      autoResizeAnswer();
-
-      setTimeout(() => {
-        startSimulation(companyParam, causeParam);
-      }, 0);
+      initAutoResize();
+      updatePlatformFields();
     });
   </script>
 </body>
