@@ -434,7 +434,7 @@
       padding: 0.6rem 1rem 0.8rem;
       display: flex;
       gap: 0.6rem;
-      align-items: flex-start;
+      align-items: center; /* Avatar-Mitte mit Composer-Mitte ausrichten */
       background: #000;
     }
 
@@ -453,7 +453,7 @@
     .composer-row {
       display: flex;
       gap: 0.5rem;
-      align-items: flex-start;
+      align-items: center; /* Textfeld-Mitte mit Button-Mitte ausrichten */
     }
 
     .composer-row textarea {
@@ -933,7 +933,7 @@
     // ===================== KONFIGURATION ===========================
 const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
 const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                               // LangSmith Key oder leer
+const API_KEY = "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";                              // LangSmith Key oder leer
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -1015,7 +1015,7 @@ const API_KEY = "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";          
     }
 
     function setStatus(text) {
-      // Status wird aktuell nicht angezeigt, Funktion bleibt für evtl. spätere Nutzung
+      // aktuell keine sichtbare Status-Anzeige
     }
 
     function setComposerEnabled(on) {
@@ -1116,13 +1116,15 @@ const API_KEY = "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";          
     }
 
     // X-ähnliche Replies mit sinnvollen Namen
-    function createCommentsBlock(comments, label) {
+    function createCommentsBlock(comments, label, shouldOpen) {
       const details = document.createElement("details");
       details.className = "comments";
+      if (shouldOpen) {
+        details.open = true;
+      }
 
       const summary = document.createElement("summary");
       if (Array.isArray(comments) && comments.length) {
-        details.open = true;
         summary.textContent =
           comments.length === 1
             ? "1 Antwort"
@@ -1167,8 +1169,7 @@ const API_KEY = "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";          
 
           const meta = document.createElement("span");
           meta.className = "comment-meta";
-          meta.textContent = "1 Std.";
-
+          meta.textContent = "neu"; // <--- statt "1 Std."
           header.appendChild(name);
           header.appendChild(handle);
           header.appendChild(dot);
@@ -1202,6 +1203,10 @@ const API_KEY = "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";          
       if (!simulation.cause) {
         return;
       }
+
+      // Index des "jüngsten Posts":
+      // 0 = Auslöser-Post, 1..n = Responses
+      const newestIndex = simulation.responses.length;
 
       // 1) Auslöser-Post (Nutzer)
       const causeTweet = document.createElement("article");
@@ -1262,7 +1267,8 @@ const API_KEY = "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";          
       if (simulation.initialComments && simulation.initialComments.length) {
         const commentsBlock = createCommentsBlock(
           simulation.initialComments,
-          "Kommentare zur ursprünglichen Beschwerde"
+          "Kommentare zur ursprünglichen Beschwerde",
+          newestIndex === 0
         );
         causeBody.appendChild(commentsBlock);
       }
@@ -1274,6 +1280,7 @@ const API_KEY = "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";          
       // 2) Für jede Unternehmensreaktion eine Runde
       simulation.responses.forEach((resp, index) => {
         const roundNumber = index + 1;
+        const isNewest = (roundNumber === newestIndex);
 
         const tweet = document.createElement("article");
         tweet.className = "tweet";
@@ -1348,22 +1355,20 @@ const API_KEY = "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";          
           metrics.appendChild(timeoutSpan);
         }
 
-// Nur anzeigen, wenn es wirklich eine Bewertung gibt
-if (typeof resp.overall === "number") {
-  const overallSpan = document.createElement("span");
-  overallSpan.className = "metric-label";
-  const classification = classifyOverall(resp.overall);
-  overallSpan.textContent = classification;
+        // Nur anzeigen, wenn es wirklich eine Bewertung gibt
+        if (typeof resp.overall === "number") {
+          const overallSpan = document.createElement("span");
+          overallSpan.className = "metric-label";
+          const classification = classifyOverall(resp.overall);
+          overallSpan.textContent = classification;
 
-  if (resp.overall >= 65) {
-    overallSpan.classList.add("reaction-good");
-  } else if (resp.overall < 50) {
-    overallSpan.classList.add("reaction-bad");
-  }
-
-  metrics.appendChild(overallSpan);
-}
-
+          if (resp.overall >= 65) {
+            overallSpan.classList.add("reaction-good");
+          } else if (resp.overall < 50) {
+            overallSpan.classList.add("reaction-bad");
+          }
+          metrics.appendChild(overallSpan);
+        }
 
         const likesDiv = document.createElement("div");
         likesDiv.className = "likes";
@@ -1377,7 +1382,8 @@ if (typeof resp.overall === "number") {
         const commentsLabel = "Community-Kommentare zu dieser Reaktion";
         const commentsBlock = createCommentsBlock(
           resp.comments || [],
-          commentsLabel
+          commentsLabel,
+          isNewest
         );
         body.appendChild(commentsBlock);
 
