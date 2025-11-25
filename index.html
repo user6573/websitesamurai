@@ -2,326 +2,1224 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <title>Shitstorm-Simulation – Start</title>
+  <title>X – Shitstorm-Simulation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      color-scheme: light;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color-scheme: dark;
     }
 
     body {
       margin: 0;
+      background: #000;
+      color: #e7e9ea;
+      display: flex;
+      justify-content: center;
       min-height: 100vh;
+    }
+
+    .app {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 1100px;
+      padding: 1.25rem 0;
+    }
+
+    .timeline {
+      width: min(700px, 100%);
+      border-radius: 1.25rem;
+      border: 1px solid #2f3336;
+      background: #050608;
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.85);
+      max-height: calc(100vh - 2.5rem);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .timeline-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #050608;
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid #2f3336;
+      padding: 0.75rem 1rem;
       display: flex;
       align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at top, #bfdbfe, #e5e7eb 55%);
-      color: #111827;
-    }
-
-    .card {
-      background: #ffffff;
-      border-radius: 1rem;
-      padding: 1.7rem 1.9rem;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
-      border: 1px solid #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      gap: 1.1rem;
-      width: min(520px, 100% - 2rem);
-    }
-
-    .title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      text-align: center;
-      color: #111827;
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
-      color: #4b5563;
-      text-align: center;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.9rem;
-    }
-
-    label {
-      font-size: 0.8rem;
-      color: #4b5563;
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    select,
-    input,
-    textarea {
-      border-radius: 0.75rem;
-      border: 1px solid #cbd5f5;
-      background: #f9fafb;
-      color: #111827;
-      padding: 0.55rem 0.75rem;
-      font: inherit;
-      font-size: 0.9rem;
-      outline: none;
-      box-sizing: border-box;
-    }
-
-    select:focus,
-    input:focus,
-    textarea:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.35);
-      background: #ffffff;
-    }
-
-    textarea {
-      resize: none;          /* Höhe steuern wir per JS */
-      min-height: 2.6rem;
-      max-height: 220px;     /* Sicherheitsnetz, echte Höhe per JS */
-      line-height: 1.3;
-    }
-
-    .row {
-      display: flex;
       gap: 0.75rem;
-      flex-wrap: wrap;
     }
 
-    .row > label {
-      flex: 1 1 160px;
+    .x-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow:
+        0 6px 14px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(148, 163, 184, 0.5);
+      background: #000;
     }
 
-    .hint {
+    .x-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .timeline-header-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .timeline-header-title h1 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .timeline-header-title span {
       font-size: 0.78rem;
-      color: #6b7280;
+      color: #9ca3af;
     }
 
-    button {
-      margin-top: 0.2rem;
-      border: none;
+    .pill {
       border-radius: 999px;
-      padding: 0.6rem 1rem;
-      font: inherit;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      background: linear-gradient(135deg, #3b82f6, #22c55e);
-      color: #ffffff;
-      display: inline-flex;
+      border: 1px solid #4b5563;
+      padding: 0.18rem 0.7rem;
+      font-size: 0.75rem;
+      color: #e5e7eb;
+      margin-left: auto;
+      white-space: nowrap;
+      background: linear-gradient(135deg, #020617, #111827);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+    }
+
+    .status-bar {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      padding: 0.35rem 1rem 0.45rem;
+      border-bottom: 1px solid #2f3336;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      background: #050608;
+    }
+
+    .status-bar span {
+      font-weight: 500;
+      color: #e7e9ea;
+    }
+
+    .feed {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 0.4rem 0.7rem 0.4rem;
+      scrollbar-width: thin;
+      scrollbar-color: #4b5563 transparent;
+    }
+
+    .feed::-webkit-scrollbar {
+      width: 6px;
+    }
+    .feed::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .feed::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 999px;
+    }
+
+    .tweet {
+      display: flex;
+      padding: 0.7rem 0.8rem;
+      margin: 0.25rem 0.3rem;
+      gap: 0.6rem;
+      border-radius: 1rem;
+      border: 1px solid #2f3336;
+      background: #020617;
+      box-shadow:
+        0 12px 26px rgba(0, 0, 0, 0.9),
+        inset 0 0 0 1px rgba(15, 23, 42, 0.9);
+      transition:
+        transform 120ms ease-out,
+        box-shadow 120ms ease-out,
+        border-color 120ms ease-out,
+        background 150ms ease-out;
+    }
+
+    .tweet:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 18px 34px rgba(0, 0, 0, 1),
+        0 0 0 1px rgba(148, 163, 184, 0.5);
+      border-color: #4b5563;
+      background: #030712;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: #000;
+      border: 1px solid #4b5563;
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.3rem;
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.9),
+        inset 0 0 0 1px rgba(15, 23, 42, 0.9);
     }
 
-    button:hover {
-      filter: brightness(1.05);
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      object-fit: cover;
     }
 
-    .platform-row {
+    .avatar.origin {
+      border-color: #e5e7eb;
+    }
+
+    .avatar.community {
+      border-color: #f97316;
+    }
+
+    .avatar.company {
+      border-color: #38bdf8;
+    }
+
+    .avatar.coach {
+      border-color: #fbbf24;
+    }
+
+    .tweet-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tweet-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+      font-size: 0.82rem;
+    }
+
+    .tweet-name {
+      font-weight: 600;
+    }
+
+    .tweet-handle {
+      color: #9ca3af;
+      font-size: 0.78rem;
+    }
+
+    .tweet-meta {
+      color: #9ca3af;
+      font-size: 0.75rem;
+      margin-left: auto;
+    }
+
+    .tweet-text {
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .metrics {
+      margin-top: 0.4rem;
+      font-size: 0.78rem;
+      color: #9ca3af;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .metric-label {
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      padding: 0.1rem 0.55rem;
+      background: #020617;
+    }
+
+    .delta-good {
+      color: #4ade80;
+      border-color: #16a34a;
+    }
+
+    .delta-bad {
+      color: #f97373;
+      border-color: #b91c1c;
+    }
+
+    .reaction-good {
+      color: #4ade80;
+    }
+
+    .reaction-bad {
+      color: #f97373;
+    }
+
+    .likes {
+      margin-top: 0.3rem;
+      font-size: 0.8rem;
+      color: #fb7185;
+      text-shadow: 0 0 8px rgba(248, 113, 113, 0.35);
+    }
+
+    .comments {
+      margin-top: 0.5rem;
+      font-size: 0.82rem;
+    }
+
+    .comments summary {
+      cursor: pointer;
+      list-style: none;
+      color: #60a5fa;
+    }
+
+    .comments summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .comment {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+      margin-top: 0.35rem;
+      border-left: 2px solid #4b5563;
+      padding-left: 0.5rem;
+      font-size: 0.85rem;
+      color: #e5e7eb;
+    }
+
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .comment-muted {
+      color: #6b7280;
+      border-left-style: dashed;
+    }
+
+    .composer {
+      border-top: 1px solid #2f3336;
+      padding: 0.7rem 1rem 0.85rem;
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+      background: #050608;
+      box-shadow: 0 -16px 34px rgba(0, 0, 0, 0.9);
+    }
+
+    .composer.disabled {
+      opacity: 0.55;
+    }
+
+    .composer-main {
+      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
+      min-width: 0;
     }
 
-    .platform-row small {
-      font-size: 0.75rem;
-      color: #6b7280;
+    .composer-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
     }
 
-    /* YouTube-Felder: untereinander */
-    .yt-extra {
-      display: none;          /* wird per JS auf "flex" gesetzt */
-      flex-direction: column; /* immer untereinander */
-      gap: 0.75rem;
+    .composer-row textarea {
+      flex: 1;
     }
 
-    .yt-extra > label {
-      width: 100%;            /* jeweils volle Breite */
+    .composer textarea {
+      border-radius: 0.9rem;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e7e9ea;
+      font: inherit;
+      font-size: 0.9rem;
+      padding: 0.45rem 0.65rem;
+      min-height: 40px;
+      max-height: 200px;
+      resize: none;
+      overflow-y: auto;
+      outline: none;
+      box-sizing: border-box;
+      box-shadow:
+        inset 0 1px 2px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 1);
+      transition:
+        border-color 120ms ease-out,
+        box-shadow 120ms ease-out,
+        background 120ms ease-out;
+    }
+
+    .composer textarea:focus {
+      border-color: #60a5fa;
+      box-shadow:
+        0 0 0 1px rgba(96, 165, 250, 0.7),
+        0 0 20px rgba(37, 99, 235, 0.35),
+        inset 0 1px 2px rgba(0, 0, 0, 1);
+      background: #020617;
+    }
+
+    .composer-hint {
+      font-size: 0.72rem;
+      color: #9ca3af;
+      max-width: 100%;
+      text-align: right;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #1d9bf0, #22c55e);
+      color: #020617;
+      font-weight: 700;
+      padding: 0.45rem 0.95rem;
+      font-size: 0.86rem;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow:
+        0 6px 16px rgba(37, 99, 235, 0.7),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+      transform: translateY(0);
+      transition:
+        transform 80ms ease-out,
+        box-shadow 80ms ease-out,
+        filter 80ms ease-out;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      filter: brightness(1.07);
+      transform: translateY(-0.5px);
+      box-shadow:
+        0 9px 22px rgba(37, 99, 235, 0.85),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow:
+        0 4px 12px rgba(37, 99, 235, 0.7),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+    }
+
+    .debug-card {
+      border-top: 1px solid #2f3336;
+      padding: 0.45rem 1rem 0.6rem;
+      font-size: 0.72rem;
+      color: #71767b;
+      max-height: 150px;
+      overflow: hidden;
+      background: #020617;
+    }
+
+    .debug-card details {
+      cursor: pointer;
+    }
+
+    .debug-card pre {
+      margin: 0.25rem 0 0;
+      max-height: 110px;
+      overflow-y: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.7rem;
+      color: #9ca3af;
+    }
+
+    .final-card {
+      border-top: 1px solid #4b5563;
+      margin-top: 0.5rem;
+    }
+
+    .final-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .final-good {
+      color: #4ade80;
+    }
+
+    .final-bad {
+      color: #f97373;
+    }
+
+    .final-summary {
+      font-size: 0.85rem;
+      color: #d1d5db;
+      margin-top: 0.2rem;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div>
-      <div class="title">Shitstorm-Simulation starten</div>
-      <div class="subtitle">
-        Definiere die Ausgangslage und wähle die Plattform, auf der du trainieren willst.
+  <div class="app">
+    <div class="timeline">
+      <div class="timeline-header">
+        <div class="x-logo">
+          <img src="images/x.png" alt="X Logo" />
+        </div>
+        <div class="timeline-header-title">
+          <h1>X – Shitstorm-Simulation</h1>
+          <span>Trainiere deine Krisenkommunikation</span>
+        </div>
+        <div class="pill" id="statusPill">Status: lädt …</div>
+      </div>
+
+      <div class="status-bar">
+        <div>Runde: <span id="roundText">–</span></div>
+        <div>Intensität: <span id="intensityText">–</span></div>
+      </div>
+
+      <div class="feed" id="feed"></div>
+
+      <div class="composer disabled" id="composer">
+        <div class="avatar company">
+          <img src="images/company.jpg" alt="Unternehmen" />
+        </div>
+        <div class="composer-main">
+          <div class="composer-row">
+            <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
+            <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+          </div>
+          <div class="composer-hint">
+            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
+          </div>
+        </div>
+      </div>
+
+      <div class="debug-card">
+        <details>
+          <summary>Debug-Antwort vom Server anzeigen</summary>
+          <pre id="debugOutput"></pre>
+        </details>
       </div>
     </div>
-
-    <form id="setupForm">
-      <div class="platform-row">
-        <label>
-          Plattform
-          <select id="platformSelect" required>
-            <option value="">Bitte wählen …</option>
-            <option value="x">Twitter X</option>
-            <option value="instagram">Instagram</option>
-            <option value="facebook">Facebook</option>
-            <option value="youtube">YouTube</option>
-          </select>
-        </label>
-        <small>
-          Je nach Auswahl wirst du auf <code>x.html</code>, <code>instagram.html</code>,
-          <code>facebook.html</code> oder <code>youtube.html</code> geleitet.
-        </small>
-      </div>
-
-      <div class="row">
-        <label>
-          Unternehmen
-          <input
-            id="companyInput"
-            placeholder="z.B. Dein Unternehmen GmbH"
-            value="Dein Unternehmen"
-          />
-        </label>
-      </div>
-
-      <!-- Standard-Fall: Ursache als freier Text (wird zum Auslöser-Post) -->
-      <label id="causeLabel">
-        Ursache des Shitstorms (wird als Post angezeigt)
-        <textarea
-          id="causeInput"
-          placeholder="z.B. &quot;Ich finde es unfassbar, dass ...&quot;"
-          data-autoresize
-        >Unangemessene Werbekampagne</textarea>
-      </label>
-
-      <!-- YouTube-Spezialfall: Video-Titel + Video-Inhalt -->
-      <div class="yt-extra" id="youtubeFields">
-        <label>
-          Titel des Videos
-          <input
-            id="ytTitleInput"
-            placeholder="z.B. &quot;Skandal bei &lt;Unternehmen&gt;&quot;"
-          />
-        </label>
-        <label>
-          Inhalt des Videos (Kurzbeschreibung)
-          <textarea
-            id="ytContentInput"
-            placeholder="Was passiert im Video? Warum sind die Leute wütend?"
-            data-autoresize
-          ></textarea>
-        </label>
-      </div>
-
-      <div class="hint">
-        Die Ursache wird auf der gewählten Plattform als Post dargestellt –
-        bei YouTube als Kombination aus Video-Titel und Video-Inhalt.
-        Die Simulation startet mit Intensität 70/100 und versucht, unter 10 zu kommen,
-        bevor die Lage über 90 explodiert.
-      </div>
-
-      <button type="submit">Simulation starten</button>
-    </form>
   </div>
 
   <script>
-    const form = document.getElementById("setupForm");
-    const platformSelect = document.getElementById("platformSelect");
-    const companyInput = document.getElementById("companyInput");
-    const causeLabel = document.getElementById("causeLabel");
-    const causeInput = document.getElementById("causeInput");
-    const ytFields = document.getElementById("youtubeFields");
-    const ytTitleInput = document.getElementById("ytTitleInput");
-    const ytContentInput = document.getElementById("ytContentInput");
+    // ===================== KONFIGURATION ===========================
+const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
+const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
+const API_KEY = "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";                                  // LangSmith Key oder leer
 
-    // ---------- Textareas automatisch an Inhalt anpassen ----------
-    function autoResizeTextarea(el) {
-      const max = parseInt(el.dataset.maxHeight || "220", 10);
+    const COMPANY_AVATAR_SRC = "images/company.jpg";
+    const CAUSE_AVATAR_SRC = "images/1.png";
+    const USER_AVATAR_COUNT = 13;
+    let userAvatarIndex = 2; // 2..13 für Kommentare
+
+    function nextUserAvatarSrc() {
+      const src = "images/" + userAvatarIndex + ".png";
+      userAvatarIndex++;
+      if (userAvatarIndex > USER_AVATAR_COUNT) userAvatarIndex = 2;
+      return src;
+    }
+
+    // ===================== STATE & DOM =============================
+    let threadId = null;
+    let waitingForAnswer = false;
+    let finished = false;
+
+    const feedEl = document.getElementById("feed");
+    const composerEl = document.getElementById("composer");
+    const answerInputEl = document.getElementById("answerInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const statusPillEl = document.getElementById("statusPill");
+    const roundTextEl = document.getElementById("roundText");
+    const intensityTextEl = document.getElementById("intensityText");
+    const debugOutputEl = document.getElementById("debugOutput");
+
+    const simulation = {
+      company: "",
+      cause: "",
+      initialIntensity: 70,
+      initialComments: [],
+      responses: [],
+      finalOutcome: "",
+      finalSummary: ""
+    };
+
+    let prevIntensity = simulation.initialIntensity;
+
+    function buildHeaders() {
+      const h = { "Content-Type": "application/json" };
+      if (API_KEY && API_KEY.trim() !== "") {
+        h["x-api-key"] = API_KEY.trim();
+      }
+      return h;
+    }
+
+    function setStatus(text) {
+      statusPillEl.textContent = "Status: " + text;
+    }
+
+    function setComposerEnabled(on) {
+      if (on) {
+        composerEl.classList.remove("disabled");
+        answerInputEl.disabled = false;
+        sendBtn.disabled = false;
+        autoResizeAnswer();
+      } else {
+        composerEl.classList.add("disabled");
+        answerInputEl.disabled = true;
+        sendBtn.disabled = true;
+      }
+    }
+
+    function resetSimulation() {
+      simulation.company = "";
+      simulation.cause = "";
+      simulation.initialIntensity = 70;
+      simulation.initialComments = [];
+      simulation.responses = [];
+      simulation.finalOutcome = "";
+      simulation.finalSummary = "";
+      prevIntensity = simulation.initialIntensity;
+
+      feedEl.innerHTML = "";
+      roundTextEl.textContent = "–";
+      intensityTextEl.textContent = "–";
+      debugOutputEl.textContent = "";
+
+      threadId = null;
+      waitingForAnswer = false;
+      finished = false;
+      setComposerEnabled(false);
+      userAvatarIndex = 2;
+
+      answerInputEl.value = "";
+      autoResizeAnswer();
+    }
+
+    // =============== Auto-Resize für Company-Textfeld ==============
+    function autoResizeAnswer() {
+      const el = answerInputEl;
+      if (!el) return;
+      const max = 200; // muss zu max-height in CSS passen
       el.style.height = "auto";
       const newHeight = Math.min(el.scrollHeight, max);
       el.style.height = newHeight + "px";
     }
 
-    function initAutoResize() {
-      document.querySelectorAll("textarea[data-autoresize]").forEach((ta) => {
-        autoResizeTextarea(ta);
-        ta.addEventListener("input", () => autoResizeTextarea(ta));
-      });
+    // ===================== RENDERING ===============================
+
+    function clampLikes(n) {
+      return Math.max(3, Math.min(999, Math.round(n)));
     }
 
-    // ---------- Felder je nach Plattform umschalten ----------
-    function updatePlatformFields() {
-      const platform = platformSelect.value;
-      if (platform === "youtube") {
-        causeLabel.style.display = "none";
-        ytFields.style.display = "flex";
+    function likesForCause(intensity) {
+      const base = 30;
+      const scaled = typeof intensity === "number" ? intensity * 1.5 : 70;
+      return clampLikes(base + scaled);
+    }
+
+    function likesForResponse(resp) {
+      const intensity = typeof resp.intensityAfter === "number" ? resp.intensityAfter : prevIntensity;
+      const overall = typeof resp.overall === "number" ? resp.overall : 50;
+      const delta = typeof resp.deltaIntensity === "number" ? resp.deltaIntensity : 0;
+      const score = overall + (delta < 0 ? -delta * 2 : -delta);
+      const base = 15 + (100 - intensity) * 0.3;
+      return clampLikes(base + score / 3);
+    }
+
+    function classifyOverall(overall) {
+      if (typeof overall !== "number") return "Noch keine Bewertung verfügbar.";
+      if (overall >= 80) return "Sehr gute Reaktion – starke Deeskalation.";
+      if (overall >= 65) return "Gute Reaktion – der Shitstorm beruhigt sich.";
+      if (overall >= 50) return "Durchwachsene Reaktion – leichte Entspannung.";
+      if (overall >= 35) return "Problematische Reaktion – die Lage bleibt kritisch.";
+      return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
+    }
+
+    function createCommentsBlock(comments, label) {
+      const details = document.createElement("details");
+      details.className = "comments";
+
+      const summary = document.createElement("summary");
+      if (Array.isArray(comments) && comments.length) {
+        summary.textContent = `${label} (${comments.length})`;
       } else {
-        causeLabel.style.display = "flex";
-        ytFields.style.display = "none";
+        summary.textContent = `${label} (keine)`;
       }
-      initAutoResize();
+      details.appendChild(summary);
+
+      if (Array.isArray(comments) && comments.length) {
+        comments.forEach((c) => {
+          const row = document.createElement("div");
+          row.className = "comment";
+
+          const av = document.createElement("div");
+          av.classList.add("avatar", "community", "comment-avatar");
+          const img = document.createElement("img");
+          img.src = nextUserAvatarSrc();
+          img.alt = "Community-User";
+          av.appendChild(img);
+
+          const textSpan = document.createElement("span");
+          textSpan.textContent = c;
+
+          row.appendChild(av);
+          row.appendChild(textSpan);
+          details.appendChild(row);
+        });
+      } else {
+        const info = document.createElement("div");
+        info.className = "comment comment-muted";
+        info.textContent = "Noch keine Kommentare.";
+        details.appendChild(info);
+      }
+
+      return details;
     }
 
-    platformSelect.addEventListener("change", updatePlatformFields);
+    function renderFeed() {
+      feedEl.innerHTML = "";
 
-    // ---------- Formular-Submit / Navigation ----------
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      const platform = platformSelect.value;
-      if (!platform) {
-        alert("Bitte eine Plattform auswählen.");
+      if (!simulation.cause) {
         return;
       }
 
-      const company = companyInput.value.trim();
+      // 1) Auslöser-Post (Nutzer)
+      const causeTweet = document.createElement("article");
+      causeTweet.className = "tweet";
 
-      let target;
-      switch (platform) {
-        case "x":
-          target = "x.html";
-          break;
-        case "instagram":
-          target = "instagram.html";
-          break;
-        case "facebook":
-          target = "facebook.html";
-          break;
-        case "youtube":
-          target = "youtube.html";
-          break;
-        default:
-          alert("Unbekannte Plattform.");
-          return;
+      const causeAvatar = document.createElement("div");
+      causeAvatar.classList.add("avatar", "origin");
+      const causeImg = document.createElement("img");
+      causeImg.src = CAUSE_AVATAR_SRC;
+      causeImg.alt = "Nutzer";
+      causeAvatar.appendChild(causeImg);
+
+      const causeBody = document.createElement("div");
+      causeBody.classList.add("tweet-body");
+
+      const causeHeader = document.createElement("div");
+      causeHeader.classList.add("tweet-header");
+
+      const causeName = document.createElement("span");
+      causeName.classList.add("tweet-name");
+      causeName.textContent = "Random Nutzer";
+
+      const causeHandle = document.createElement("span");
+      causeHandle.classList.add("tweet-handle");
+      causeHandle.textContent = " @user123";
+
+      const causeMeta = document.createElement("span");
+      causeMeta.classList.add("tweet-meta");
+      causeMeta.textContent = "Auslöser des Shitstorms";
+
+      causeHeader.appendChild(causeName);
+      causeHeader.appendChild(causeHandle);
+      causeHeader.appendChild(causeMeta);
+
+      const causeText = document.createElement("div");
+      causeText.classList.add("tweet-text");
+      causeText.textContent = simulation.cause;
+
+      const causeLikes = document.createElement("div");
+      causeLikes.className = "likes";
+      causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
+
+      causeBody.appendChild(causeHeader);
+      causeBody.appendChild(causeText);
+      causeBody.appendChild(causeLikes);
+
+      if (simulation.initialComments && simulation.initialComments.length) {
+        const commentsBlock = createCommentsBlock(
+          simulation.initialComments,
+          "Kommentare zur ursprünglichen Beschwerde"
+        );
+        causeBody.appendChild(commentsBlock);
       }
 
-      const params = new URLSearchParams();
-      if (company) params.set("company", company);
+      causeTweet.appendChild(causeAvatar);
+      causeTweet.appendChild(causeBody);
+      feedEl.appendChild(causeTweet);
 
-      if (platform === "youtube") {
-        const title = ytTitleInput.value.trim();
-        const content = ytContentInput.value.trim();
-        const combined = [title, content].filter(Boolean).join(" – ");
-        if (combined) params.set("cause", combined);
-        if (title) params.set("videoTitle", title);
-        if (content) params.set("videoContent", content);
+      // 2) Für jede Unternehmensreaktion eine Runde
+      simulation.responses.forEach((resp, index) => {
+        const roundNumber = index + 1;
+
+        const tweet = document.createElement("article");
+        tweet.className = "tweet";
+
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "company");
+        const companyImg = document.createElement("img");
+        companyImg.src = COMPANY_AVATAR_SRC;
+        companyImg.alt = "Unternehmen";
+        avatar.appendChild(companyImg);
+
+        const body = document.createElement("div");
+        body.classList.add("tweet-body");
+
+        const header = document.createElement("div");
+        header.classList.add("tweet-header");
+
+        const name = document.createElement("span");
+        name.classList.add("tweet-name");
+        name.textContent = simulation.company || "Unternehmen";
+
+        const handle = document.createElement("span");
+        handle.classList.add("tweet-handle");
+        handle.textContent =
+          " @" +
+          (simulation.company || "brand").replace(/\s+/g, "").toLowerCase();
+
+        const meta = document.createElement("span");
+        meta.classList.add("tweet-meta");
+        meta.textContent = `Reaktion · Runde ${roundNumber}`;
+
+        header.appendChild(name);
+        header.appendChild(handle);
+        header.appendChild(meta);
+
+        const text = document.createElement("div");
+        text.classList.add("tweet-text");
+        text.textContent = resp.answer;
+
+        const metrics = document.createElement("div");
+        metrics.className = "metrics";
+
+        if (typeof resp.intensityAfter === "number") {
+          const intensitySpan = document.createElement("span");
+          intensitySpan.className = "metric-label";
+          intensitySpan.textContent = `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
+          metrics.appendChild(intensitySpan);
+        }
+
+        if (typeof resp.deltaIntensity === "number") {
+          const deltaSpan = document.createElement("span");
+          deltaSpan.className = "metric-label";
+          const delta = resp.deltaIntensity;
+          const deltaText = (delta >= 0 ? "+" : "") + delta.toFixed(1);
+          if (delta < 0) {
+            deltaSpan.classList.add("delta-good");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (entschärft)`;
+          } else if (delta > 0) {
+            deltaSpan.classList.add("delta-bad");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (verschärft)`;
+          } else {
+            deltaSpan.textContent = "Intensitätveränderung: ±0 (unverändert)";
+          }
+          metrics.appendChild(deltaSpan);
+        }
+
+        const overallSpan = document.createElement("span");
+        overallSpan.className = "metric-label";
+        const classification = classifyOverall(resp.overall);
+        overallSpan.textContent = classification;
+        if (typeof resp.overall === "number") {
+          if (resp.overall >= 65) overallSpan.classList.add("reaction-good");
+          else if (resp.overall < 50) overallSpan.classList.add("reaction-bad");
+        }
+        metrics.appendChild(overallSpan);
+
+        const likesDiv = document.createElement("div");
+        likesDiv.className = "likes";
+        likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
+
+        body.appendChild(header);
+        body.appendChild(text);
+        body.appendChild(metrics);
+        body.appendChild(likesDiv);
+
+        const commentsLabel = "Community-Kommentare zu dieser Reaktion";
+        const commentsBlock = createCommentsBlock(
+          resp.comments || [],
+          commentsLabel
+        );
+        body.appendChild(commentsBlock);
+
+        tweet.appendChild(avatar);
+        tweet.appendChild(body);
+
+        feedEl.appendChild(tweet);
+      });
+
+      // 3) Finale Karte
+      if (simulation.finalOutcome) {
+        const finalTweet = document.createElement("article");
+        finalTweet.className = "tweet final-card";
+
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "coach");
+        const coachImg = document.createElement("img");
+        coachImg.src = COMPANY_AVATAR_SRC;
+        coachImg.alt = "Coach";
+        avatar.appendChild(coachImg);
+
+        const body = document.createElement("div");
+        body.classList.add("tweet-body");
+
+        const title = document.createElement("div");
+        title.classList.add("final-title");
+        if (simulation.finalOutcome.includes("abgeflacht")) {
+          title.classList.add("final-good");
+        } else {
+          title.classList.add("final-bad");
+        }
+        title.textContent = simulation.finalOutcome;
+
+        const summary = document.createElement("div");
+        summary.classList.add("final-summary");
+        summary.textContent = simulation.finalSummary || "";
+
+        body.appendChild(title);
+        if (simulation.finalSummary) body.appendChild(summary);
+
+        finalTweet.appendChild(avatar);
+        finalTweet.appendChild(body);
+        feedEl.appendChild(finalTweet);
+      }
+    }
+
+    // ===================== HTTP / UTILS ============================
+
+    async function createThread() {
+      const res = await fetch(`${BASE_URL}/threads`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: "{}"
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`Thread-Erstellung fehlgeschlagen: ${res.status} – ${txt}`);
+      }
+      const data = await res.json();
+      return data.thread_id || data.id;
+    }
+
+    async function runWait(body) {
+      if (!threadId) {
+        threadId = await createThread();
+      }
+
+      const res = await fetch(`${BASE_URL}/threads/${threadId}/runs/wait`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: JSON.stringify(Object.assign({ assistant_id: ASSISTANT_ID }, body))
+      });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        const txt = await res.text();
+        throw new Error("Antwort keine gültige JSON: " + txt);
+      }
+
+      debugOutputEl.textContent = JSON.stringify(data, null, 2);
+
+      if (!res.ok || data.__error__) {
+        const errMsg =
+          data.__error__ && (data.__error__.message || data.__error__.error)
+            ? data.__error__.message || data.__error__.error
+            : res.statusText;
+        throw new Error("Server-Fehler: " + errMsg);
+      }
+
+      return data;
+    }
+
+    function findState(obj, depth = 0) {
+      if (!obj || typeof obj !== "object" || depth > 6) return null;
+
+      const hasStateShape =
+        Object.prototype.hasOwnProperty.call(obj, "last_community_comments") ||
+        (Object.prototype.hasOwnProperty.call(obj, "platform") &&
+          Object.prototype.hasOwnProperty.call(obj, "cause") &&
+          Object.prototype.hasOwnProperty.call(obj, "intensity"));
+
+      if (hasStateShape) return obj;
+
+      for (const key of Object.keys(obj)) {
+        const child = obj[key];
+        if (child && typeof child === "object") {
+          const found = findState(child, depth + 1);
+          if (found) return found;
+        }
+      }
+
+      return null;
+    }
+
+    function hasInterrupt(result) {
+      return Array.isArray(result.__interrupt__) && result.__interrupt__.length > 0;
+    }
+
+    function extractLastCoachFeedback(history) {
+      if (!Array.isArray(history)) return "";
+      const coachEntries = history.filter((h) => h.actor === "coach");
+      if (!coachEntries.length) return "";
+      return coachEntries[coachEntries.length - 1].content || "";
+    }
+
+    function updateStatusBar(state) {
+      if (typeof state.round === "number") {
+        roundTextEl.textContent = String(state.round);
+      }
+      if (typeof state.intensity === "number") {
+        intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
+      }
+    }
+
+    // ===================== RESULT-HANDLING =========================
+
+    function processInitialResult(result) {
+      const state = findState(result) || {};
+      simulation.initialIntensity =
+        typeof state.intensity === "number" ? state.intensity : 70;
+      prevIntensity = simulation.initialIntensity;
+
+      if (Array.isArray(state.last_community_comments)) {
+        simulation.initialComments = state.last_community_comments.slice();
       } else {
-        const cause = causeInput.value.trim();
-        if (cause) params.set("cause", cause);
+        simulation.initialComments = [];
       }
 
-      params.set("auto", "1");
+      updateStatusBar(state);
+      renderFeed();
 
-      const url = params.toString() ? `${target}?${params.toString()}` : target;
-      window.location.href = url;
+      if (hasInterrupt(result)) {
+        waitingForAnswer = true;
+        setComposerEnabled(true);
+        setStatus("erste Antwort ist gefragt");
+        answerInputEl.focus();
+        autoResizeAnswer();
+      } else {
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        if (state.status && state.status !== "running") {
+          setStatus("beendet");
+        } else {
+          setStatus("läuft …");
+        }
+      }
+    }
+
+    function processResponseResult(result, resp) {
+      const state = findState(result) || {};
+
+      if (typeof state.politeness_score === "number") {
+        resp.politeness = state.politeness_score;
+      }
+      if (typeof state.responsibility_score === "number") {
+        resp.responsibility = state.responsibility_score;
+      }
+      if (typeof state.reaction_score === "number") {
+        resp.overall = state.reaction_score;
+      }
+
+      if (typeof state.intensity === "number") {
+        resp.intensityAfter = state.intensity;
+        resp.deltaIntensity = state.intensity - prevIntensity;
+        prevIntensity = state.intensity;
+      }
+
+      resp.feedback = extractLastCoachFeedback(state.history) || "";
+
+      if (Array.isArray(state.last_community_comments)) {
+        resp.comments = state.last_community_comments.slice();
+      } else {
+        resp.comments = resp.comments || [];
+      }
+
+      updateStatusBar(state);
+
+      if (state.status && state.status !== "running") {
+        finished = true;
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        simulation.finalOutcome =
+          state.status === "user_won"
+            ? "Der Shitstorm ist abgeflacht."
+            : "Der Shitstorm ist außer Kontrolle geraten.";
+        simulation.finalSummary = state.summary || "";
+        setStatus("beendet");
+      } else if (hasInterrupt(result)) {
+        waitingForAnswer = true;
+        setComposerEnabled(true);
+        setStatus("nächste Antwort ist gefragt");
+        answerInputEl.focus();
+        autoResizeAnswer();
+      } else {
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        setStatus("läuft …");
+      }
+
+      renderFeed();
+    }
+
+    // ===================== SIMULATION FLOW =========================
+
+    async function startSimulation(companyParam, causeParam) {
+      resetSimulation();
+      simulation.company = (companyParam || "Dein Unternehmen").trim();
+      simulation.cause =
+        (causeParam || "Unangemessene Werbekampagne").trim();
+
+      setStatus("startet …");
+      renderFeed();
+
+      const initialState = {
+        platform: "X/Twitter",
+        cause: simulation.cause,
+        company_name: simulation.company,
+        round: 0,
+        history: [],
+        last_company_response: "",
+        last_community_comments: [],
+        politeness_score: 0.0,
+        responsibility_score: 0.0,
+        reaction_score: 0.0,
+        intensity: 70.0,
+        status: "running",
+        summary: ""
+      };
+
+      try {
+        const result = await runWait({ input: initialState });
+        processInitialResult(result);
+      } catch (err) {
+        appendError(err.message);
+        setStatus("Fehler");
+      }
+    }
+
+    async function sendAnswer() {
+      if (!waitingForAnswer || finished) return;
+      const answer = answerInputEl.value.trim();
+      if (!answer) return;
+
+      const resp = {
+        id: simulation.responses.length + 1,
+        answer,
+        comments: [],
+        politeness: null,
+        responsibility: null,
+        overall: null,
+        feedback: "",
+        intensityAfter: null,
+        deltaIntensity: null
+      };
+      simulation.responses.push(resp);
+      renderFeed();
+
+      answerInputEl.value = "";
+      autoResizeAnswer();
+
+      setComposerEnabled(false);
+      waitingForAnswer = false;
+      setStatus("läuft …");
+
+      try {
+        const result = await runWait({ command: { resume: answer } });
+        processResponseResult(result, resp);
+      } catch (err) {
+        appendError(err.message);
+        setStatus("Fehler");
+        setComposerEnabled(false);
+      }
+    }
+
+    function appendError(message) {
+      const tweet = document.createElement("article");
+      tweet.className = "tweet";
+
+      const avatar = document.createElement("div");
+      avatar.classList.add("avatar");
+      const img = document.createElement("img");
+      img.src = COMPANY_AVATAR_SRC;
+      img.alt = "System";
+      avatar.appendChild(img);
+
+      const body = document.createElement("div");
+      body.classList.add("tweet-body");
+
+      const header = document.createElement("div");
+      header.classList.add("tweet-header");
+
+      const name = document.createElement("span");
+      name.classList.add("tweet-name");
+      name.textContent = "Systemfehler";
+
+      const handle = document.createElement("span");
+      handle.classList.add("tweet-handle");
+      handle.textContent = " @sim";
+
+      header.appendChild(name);
+      header.appendChild(handle);
+
+      const text = document.createElement("div");
+      text.classList.add("tweet-text");
+      text.textContent = message;
+
+      body.appendChild(header);
+      body.appendChild(text);
+      tweet.appendChild(avatar);
+      tweet.appendChild(body);
+      feedEl.appendChild(tweet);
+      feedEl.scrollTop = feedEl.scrollHeight;
+    }
+
+    // ===================== EVENTS / AUTOSTART ======================
+
+    sendBtn.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      sendAnswer();
     });
 
-    // ---------- Initialisierung ----------
+    answerInputEl.addEventListener("keydown", (ev) => {
+      if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
+        ev.preventDefault();
+        sendAnswer();
+      }
+    });
+
+    answerInputEl.addEventListener("input", autoResizeAnswer);
+
     document.addEventListener("DOMContentLoaded", () => {
-      initAutoResize();
-      updatePlatformFields();
+      const params = new URLSearchParams(window.location.search);
+      const companyParam = params.get("company") || "Dein Unternehmen";
+      const causeParam =
+        params.get("cause") || "Unangemessene Werbekampagne";
+
+      autoResizeAnswer();
+
+      setTimeout(() => {
+        startSimulation(companyParam, causeParam);
+      }, 0);
     });
   </script>
 </body>
