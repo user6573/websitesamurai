@@ -856,8 +856,8 @@
               <img src="images/company.jpg" alt="Profil" />
             </div>
             <div class="sidebar-profile-info">
-              <span class="sidebar-profile-name">Fritz Schattel</span>
-              <span class="sidebar-profile-handle">@schattel18306</span>
+              <span class="sidebar-profile-name" id="sidebarProfileName">Unternehmen</span>
+              <span class="sidebar-profile-handle" id="sidebarProfileHandle">@company</span>
             </div>
             <div class="sidebar-profile-more">⋯</div>
           </div>
@@ -993,327 +993,822 @@
     </div>
   </div>
 
- <script>
-  // ===================== KONFIGURATION ===========================
+  <script>
+    // ===================== KONFIGURATION ===========================
+    const BASE_URL = "https://DEIN-LANGGRAPH-SERVER";  // z.B. "https://xyz.eu.langgraph.app"
+    const ASSISTANT_ID = "shitstorm";                  // Name aus langgraph.json
+    const API_KEY = "";                                // LangSmith Key oder leer
 
-const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                                // LangSmith Key oder leer                             // LangSmith Key oder leer
+    const COMPANY_AVATAR_SRC = "images/company.jpg";
+    const CAUSE_AVATAR_SRC = "images/1.png";
+    const USER_AVATAR_COUNT = 13;
+    let userAvatarIndex = 2; // 2..13 für Kommentare
 
-  const COMPANY_AVATAR_SRC = "images/company.jpg";
-  const CAUSE_AVATAR_SRC = "images/1.png";
-  const USER_AVATAR_COUNT = 13;
-  let userAvatarIndex = 2; // 2..13 für Kommentare
+    // maximale Wartezeit (ms) bis automatische Community-Reaktion
+    let maxWaitMs = null;
+    let reactionTimerId = null;
 
-  // Nutzer, der den ursprünglichen Shitstorm-Post absetzt
-  const CAUSE_USER = {
-    name: "Fritz Schattel",
-    handle: "schattel18306"
-  };
+    // Nutzer, der den ursprünglichen Shitstorm-Post absetzt
+    const CAUSE_USER = {
+      name: "Chris Wagner",
+      handle: "chris_wagner"
+    };
 
-  // Sinnvolle Profile für Community-Kommentare
-  const COMMENT_PROFILES = [
-    { name: "Lena Weber",    handle: "lenaweber" },
-    { name: "Jonas Müller",  handle: "jonasm" },
-    { name: "Sarah König",   handle: "sarahkoenig" },
-    { name: "Ali Demir",     handle: "alidemir" },
-    { name: "Mara Hoffmann", handle: "marahoffmann" },
-    { name: "Tom Richter",   handle: "tom_richter" },
-    { name: "Julia Meier",   handle: "juliameier" },
-    { name: "David Schulz",  handle: "d_schulz" },
-    { name: "Nina Bauer",    handle: "ninabauer" },
-    { name: "Philipp Lang",  handle: "philang" }
-  ];
+    // Sinnvolle Profile für Community-Kommentare
+    const COMMENT_PROFILES = [
+      { name: "Lena Weber",    handle: "lenaweber" },
+      { name: "Jonas Müller",  handle: "jonasm" },
+      { name: "Sarah König",   handle: "sarahkoenig" },
+      { name: "Ali Demir",     handle: "alidemir" },
+      { name: "Mara Hoffmann", handle: "marahoffmann" },
+      { name: "Tom Richter",   handle: "tom_richter" },
+      { name: "Julia Meier",   handle: "juliameier" },
+      { name: "David Schulz",  handle: "d_schulz" },
+      { name: "Nina Bauer",    handle: "ninabauer" },
+      { name: "Philipp Lang",  handle: "philang" }
+    ];
 
-  let commentProfileIndex = 0;
-  function nextCommentProfile() {
-    const profile = COMMENT_PROFILES[commentProfileIndex % COMMENT_PROFILES.length];
-    commentProfileIndex++;
-    return profile;
-  }
-
-  function nextUserAvatarSrc() {
-    const src = "images/" + userAvatarIndex + ".png";
-    userAvatarIndex++;
-    if (userAvatarIndex > USER_AVATAR_COUNT) userAvatarIndex = 2;
-    return src;
-  }
-
-  // ===================== STATE & DOM =============================
-  let threadId = null;
-  let waitingForAnswer = false;
-  let finished = false;
-
-  const feedEl = document.getElementById("feed");
-  const composerEl = document.getElementById("composer");
-  const answerInputEl = document.getElementById("answerInput");
-  const sendBtn = document.getElementById("sendBtn");
-  const statusPillEl = document.getElementById("statusPill");
-  const roundTextEl = document.getElementById("roundText");
-  const intensityTextEl = document.getElementById("intensityText");
-  const debugOutputEl = document.getElementById("debugOutput");
-
-  const simulation = {
-    company: "",
-    cause: "",
-    initialIntensity: 70,
-    initialComments: [],
-    responses: [],
-    finalOutcome: "",
-    finalSummary: ""
-  };
-
-  let prevIntensity = simulation.initialIntensity;
-
-  function buildHeaders() {
-    const h = { "Content-Type": "application/json" };
-    if (API_KEY && API_KEY.trim() !== "") {
-      h["x-api-key"] = API_KEY.trim();
+    let commentProfileIndex = 0;
+    function nextCommentProfile() {
+      const profile = COMMENT_PROFILES[commentProfileIndex % COMMENT_PROFILES.length];
+      commentProfileIndex++;
+      return profile;
     }
-    return h;
-  }
 
-  function setStatus(text) {
-    statusPillEl.textContent = "Status: " + text;
-  }
+    function nextUserAvatarSrc() {
+      const src = "images/" + userAvatarIndex + ".png";
+      userAvatarIndex++;
+      if (userAvatarIndex > USER_AVATAR_COUNT) userAvatarIndex = 2;
+      return src;
+    }
 
-  function setComposerEnabled(on) {
-    if (on) {
-      composerEl.classList.remove("disabled");
-      answerInputEl.disabled = false;
-      sendBtn.disabled = false;
+    // ===================== STATE & DOM =============================
+    let threadId = null;
+    let waitingForAnswer = false;
+    let finished = false;
+
+    const feedEl = document.getElementById("feed");
+    const composerEl = document.getElementById("composer");
+    const answerInputEl = document.getElementById("answerInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const statusPillEl = document.getElementById("statusPill");
+    const roundTextEl = document.getElementById("roundText");
+    const intensityTextEl = document.getElementById("intensityText");
+    const debugOutputEl = document.getElementById("debugOutput");
+    const sidebarProfileNameEl = document.getElementById("sidebarProfileName");
+    const sidebarProfileHandleEl = document.getElementById("sidebarProfileHandle");
+
+    const simulation = {
+      company: "",
+      cause: "",
+      initialIntensity: 70,
+      initialComments: [],
+      responses: [],
+      finalOutcome: "",
+      finalSummary: ""
+    };
+
+    let prevIntensity = simulation.initialIntensity;
+
+    function buildHeaders() {
+      const h = { "Content-Type": "application/json" };
+      if (API_KEY && API_KEY.trim() !== "") {
+        h["x-api-key"] = API_KEY.trim();
+      }
+      return h;
+    }
+
+    function setStatus(text) {
+      statusPillEl.textContent = "Status: " + text;
+    }
+
+    function setComposerEnabled(on) {
+      if (on) {
+        composerEl.classList.remove("disabled");
+        answerInputEl.disabled = false;
+        sendBtn.disabled = false;
+        autoResizeAnswer();
+      } else {
+        composerEl.classList.add("disabled");
+        answerInputEl.disabled = true;
+        sendBtn.disabled = true;
+      }
+    }
+
+    function clearReactionTimer() {
+      if (reactionTimerId !== null) {
+        clearTimeout(reactionTimerId);
+        reactionTimerId = null;
+      }
+    }
+
+    function scheduleReactionTimer() {
+      clearReactionTimer();
+      if (!maxWaitMs || maxWaitMs <= 0) return;
+      reactionTimerId = setTimeout(() => {
+        if (!waitingForAnswer || finished) return;
+        handleReactionTimeout();
+      }, maxWaitMs);
+    }
+
+    function resetSimulation() {
+      simulation.company = "";
+      simulation.cause = "";
+      simulation.initialIntensity = 70;
+      simulation.initialComments = [];
+      simulation.responses = [];
+      simulation.finalOutcome = "";
+      simulation.finalSummary = "";
+      prevIntensity = simulation.initialIntensity;
+
+      feedEl.innerHTML = "";
+      roundTextEl.textContent = "–";
+      intensityTextEl.textContent = "–";
+      debugOutputEl.textContent = "";
+
+      threadId = null;
+      waitingForAnswer = false;
+      finished = false;
+      setComposerEnabled(false);
+      userAvatarIndex = 2;
+      commentProfileIndex = 0;
+      clearReactionTimer();
+
+      answerInputEl.value = "";
       autoResizeAnswer();
-    } else {
-      composerEl.classList.add("disabled");
-      answerInputEl.disabled = true;
-      sendBtn.disabled = true;
     }
-  }
 
-  function resetSimulation() {
-    simulation.company = "";
-    simulation.cause = "";
-    simulation.initialIntensity = 70;
-    simulation.initialComments = [];
-    simulation.responses = [];
-    simulation.finalOutcome = "";
-    simulation.finalSummary = "";
-    prevIntensity = simulation.initialIntensity;
-
-    feedEl.innerHTML = "";
-    roundTextEl.textContent = "–";
-    intensityTextEl.textContent = "–";
-    debugOutputEl.textContent = "";
-
-    threadId = null;
-    waitingForAnswer = false;
-    finished = false;
-    setComposerEnabled(false);
-    userAvatarIndex = 2;
-    commentProfileIndex = 0;
-
-    answerInputEl.value = "";
-    autoResizeAnswer();
-  }
-
-  // =============== Auto-Resize für Company-Textfeld ==============
-  function autoResizeAnswer() {
-    const el = answerInputEl;
-    if (!el) return;
-    const max = 200; // muss zu max-height in CSS passen
-    el.style.height = "auto";
-    const newHeight = Math.min(el.scrollHeight, max);
-    el.style.height = newHeight + "px";
-  }
-
-  // ===================== RENDERING ===============================
-
-  function clampLikes(n) {
-    return Math.max(3, Math.min(999, Math.round(n)));
-  }
-
-  function likesForCause(intensity) {
-    const base = 30;
-    const scaled = typeof intensity === "number" ? intensity * 1.5 : 70;
-    return clampLikes(base + scaled);
-  }
-
-  function likesForResponse(resp) {
-    const intensity = typeof resp.intensityAfter === "number" ? resp.intensityAfter : prevIntensity;
-    const overall = typeof resp.overall === "number" ? resp.overall : 50;
-    const delta = typeof resp.deltaIntensity === "number" ? resp.deltaIntensity : 0;
-    const score = overall + (delta < 0 ? -delta * 2 : -delta);
-    const base = 15 + (100 - intensity) * 0.3;
-    return clampLikes(base + score / 3);
-  }
-
-  function classifyOverall(overall) {
-    if (typeof overall !== "number") return "Noch keine Bewertung verfügbar.";
-    if (overall >= 80) return "Sehr gute Reaktion – starke Deeskalation.";
-    if (overall >= 65) return "Gute Reaktion – der Shitstorm beruhigt sich.";
-    if (overall >= 50) return "Durchwachsene Reaktion – leichte Entspannung.";
-    if (overall >= 35) return "Problematische Reaktion – die Lage bleibt kritisch.";
-    return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
-  }
-
-  // X-ähnliche Replies mit sinnvollen Namen
-  function createCommentsBlock(comments, label) {
-    const details = document.createElement("details");
-    details.className = "comments";
-
-    const summary = document.createElement("summary");
-    if (Array.isArray(comments) && comments.length) {
-      details.open = true;
-      summary.textContent =
-        comments.length === 1
-          ? "1 Antwort"
-          : `${comments.length} Antworten`;
-    } else {
-      summary.textContent = "Noch keine Antworten";
-      summary.style.color = "#71767b";
+    // =============== Auto-Resize für Company-Textfeld ==============
+    function autoResizeAnswer() {
+      const el = answerInputEl;
+      if (!el) return;
+      const max = 200; // muss zu max-height in CSS passen
+      el.style.height = "auto";
+      const newHeight = Math.min(el.scrollHeight, max);
+      el.style.height = newHeight + "px";
     }
-    details.appendChild(summary);
 
-    if (Array.isArray(comments) && comments.length) {
-      comments.forEach((c) => {
-        const row = document.createElement("div");
-        row.className = "comment";
+    // ===================== RENDERING ===============================
 
-        const av = document.createElement("div");
-        av.classList.add("avatar", "community", "comment-avatar");
-        const img = document.createElement("img");
-        img.src = nextUserAvatarSrc();
-        img.alt = "Community-User";
-        av.appendChild(img);
+    function clampLikes(n) {
+      return Math.max(3, Math.min(999, Math.round(n)));
+    }
+
+    function likesForCause(intensity) {
+      const base = 30;
+      const scaled = typeof intensity === "number" ? intensity * 1.5 : 70;
+      return clampLikes(base + scaled);
+    }
+
+    function likesForResponse(resp) {
+      const intensity = typeof resp.intensityAfter === "number" ? resp.intensityAfter : prevIntensity;
+      const overall = typeof resp.overall === "number" ? resp.overall : 50;
+      const delta = typeof resp.deltaIntensity === "number" ? resp.deltaIntensity : 0;
+      const score = overall + (delta < 0 ? -delta * 2 : -delta);
+      const base = 15 + (100 - intensity) * 0.3;
+      return clampLikes(base + score / 3);
+    }
+
+    function classifyOverall(overall) {
+      if (typeof overall !== "number") return "Noch keine Bewertung verfügbar.";
+      if (overall >= 80) return "Sehr gute Reaktion – starke Deeskalation.";
+      if (overall >= 65) return "Gute Reaktion – der Shitstorm beruhigt sich.";
+      if (overall >= 50) return "Durchwachsene Reaktion – leichte Entspannung.";
+      if (overall >= 35) return "Problematische Reaktion – die Lage bleibt kritisch.";
+      return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
+    }
+
+    // X-ähnliche Replies mit sinnvollen Namen
+    function createCommentsBlock(comments, label) {
+      const details = document.createElement("details");
+      details.className = "comments";
+
+      const summary = document.createElement("summary");
+      if (Array.isArray(comments) && comments.length) {
+        details.open = true;
+        summary.textContent =
+          comments.length === 1
+            ? "1 Antwort"
+            : `${comments.length} Antworten`;
+      } else {
+        summary.textContent = "Noch keine Antworten";
+        summary.style.color = "#71767b";
+      }
+      details.appendChild(summary);
+
+      if (Array.isArray(comments) && comments.length) {
+        comments.forEach((c) => {
+          const row = document.createElement("div");
+          row.className = "comment";
+
+          const av = document.createElement("div");
+          av.classList.add("avatar", "community", "comment-avatar");
+          const img = document.createElement("img");
+          img.src = nextUserAvatarSrc();
+          img.alt = "Community-User";
+          av.appendChild(img);
+
+          const body = document.createElement("div");
+          body.className = "comment-body";
+
+          const header = document.createElement("div");
+          header.className = "comment-header";
+
+          const profile = nextCommentProfile();
+
+          const name = document.createElement("span");
+          name.className = "comment-name";
+          name.textContent = profile.name;
+
+          const handle = document.createElement("span");
+          handle.className = "comment-handle";
+          handle.textContent = `@${profile.handle}`;
+
+          const dot = document.createElement("span");
+          dot.className = "comment-dot";
+          dot.textContent = "·";
+
+          const meta = document.createElement("span");
+          meta.className = "comment-meta";
+          meta.textContent = "1 Std.";
+
+          header.appendChild(name);
+          header.appendChild(handle);
+          header.appendChild(dot);
+          header.appendChild(meta);
+
+          const text = document.createElement("div");
+          text.className = "comment-text";
+          text.textContent = c;
+
+          body.appendChild(header);
+          body.appendChild(text);
+
+          row.appendChild(av);
+          row.appendChild(body);
+
+          details.appendChild(row);
+        });
+      } else {
+        const info = document.createElement("div");
+        info.className = "comment-muted";
+        info.textContent = "Noch keine Antworten.";
+        details.appendChild(info);
+      }
+
+      return details;
+    }
+
+    function renderFeed() {
+      feedEl.innerHTML = "";
+
+      if (!simulation.cause) {
+        return;
+      }
+
+      // 1) Auslöser-Post (Nutzer)
+      const causeTweet = document.createElement("article");
+      causeTweet.className = "tweet";
+
+      const causeAvatar = document.createElement("div");
+      causeAvatar.classList.add("avatar", "origin");
+      const causeImg = document.createElement("img");
+      causeImg.src = CAUSE_AVATAR_SRC;
+      causeImg.alt = "Nutzer";
+      causeAvatar.appendChild(causeImg);
+
+      const causeBody = document.createElement("div");
+      causeBody.classList.add("tweet-body");
+
+      const causeHeader = document.createElement("div");
+      causeHeader.classList.add("tweet-header");
+
+      const causeName = document.createElement("span");
+      causeName.classList.add("tweet-name");
+      causeName.textContent = CAUSE_USER.name;
+
+      const causeHandle = document.createElement("span");
+      causeHandle.classList.add("tweet-handle");
+      causeHandle.textContent = " @" + CAUSE_USER.handle;
+
+      const causeMeta = document.createElement("span");
+      causeMeta.classList.add("tweet-meta");
+      causeMeta.textContent = "Auslöser des Shitstorms";
+
+      causeHeader.appendChild(causeName);
+      causeHeader.appendChild(causeHandle);
+      causeHeader.appendChild(causeMeta);
+
+      const causeText = document.createElement("div");
+      causeText.classList.add("tweet-text");
+      causeText.textContent = simulation.cause;
+
+      const causeLikes = document.createElement("div");
+      causeLikes.className = "likes";
+      causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
+
+      causeBody.appendChild(causeHeader);
+      causeBody.appendChild(causeText);
+      causeBody.appendChild(causeLikes);
+
+      if (simulation.initialComments && simulation.initialComments.length) {
+        const commentsBlock = createCommentsBlock(
+          simulation.initialComments,
+          "Kommentare zur ursprünglichen Beschwerde"
+        );
+        causeBody.appendChild(commentsBlock);
+      }
+
+      causeTweet.appendChild(causeAvatar);
+      causeTweet.appendChild(causeBody);
+      feedEl.appendChild(causeTweet);
+
+      // 2) Für jede Unternehmensreaktion eine Runde
+      simulation.responses.forEach((resp, index) => {
+        const roundNumber = index + 1;
+
+        const tweet = document.createElement("article");
+        tweet.className = "tweet";
+
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "company");
+        const companyImg = document.createElement("img");
+        companyImg.src = COMPANY_AVATAR_SRC;
+        companyImg.alt = "Unternehmen";
+        avatar.appendChild(companyImg);
 
         const body = document.createElement("div");
-        body.className = "comment-body";
+        body.classList.add("tweet-body");
 
         const header = document.createElement("div");
-        header.className = "comment-header";
-
-        const profile = nextCommentProfile();
+        header.classList.add("tweet-header");
 
         const name = document.createElement("span");
-        name.className = "comment-name";
-        name.textContent = profile.name;
+        name.classList.add("tweet-name");
+        name.textContent = simulation.company || "Unternehmen";
 
         const handle = document.createElement("span");
-        handle.className = "comment-handle";
-        handle.textContent = `@${profile.handle}`;
-
-        const dot = document.createElement("span");
-        dot.className = "comment-dot";
-        dot.textContent = "·";
+        handle.classList.add("tweet-handle");
+        handle.textContent =
+          " @" +
+          (simulation.company || "brand").replace(/\s+/g, "").toLowerCase().replace(/[^a-z0-9_]/g, "");
 
         const meta = document.createElement("span");
-        meta.className = "comment-meta";
-        meta.textContent = "1 Std.";
+        meta.classList.add("tweet-meta");
+        meta.textContent = `Reaktion · Runde ${roundNumber}`;
 
         header.appendChild(name);
         header.appendChild(handle);
-        header.appendChild(dot);
         header.appendChild(meta);
 
         const text = document.createElement("div");
-        text.className = "comment-text";
-        text.textContent = c;
+        text.classList.add("tweet-text");
+        text.textContent = resp.answer;
+
+        const metrics = document.createElement("div");
+        metrics.className = "metrics";
+
+        if (typeof resp.intensityAfter === "number") {
+          const intensitySpan = document.createElement("span");
+          intensitySpan.className = "metric-label";
+          intensitySpan.textContent = `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
+          metrics.appendChild(intensitySpan);
+        }
+
+        if (typeof resp.deltaIntensity === "number") {
+          const deltaSpan = document.createElement("span");
+          deltaSpan.className = "metric-label";
+          const delta = resp.deltaIntensity;
+          const deltaText = (delta >= 0 ? "+" : "") + delta.toFixed(1);
+          if (delta < 0) {
+            deltaSpan.classList.add("delta-good");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (entschärft)`;
+          } else if (delta > 0) {
+            deltaSpan.classList.add("delta-bad");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (verschärft)`;
+          } else {
+            deltaSpan.textContent = "Intensitätveränderung: ±0 (unverändert)";
+          }
+          metrics.appendChild(deltaSpan);
+        }
+
+        const overallSpan = document.createElement("span");
+        overallSpan.className = "metric-label";
+        const classification = classifyOverall(resp.overall);
+        overallSpan.textContent = classification;
+        if (typeof resp.overall === "number") {
+          if (resp.overall >= 65) overallSpan.classList.add("reaction-good");
+          else if (resp.overall < 50) overallSpan.classList.add("reaction-bad");
+        }
+        metrics.appendChild(overallSpan);
+
+        const likesDiv = document.createElement("div");
+        likesDiv.className = "likes";
+        likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
 
         body.appendChild(header);
         body.appendChild(text);
+        body.appendChild(metrics);
+        body.appendChild(likesDiv);
 
-        row.appendChild(av);
-        row.appendChild(body);
+        const commentsLabel = "Community-Kommentare zu dieser Reaktion";
+        const commentsBlock = createCommentsBlock(
+          resp.comments || [],
+          commentsLabel
+        );
+        body.appendChild(commentsBlock);
 
-        details.appendChild(row);
+        tweet.appendChild(avatar);
+        tweet.appendChild(body);
+
+        feedEl.appendChild(tweet);
       });
-    } else {
-      const info = document.createElement("div");
-      info.className = "comment-muted";
-      info.textContent = "Noch keine Antworten.";
-      details.appendChild(info);
+
+      // 3) Finale Karte
+      if (simulation.finalOutcome) {
+        const finalTweet = document.createElement("article");
+        finalTweet.className = "tweet final-card";
+
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "coach");
+        const coachImg = document.createElement("img");
+        coachImg.src = COMPANY_AVATAR_SRC;
+        coachImg.alt = "Coach";
+        avatar.appendChild(coachImg);
+
+        const body = document.createElement("div");
+        body.classList.add("tweet-body");
+
+        const title = document.createElement("div");
+        title.classList.add("final-title");
+        if (simulation.finalOutcome.includes("abgeflacht")) {
+          title.classList.add("final-good");
+        } else {
+          title.classList.add("final-bad");
+        }
+        title.textContent = simulation.finalOutcome;
+
+        const summary = document.createElement("div");
+        summary.classList.add("final-summary");
+        summary.textContent = simulation.finalSummary || "";
+
+        body.appendChild(title);
+        if (simulation.finalSummary) body.appendChild(summary);
+
+        finalTweet.appendChild(avatar);
+        finalTweet.appendChild(body);
+        feedEl.appendChild(finalTweet);
+      }
     }
 
-    return details;
-  }
+    // ===================== HTTP / UTILS ============================
 
-  function renderFeed() {
-    feedEl.innerHTML = "";
-
-    if (!simulation.cause) {
-      return;
+    async function createThread() {
+      const res = await fetch(`${BASE_URL}/threads`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: "{}"
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`Thread-Erstellung fehlgeschlagen: ${res.status} – ${txt}`);
+      }
+      const data = await res.json();
+      return data.thread_id || data.id;
     }
 
-    // 1) Auslöser-Post (Nutzer)
-    const causeTweet = document.createElement("article");
-    causeTweet.className = "tweet";
+    async function runWait(body) {
+      if (!threadId) {
+        threadId = await createThread();
+      }
 
-    const causeAvatar = document.createElement("div");
-    causeAvatar.classList.add("avatar", "origin");
-    const causeImg = document.createElement("img");
-    causeImg.src = CAUSE_AVATAR_SRC;
-    causeImg.alt = "Nutzer";
-    causeAvatar.appendChild(causeImg);
+      const res = await fetch(`${BASE_URL}/threads/${threadId}/runs/wait`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: JSON.stringify(Object.assign({ assistant_id: ASSISTANT_ID }, body))
+      });
 
-    const causeBody = document.createElement("div");
-    causeBody.classList.add("tweet-body");
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        const txt = await res.text();
+        throw new Error("Antwort keine gültige JSON: " + txt);
+      }
 
-    const causeHeader = document.createElement("div");
-    causeHeader.classList.add("tweet-header");
+      debugOutputEl.textContent = JSON.stringify(data, null, 2);
 
-    const causeName = document.createElement("span");
-    causeName.classList.add("tweet-name");
-    causeName.textContent = CAUSE_USER.name;
+      if (!res.ok || data.__error__) {
+        const errMsg =
+          data.__error__ && (data.__error__.message || data.__error__.error)
+            ? data.__error__.message || data.__error__.error
+            : res.statusText;
+        throw new Error("Server-Fehler: " + errMsg);
+      }
 
-    const causeHandle = document.createElement("span");
-    causeHandle.classList.add("tweet-handle");
-    causeHandle.textContent = " @" + CAUSE_USER.handle;
-
-    const causeMeta = document.createElement("span");
-    causeMeta.classList.add("tweet-meta");
-    causeMeta.textContent = "Auslöser des Shitstorms";
-
-    causeHeader.appendChild(causeName);
-    causeHeader.appendChild(causeHandle);
-    causeHeader.appendChild(causeMeta);
-
-    const causeText = document.createElement("div");
-    causeText.classList.add("tweet-text");
-    causeText.textContent = simulation.cause;
-
-    const causeLikes = document.createElement("div");
-    causeLikes.className = "likes";
-    causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
-
-    causeBody.appendChild(causeHeader);
-    causeBody.appendChild(causeText);
-    causeBody.appendChild(causeLikes);
-
-    if (simulation.initialComments && simulation.initialComments.length) {
-      const commentsBlock = createCommentsBlock(
-        simulation.initialComments,
-        "Kommentare zur ursprünglichen Beschwerde"
-      );
-      causeBody.appendChild(commentsBlock);
+      return data;
     }
 
-    causeTweet.appendChild(causeAvatar);
-    causeTweet.appendChild(causeBody);
-    feedEl.appendChild(causeTweet);
+    function findState(obj, depth = 0) {
+      if (!obj || typeof obj !== "object" || depth > 6) return null;
 
-    // 2) Für jede Unternehmensreaktion eine Runde
-    simulation.responses.forEach((resp, index) => {
-      const roundNumber = index + 1;
+      const hasStateShape =
+        Object.prototype.hasOwnProperty.call(obj, "last_community_comments") ||
+        (Object.prototype.hasOwnProperty.call(obj, "platform") &&
+          Object.prototype.hasOwnProperty.call(obj, "cause") &&
+          Object.prototype.hasOwnProperty.call(obj, "intensity"));
 
+      if (hasStateShape) return obj;
+
+      for (const key of Object.keys(obj)) {
+        const child = obj[key];
+        if (child && typeof child === "object") {
+          const found = findState(child, depth + 1);
+          if (found) return found;
+        }
+      }
+
+      return null;
+    }
+
+    function hasInterrupt(result) {
+      return Array.isArray(result.__interrupt__) && result.__interrupt__.length > 0;
+    }
+
+    function extractLastCoachFeedback(history) {
+      if (!Array.isArray(history)) return "";
+      const coachEntries = history.filter((h) => h.actor === "coach");
+      if (!coachEntries.length) return "";
+      return coachEntries[coachEntries.length - 1].content || "";
+    }
+
+    function updateStatusBar(state) {
+      if (typeof state.round === "number") {
+        roundTextEl.textContent = String(state.round);
+      }
+      if (typeof state.intensity === "number") {
+        intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
+      }
+    }
+
+    // ===================== RESULT-HANDLING =========================
+
+    function processInitialResult(result) {
+      const state = findState(result) || {};
+      simulation.initialIntensity =
+        typeof state.intensity === "number" ? state.intensity : 70;
+      prevIntensity = simulation.initialIntensity;
+
+      if (Array.isArray(state.last_community_comments)) {
+        simulation.initialComments = state.last_community_comments.slice();
+      } else {
+        simulation.initialComments = [];
+      }
+
+      updateStatusBar(state);
+      renderFeed();
+
+      if (hasInterrupt(result)) {
+        waitingForAnswer = true;
+        setComposerEnabled(true);
+        setStatus("erste Antwort ist gefragt");
+        answerInputEl.focus();
+        autoResizeAnswer();
+        scheduleReactionTimer();
+      } else {
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        if (state.status && state.status !== "running") {
+          setStatus("beendet");
+        } else {
+          setStatus("läuft …");
+        }
+      }
+    }
+
+    function processResponseResult(result, resp) {
+      const state = findState(result) || {};
+
+      if (typeof state.politeness_score === "number") {
+        resp.politeness = state.politeness_score;
+      }
+      if (typeof state.responsibility_score === "number") {
+        resp.responsibility = state.responsibility_score;
+      }
+      if (typeof state.reaction_score === "number") {
+        resp.overall = state.reaction_score;
+      }
+
+      if (typeof state.intensity === "number") {
+        resp.intensityAfter = state.intensity;
+        resp.deltaIntensity = state.intensity - prevIntensity;
+        prevIntensity = state.intensity;
+      }
+
+      resp.feedback = extractLastCoachFeedback(state.history) || "";
+
+      if (Array.isArray(state.last_community_comments)) {
+        resp.comments = state.last_community_comments.slice();
+      } else {
+        resp.comments = resp.comments || [];
+      }
+
+      updateStatusBar(state);
+
+      if (state.status && state.status !== "running") {
+        finished = true;
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        simulation.finalOutcome =
+          state.status === "user_won"
+            ? "Der Shitstorm ist abgeflacht."
+            : "Der Shitstorm ist außer Kontrolle geraten.";
+        simulation.finalSummary = state.summary || "";
+        setStatus("beendet");
+      } else if (hasInterrupt(result)) {
+        waitingForAnswer = true;
+        setComposerEnabled(true);
+        setStatus("nächste Antwort ist gefragt");
+        answerInputEl.focus();
+        autoResizeAnswer();
+        scheduleReactionTimer();
+      } else {
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        setStatus("läuft …");
+      }
+
+      renderFeed();
+    }
+
+    function processTimeoutResult(result) {
+      const state = findState(result) || {};
+
+      let newComments = [];
+      if (Array.isArray(state.last_community_comments)) {
+        newComments = state.last_community_comments.slice();
+      }
+
+      if (newComments.length) {
+        if (simulation.responses.length === 0) {
+          simulation.initialComments = (simulation.initialComments || []).concat(newComments);
+        } else {
+          const lastResp = simulation.responses[simulation.responses.length - 1];
+          lastResp.comments = (lastResp.comments || []).concat(newComments);
+        }
+      }
+
+      if (typeof state.intensity === "number") {
+        prevIntensity = state.intensity;
+      }
+
+      updateStatusBar(state);
+
+      if (state.status && state.status !== "running") {
+        finished = true;
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        simulation.finalOutcome =
+          state.status === "user_won"
+            ? "Der Shitstorm ist abgeflacht."
+            : "Der Shitstorm ist außer Kontrolle geraten.";
+        simulation.finalSummary = state.summary || "";
+        setStatus("beendet");
+      } else if (hasInterrupt(result)) {
+        waitingForAnswer = true;
+        setComposerEnabled(true);
+        setStatus("Community hat erneut reagiert – jetzt bist du wieder dran");
+        answerInputEl.focus();
+        autoResizeAnswer();
+        scheduleReactionTimer();
+      } else {
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        setStatus("läuft …");
+      }
+
+      renderFeed();
+    }
+
+    // ===================== SIMULATION FLOW =========================
+
+    async function startSimulation(companyParam, causeParam) {
+      resetSimulation();
+      simulation.company = (companyParam || "Dein Unternehmen").trim();
+      simulation.cause =
+        (causeParam || "Unangemessene Werbekampagne").trim();
+
+      // Sidebar-Name & Handle setzen
+      const companyName = simulation.company || "Dein Unternehmen";
+      const rawHandle = companyName
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(/[^a-z0-9_]/g, "");
+      const handleText = rawHandle || "brand";
+
+      if (sidebarProfileNameEl) sidebarProfileNameEl.textContent = companyName;
+      if (sidebarProfileHandleEl) sidebarProfileHandleEl.textContent = "@" + handleText;
+
+      setStatus("startet …");
+      renderFeed();
+
+      const initialState = {
+        platform: "X/Twitter",
+        cause: simulation.cause,
+        company_name: simulation.company,
+        round: 0,
+        history: [],
+        last_company_response: "",
+        last_community_comments: [],
+        politeness_score: 0.0,
+        responsibility_score: 0.0,
+        reaction_score: 0.0,
+        intensity: 70.0,
+        status: "running",
+        summary: ""
+      };
+
+      try {
+        const result = await runWait({ input: initialState });
+        processInitialResult(result);
+      } catch (err) {
+        appendError(err.message);
+        setStatus("Fehler");
+      }
+    }
+
+    async function sendAnswer() {
+      if (!waitingForAnswer || finished) return;
+      const answer = answerInputEl.value.trim();
+      if (!answer) return;
+
+      const resp = {
+        id: simulation.responses.length + 1,
+        answer,
+        comments: [],
+        politeness: null,
+        responsibility: null,
+        overall: null,
+        feedback: "",
+        intensityAfter: null,
+        deltaIntensity: null
+      };
+      simulation.responses.push(resp);
+      renderFeed();
+
+      answerInputEl.value = "";
+      autoResizeAnswer();
+
+      setComposerEnabled(false);
+      waitingForAnswer = false;
+      setStatus("läuft …");
+      clearReactionTimer();
+
+      try {
+        const result = await runWait({ command: { resume: answer } });
+        processResponseResult(result, resp);
+      } catch (err) {
+        appendError(err.message);
+        setStatus("Fehler");
+        setComposerEnabled(false);
+      }
+    }
+
+    async function handleReactionTimeout() {
+      if (!waitingForAnswer || finished) return;
+      clearReactionTimer();
+      waitingForAnswer = false;
+      setComposerEnabled(false);
+      setStatus("Reaktionszeit überschritten – Community reagiert weiter …");
+
+      try {
+        const result = await runWait({
+          command: {
+            resume: "[AUTOMATISCHE COMMUNITY-REAKTION: Unternehmen hat nicht innerhalb der vereinbarten Zeit geantwortet]"
+          }
+        });
+        processTimeoutResult(result);
+      } catch (err) {
+        appendError(err.message);
+        setStatus("Fehler");
+      }
+    }
+
+    function appendError(message) {
       const tweet = document.createElement("article");
       tweet.className = "tweet";
 
       const avatar = document.createElement("div");
-      avatar.classList.add("avatar", "company");
-      const companyImg = document.createElement("img");
-      companyImg.src = COMPANY_AVATAR_SRC;
-      companyImg.alt = "Unternehmen";
-      avatar.appendChild(companyImg);
+      avatar.classList.add("avatar");
+      const img = document.createElement("img");
+      img.src = COMPANY_AVATAR_SRC;
+      img.alt = "System";
+      avatar.appendChild(img);
 
       const body = document.createElement("div");
       body.classList.add("tweet-body");
@@ -1323,441 +1818,62 @@ const API_KEY = "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";          
 
       const name = document.createElement("span");
       name.classList.add("tweet-name");
-      name.textContent = simulation.company || "Unternehmen";
+      name.textContent = "Systemfehler";
 
       const handle = document.createElement("span");
       handle.classList.add("tweet-handle");
-      handle.textContent =
-        " @" +
-        (simulation.company || "brand").replace(/\s+/g, "").toLowerCase();
-
-      const meta = document.createElement("span");
-      meta.classList.add("tweet-meta");
-      meta.textContent = `Reaktion · Runde ${roundNumber}`;
+      handle.textContent = " @sim";
 
       header.appendChild(name);
       header.appendChild(handle);
-      header.appendChild(meta);
 
       const text = document.createElement("div");
       text.classList.add("tweet-text");
-      text.textContent = resp.answer;
-
-      const metrics = document.createElement("div");
-      metrics.className = "metrics";
-
-      if (typeof resp.intensityAfter === "number") {
-        const intensitySpan = document.createElement("span");
-        intensitySpan.className = "metric-label";
-        intensitySpan.textContent = `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
-        metrics.appendChild(intensitySpan);
-      }
-
-      if (typeof resp.deltaIntensity === "number") {
-        const deltaSpan = document.createElement("span");
-        deltaSpan.className = "metric-label";
-        const delta = resp.deltaIntensity;
-        const deltaText = (delta >= 0 ? "+" : "") + delta.toFixed(1);
-        if (delta < 0) {
-          deltaSpan.classList.add("delta-good");
-          deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (entschärft)`;
-        } else if (delta > 0) {
-          deltaSpan.classList.add("delta-bad");
-          deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (verschärft)`;
-        } else {
-          deltaSpan.textContent = "Intensitätveränderung: ±0 (unverändert)";
-        }
-        metrics.appendChild(deltaSpan);
-      }
-
-      const overallSpan = document.createElement("span");
-      overallSpan.className = "metric-label";
-      const classification = classifyOverall(resp.overall);
-      overallSpan.textContent = classification;
-      if (typeof resp.overall === "number") {
-        if (resp.overall >= 65) overallSpan.classList.add("reaction-good");
-        else if (resp.overall < 50) overallSpan.classList.add("reaction-bad");
-      }
-      metrics.appendChild(overallSpan);
-
-      const likesDiv = document.createElement("div");
-      likesDiv.className = "likes";
-      likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
+      text.textContent = message;
 
       body.appendChild(header);
       body.appendChild(text);
-      body.appendChild(metrics);
-      body.appendChild(likesDiv);
-
-      const commentsLabel = "Community-Kommentare zu dieser Reaktion";
-      const commentsBlock = createCommentsBlock(
-        resp.comments || [],
-        commentsLabel
-      );
-      body.appendChild(commentsBlock);
-
       tweet.appendChild(avatar);
       tweet.appendChild(body);
-
       feedEl.appendChild(tweet);
-    });
-
-    // 3) Finale Karte
-    if (simulation.finalOutcome) {
-      const finalTweet = document.createElement("article");
-      finalTweet.className = "tweet final-card";
-
-      const avatar = document.createElement("div");
-      avatar.classList.add("avatar", "coach");
-      const coachImg = document.createElement("img");
-      coachImg.src = COMPANY_AVATAR_SRC;
-      coachImg.alt = "Coach";
-      avatar.appendChild(coachImg);
-
-      const body = document.createElement("div");
-      body.classList.add("tweet-body");
-
-      const title = document.createElement("div");
-      title.classList.add("final-title");
-      if (simulation.finalOutcome.includes("abgeflacht")) {
-        title.classList.add("final-good");
-      } else {
-        title.classList.add("final-bad");
-      }
-      title.textContent = simulation.finalOutcome;
-
-      const summary = document.createElement("div");
-      summary.classList.add("final-summary");
-      summary.textContent = simulation.finalSummary || "";
-
-      body.appendChild(title);
-      if (simulation.finalSummary) body.appendChild(summary);
-
-      finalTweet.appendChild(avatar);
-      finalTweet.appendChild(body);
-      feedEl.appendChild(finalTweet);
-    }
-  }
-
-  // ===================== HTTP / UTILS ============================
-
-  async function createThread() {
-    const res = await fetch(`${BASE_URL}/threads`, {
-      method: "POST",
-      headers: buildHeaders(),
-      body: "{}"
-    });
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(`Thread-Erstellung fehlgeschlagen: ${res.status} – ${txt}`);
-    }
-    const data = await res.json();
-    return data.thread_id || data.id;
-  }
-
-  async function runWait(body) {
-    if (!threadId) {
-      threadId = await createThread();
+      feedEl.scrollTop = feedEl.scrollHeight;
     }
 
-    const res = await fetch(`${BASE_URL}/threads/${threadId}/runs/wait`, {
-      method: "POST",
-      headers: buildHeaders(),
-      body: JSON.stringify(Object.assign({ assistant_id: ASSISTANT_ID }, body))
-    });
+    // ===================== EVENTS / AUTOSTART ======================
 
-    let data;
-    try {
-      data = await res.json();
-    } catch (e) {
-      const txt = await res.text();
-      throw new Error("Antwort keine gültige JSON: " + txt);
-    }
-
-    debugOutputEl.textContent = JSON.stringify(data, null, 2);
-
-    if (!res.ok || data.__error__) {
-      const errMsg =
-        data.__error__ && (data.__error__.message || data.__error__.error)
-          ? data.__error__.message || data.__error__.error
-          : res.statusText;
-      throw new Error("Server-Fehler: " + errMsg);
-    }
-
-    return data;
-  }
-
-  function findState(obj, depth = 0) {
-    if (!obj || typeof obj !== "object" || depth > 6) return null;
-
-    const hasStateShape =
-      Object.prototype.hasOwnProperty.call(obj, "last_community_comments") ||
-      (Object.prototype.hasOwnProperty.call(obj, "platform") &&
-        Object.prototype.hasOwnProperty.call(obj, "cause") &&
-        Object.prototype.hasOwnProperty.call(obj, "intensity"));
-
-    if (hasStateShape) return obj;
-
-    for (const key of Object.keys(obj)) {
-      const child = obj[key];
-      if (child && typeof child === "object") {
-        const found = findState(child, depth + 1);
-        if (found) return found;
-      }
-    }
-
-    return null;
-  }
-
-  function hasInterrupt(result) {
-    return Array.isArray(result.__interrupt__) && result.__interrupt__.length > 0;
-  }
-
-  function extractLastCoachFeedback(history) {
-    if (!Array.isArray(history)) return "";
-    const coachEntries = history.filter((h) => h.actor === "coach");
-    if (!coachEntries.length) return "";
-    return coachEntries[coachEntries.length - 1].content || "";
-  }
-
-  function updateStatusBar(state) {
-    if (typeof state.round === "number") {
-      roundTextEl.textContent = String(state.round);
-    }
-    if (typeof state.intensity === "number") {
-      intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
-    }
-  }
-
-  // ===================== RESULT-HANDLING =========================
-
-  function processInitialResult(result) {
-    const state = findState(result) || {};
-    simulation.initialIntensity =
-      typeof state.intensity === "number" ? state.intensity : 70;
-    prevIntensity = simulation.initialIntensity;
-
-    if (Array.isArray(state.last_community_comments)) {
-      simulation.initialComments = state.last_community_comments.slice();
-    } else {
-      simulation.initialComments = [];
-    }
-
-    updateStatusBar(state);
-    renderFeed();
-
-    if (hasInterrupt(result)) {
-      waitingForAnswer = true;
-      setComposerEnabled(true);
-      setStatus("erste Antwort ist gefragt");
-      answerInputEl.focus();
-      autoResizeAnswer();
-    } else {
-      waitingForAnswer = false;
-      setComposerEnabled(false);
-      if (state.status && state.status !== "running") {
-        setStatus("beendet");
-      } else {
-        setStatus("läuft …");
-      }
-    }
-  }
-
-  function processResponseResult(result, resp) {
-    const state = findState(result) || {};
-
-    if (typeof state.politeness_score === "number") {
-      resp.politeness = state.politeness_score;
-    }
-    if (typeof state.responsibility_score === "number") {
-      resp.responsibility = state.responsibility_score;
-    }
-    if (typeof state.reaction_score === "number") {
-      resp.overall = state.reaction_score;
-    }
-
-    if (typeof state.intensity === "number") {
-      resp.intensityAfter = state.intensity;
-      resp.deltaIntensity = state.intensity - prevIntensity;
-      prevIntensity = state.intensity;
-    }
-
-    resp.feedback = extractLastCoachFeedback(state.history) || "";
-
-    if (Array.isArray(state.last_community_comments)) {
-      resp.comments = state.last_community_comments.slice();
-    } else {
-      resp.comments = resp.comments || [];
-    }
-
-    updateStatusBar(state);
-
-    if (state.status && state.status !== "running") {
-      finished = true;
-      waitingForAnswer = false;
-      setComposerEnabled(false);
-      simulation.finalOutcome =
-        state.status === "user_won"
-          ? "Der Shitstorm ist abgeflacht."
-          : "Der Shitstorm ist außer Kontrolle geraten.";
-      simulation.finalSummary = state.summary || "";
-      setStatus("beendet");
-    } else if (hasInterrupt(result)) {
-      waitingForAnswer = true;
-      setComposerEnabled(true);
-      setStatus("nächste Antwort ist gefragt");
-      answerInputEl.focus();
-      autoResizeAnswer();
-    } else {
-      waitingForAnswer = false;
-      setComposerEnabled(false);
-      setStatus("läuft …");
-    }
-
-    renderFeed();
-  }
-
-  // ===================== SIMULATION FLOW =========================
-
-  async function startSimulation(companyParam, causeParam) {
-    resetSimulation();
-    simulation.company = (companyParam || "Dein Unternehmen").trim();
-    simulation.cause =
-      (causeParam || "Unangemessene Werbekampagne").trim();
-
-    setStatus("startet …");
-    renderFeed();
-
-    const initialState = {
-      platform: "X/Twitter",
-      cause: simulation.cause,
-      company_name: simulation.company,
-      round: 0,
-      history: [],
-      last_company_response: "",
-      last_community_comments: [],
-      politeness_score: 0.0,
-      responsibility_score: 0.0,
-      reaction_score: 0.0,
-      intensity: 70.0,
-      status: "running",
-      summary: ""
-    };
-
-    try {
-      const result = await runWait({ input: initialState });
-      processInitialResult(result);
-    } catch (err) {
-      appendError(err.message);
-      setStatus("Fehler");
-    }
-  }
-
-  async function sendAnswer() {
-    if (!waitingForAnswer || finished) return;
-    const answer = answerInputEl.value.trim();
-    if (!answer) return;
-
-    const resp = {
-      id: simulation.responses.length + 1,
-      answer,
-      comments: [],
-      politeness: null,
-      responsibility: null,
-      overall: null,
-      feedback: "",
-      intensityAfter: null,
-      deltaIntensity: null
-    };
-    simulation.responses.push(resp);
-    renderFeed();
-
-    answerInputEl.value = "";
-    autoResizeAnswer();
-
-    setComposerEnabled(false);
-    waitingForAnswer = false;
-    setStatus("läuft …");
-
-    try {
-      const result = await runWait({ command: { resume: answer } });
-      processResponseResult(result, resp);
-    } catch (err) {
-      appendError(err.message);
-      setStatus("Fehler");
-      setComposerEnabled(false);
-    }
-  }
-
-  function appendError(message) {
-    const tweet = document.createElement("article");
-    tweet.className = "tweet";
-
-    const avatar = document.createElement("div");
-    avatar.classList.add("avatar");
-    const img = document.createElement("img");
-    img.src = COMPANY_AVATAR_SRC;
-    img.alt = "System";
-    avatar.appendChild(img);
-
-    const body = document.createElement("div");
-    body.classList.add("tweet-body");
-
-    const header = document.createElement("div");
-    header.classList.add("tweet-header");
-
-    const name = document.createElement("span");
-    name.classList.add("tweet-name");
-    name.textContent = "Systemfehler";
-
-    const handle = document.createElement("span");
-    handle.classList.add("tweet-handle");
-    handle.textContent = " @sim";
-
-    header.appendChild(name);
-    header.appendChild(handle);
-
-    const text = document.createElement("div");
-    text.classList.add("tweet-text");
-    text.textContent = message;
-
-    body.appendChild(header);
-    body.appendChild(text);
-    tweet.appendChild(avatar);
-    tweet.appendChild(body);
-    feedEl.appendChild(tweet);
-    feedEl.scrollTop = feedEl.scrollHeight;
-  }
-
-  // ===================== EVENTS / AUTOSTART ======================
-
-  sendBtn.addEventListener("click", (ev) => {
-    ev.preventDefault();
-    sendAnswer();
-  });
-
-  answerInputEl.addEventListener("keydown", (ev) => {
-    if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
+    sendBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
       sendAnswer();
-    }
-  });
+    });
 
-  answerInputEl.addEventListener("input", autoResizeAnswer);
+    answerInputEl.addEventListener("keydown", (ev) => {
+      if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
+        ev.preventDefault();
+        sendAnswer();
+      }
+    });
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    const companyParam = params.get("company") || "Dein Unternehmen";
-    const causeParam =
-      params.get("cause") || "Unangemessene Werbekampagne";
+    answerInputEl.addEventListener("input", autoResizeAnswer);
 
-    autoResizeAnswer();
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const companyParam = params.get("company") || "Dein Unternehmen";
+      const causeParam =
+        params.get("cause") || "Unangemessene Werbekampagne";
 
-    setTimeout(() => {
-      startSimulation(companyParam, causeParam);
-    }, 0);
-  });
-</script>
+      const maxParam = parseInt(params.get("maxMinutes") || "15", 10);
+      if (!isNaN(maxParam) && maxParam > 0) {
+        maxWaitMs = maxParam * 60 * 1000;
+      } else {
+        maxWaitMs = 15 * 60 * 1000;
+      }
 
+      autoResizeAnswer();
+
+      setTimeout(() => {
+        startSimulation(companyParam, causeParam);
+      }, 0);
+    });
+  </script>
 </body>
 </html>
