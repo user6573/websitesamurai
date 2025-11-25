@@ -1348,15 +1348,22 @@ const API_KEY = "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";          
           metrics.appendChild(timeoutSpan);
         }
 
-        const overallSpan = document.createElement("span");
-        overallSpan.className = "metric-label";
-        const classification = classifyOverall(resp.overall);
-        overallSpan.textContent = classification;
-        if (typeof resp.overall === "number") {
-          if (resp.overall >= 65) overallSpan.classList.add("reaction-good");
-          else if (resp.overall < 50) overallSpan.classList.add("reaction-bad");
-        }
-        metrics.appendChild(overallSpan);
+// Nur anzeigen, wenn es wirklich eine Bewertung gibt
+if (typeof resp.overall === "number") {
+  const overallSpan = document.createElement("span");
+  overallSpan.className = "metric-label";
+  const classification = classifyOverall(resp.overall);
+  overallSpan.textContent = classification;
+
+  if (resp.overall >= 65) {
+    overallSpan.classList.add("reaction-good");
+  } else if (resp.overall < 50) {
+    overallSpan.classList.add("reaction-bad");
+  }
+
+  metrics.appendChild(overallSpan);
+}
+
 
         const likesDiv = document.createElement("div");
         likesDiv.className = "likes";
