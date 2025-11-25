@@ -20,50 +20,205 @@
     }
 
     .app {
-      display: flex;
-      justify-content: center;
       width: 100%;
-      max-width: 1100px;
-      padding: 1.25rem 0;
+      max-width: 1200px;
+      padding: 0 12px;
     }
 
-    .timeline {
-      width: min(700px, 100%);
-      border-radius: 1.25rem;
-      border: 1px solid #2f3336;
-      background: #050608;
-      box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.85);
-      max-height: calc(100vh - 2.5rem);
+    .layout {
+      display: flex;
+      width: 100%;
+      gap: 0;
+    }
+
+    /* ========== LINKES SIDEBAR (NAV) ========== */
+    .sidebar-left {
+      width: 250px;
+      padding: 0.75rem 0.75rem 0.75rem 0;
+      border-right: 1px solid #2f3336;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .sidebar-left-top {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .sidebar-x-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 0.5rem;
+    }
+
+    .sidebar-x-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .nav-item {
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.9rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .nav-item:hover {
+      background: rgba(231, 233, 234, 0.1);
+    }
+
+    .nav-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid #e7e9ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .nav-item.active .nav-label {
+      font-weight: 700;
+    }
+
+    .nav-label {
+      white-space: nowrap;
+    }
+
+    .sidebar-post-btn {
+      margin-top: 0.75rem;
+      margin-left: 0.25rem;
+      padding-right: 0.75rem;
+    }
+
+    .sidebar-post-btn button {
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      background: #fff;
+      color: #0f1419;
+      font-weight: 700;
+      padding: 0.8rem 0.75rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .sidebar-post-btn button:hover {
+      background: #f0f0f0;
+    }
+
+    .sidebar-left-bottom {
+      padding: 0.4rem 0.5rem;
+    }
+
+    .sidebar-profile {
+      border-radius: 999px;
+      padding: 0.4rem 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .sidebar-profile:hover {
+      background: rgba(231, 233, 234, 0.1);
+    }
+
+    .sidebar-profile-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
       overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sidebar-profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .sidebar-profile-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .sidebar-profile-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .sidebar-profile-handle {
+      font-size: 0.8rem;
+      color: #71767b;
+    }
+
+    .sidebar-profile-more {
+      margin-left: auto;
+      color: #71767b;
+      font-size: 1.1rem;
+    }
+
+    /* ========== ZENTRALE TIMELINE (deine Simulation) ========== */
+    .timeline {
+      width: min(600px, 100%);
+      border-left: 1px solid #2f3336;
+      border-right: 1px solid #2f3336;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #000;
     }
 
     .timeline-header {
       position: sticky;
       top: 0;
       z-index: 10;
-      background: #050608;
-      backdrop-filter: blur(14px);
+      background: rgba(0, 0, 0, 0.97);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid #2f3336;
-      padding: 0.75rem 1rem;
+      padding: 0.6rem 1rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.7rem;
     }
 
     .x-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
       overflow: hidden;
       flex-shrink: 0;
-      box-shadow:
-        0 6px 14px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(148, 163, 184, 0.5);
-      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .x-logo img {
@@ -76,41 +231,33 @@
     .timeline-header-title {
       display: flex;
       flex-direction: column;
-      gap: 0.1rem;
     }
 
     .timeline-header-title h1 {
       margin: 0;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 700;
     }
 
     .timeline-header-title span {
       font-size: 0.78rem;
-      color: #9ca3af;
+      color: #71767b;
     }
 
     .pill {
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      padding: 0.18rem 0.7rem;
-      font-size: 0.75rem;
-      color: #e5e7eb;
       margin-left: auto;
-      white-space: nowrap;
-      background: linear-gradient(135deg, #020617, #111827);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+      font-size: 0.75rem;
+      color: #71767b;
     }
 
     .status-bar {
-      font-size: 0.75rem;
-      color: #9ca3af;
-      padding: 0.35rem 1rem 0.45rem;
+      font-size: 0.8rem;
+      color: #71767b;
+      padding: 0.4rem 1rem;
       border-bottom: 1px solid #2f3336;
       display: flex;
       justify-content: space-between;
       gap: 0.5rem;
-      background: #050608;
     }
 
     .status-bar span {
@@ -123,9 +270,6 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      padding: 0.4rem 0.7rem 0.4rem;
-      scrollbar-width: thin;
-      scrollbar-color: #4b5563 transparent;
     }
 
     .feed::-webkit-scrollbar {
@@ -141,29 +285,9 @@
 
     .tweet {
       display: flex;
-      padding: 0.7rem 0.8rem;
-      margin: 0.25rem 0.3rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #2f3336;
       gap: 0.6rem;
-      border-radius: 1rem;
-      border: 1px solid #2f3336;
-      background: #020617;
-      box-shadow:
-        0 12px 26px rgba(0, 0, 0, 0.9),
-        inset 0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition:
-        transform 120ms ease-out,
-        box-shadow 120ms ease-out,
-        border-color 120ms ease-out,
-        background 150ms ease-out;
-    }
-
-    .tweet:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 18px 34px rgba(0, 0, 0, 1),
-        0 0 0 1px rgba(148, 163, 184, 0.5);
-      border-color: #4b5563;
-      background: #030712;
     }
 
     .avatar {
@@ -171,15 +295,12 @@
       height: 40px;
       border-radius: 999px;
       background: #000;
-      border: 1px solid #4b5563;
+      border: 1px solid #2f3336;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       overflow: hidden;
-      box-shadow:
-        0 4px 10px rgba(0, 0, 0, 0.9),
-        inset 0 0 0 1px rgba(15, 23, 42, 0.9);
     }
 
     .avatar img {
@@ -190,19 +311,19 @@
     }
 
     .avatar.origin {
-      border-color: #e5e7eb;
+      border-color: #d1d5db;
     }
 
     .avatar.community {
-      border-color: #f97316;
+      border-color: #f91880;
     }
 
     .avatar.company {
-      border-color: #38bdf8;
+      border-color: #1d9bf0;
     }
 
     .avatar.coach {
-      border-color: #fbbf24;
+      border-color: #facc15;
     }
 
     .tweet-body {
@@ -214,7 +335,7 @@
       display: flex;
       align-items: baseline;
       gap: 0.35rem;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
     }
 
     .tweet-name {
@@ -222,19 +343,19 @@
     }
 
     .tweet-handle {
-      color: #9ca3af;
-      font-size: 0.78rem;
+      color: #71767b;
+      font-size: 0.8rem;
     }
 
     .tweet-meta {
-      color: #9ca3af;
+      color: #71767b;
       font-size: 0.75rem;
       margin-left: auto;
     }
 
     .tweet-text {
       margin-top: 0.25rem;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       white-space: pre-wrap;
       word-wrap: break-word;
     }
@@ -250,9 +371,8 @@
 
     .metric-label {
       border-radius: 999px;
-      border: 1px solid #4b5563;
+      border: 1px solid #2f3336;
       padding: 0.1rem 0.55rem;
-      background: #020617;
     }
 
     .delta-good {
@@ -276,10 +396,10 @@
     .likes {
       margin-top: 0.3rem;
       font-size: 0.8rem;
-      color: #fb7185;
-      text-shadow: 0 0 8px rgba(248, 113, 113, 0.35);
+      color: #f91880;
     }
 
+    /* ====== Kommentare / Replies – X-ähnlicher Look ====== */
     .comments {
       margin-top: 0.5rem;
       font-size: 0.82rem;
@@ -288,7 +408,8 @@
     .comments summary {
       cursor: pointer;
       list-style: none;
-      color: #60a5fa;
+      color: #1d9bf0;
+      font-size: 0.8rem;
     }
 
     .comments summary::-webkit-details-marker {
@@ -298,12 +419,10 @@
     .comment {
       display: flex;
       align-items: flex-start;
-      gap: 0.4rem;
-      margin-top: 0.35rem;
-      border-left: 2px solid #4b5563;
+      gap: 0.45rem;
+      margin-top: 0.45rem;
       padding-left: 0.5rem;
-      font-size: 0.85rem;
-      color: #e5e7eb;
+      border-left: 2px solid #2f3336;
     }
 
     .comment-avatar {
@@ -312,23 +431,68 @@
       flex-shrink: 0;
     }
 
+    .comment-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+      font-size: 0.78rem;
+    }
+
+    .comment-name {
+      font-weight: 600;
+    }
+
+    .comment-handle {
+      color: #71767b;
+      font-size: 0.78rem;
+    }
+
+    .comment-dot {
+      color: #71767b;
+      font-size: 0.8rem;
+    }
+
+    .comment-meta {
+      color: #71767b;
+      font-size: 0.75rem;
+      margin-left: auto;
+    }
+
+    .comment-text {
+      margin-top: 0.15rem;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
     .comment-muted {
       color: #6b7280;
       border-left-style: dashed;
+      padding-left: 0.5rem;
+      margin-top: 0.35rem;
+      font-size: 0.8rem;
     }
 
+    /* Composer unten – Stil wie Tweet-Composer, aber unten statt oben */
     .composer {
       border-top: 1px solid #2f3336;
-      padding: 0.7rem 1rem 0.85rem;
+      padding: 0.6rem 1rem 0.8rem;
       display: flex;
       gap: 0.6rem;
       align-items: flex-start;
-      background: #050608;
-      box-shadow: 0 -16px 34px rgba(0, 0, 0, 0.9);
+      background: #000;
     }
 
     .composer.disabled {
-      opacity: 0.55;
+      opacity: 0.6;
     }
 
     .composer-main {
@@ -350,12 +514,12 @@
     }
 
     .composer textarea {
-      border-radius: 0.9rem;
-      border: 1px solid #374151;
-      background: #020617;
+      border-radius: 1rem;
+      border: 1px solid #2f3336;
+      background: #000;
       color: #e7e9ea;
       font: inherit;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       padding: 0.45rem 0.65rem;
       min-height: 40px;
       max-height: 200px;
@@ -363,72 +527,40 @@
       overflow-y: auto;
       outline: none;
       box-sizing: border-box;
-      box-shadow:
-        inset 0 1px 2px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 1);
-      transition:
-        border-color 120ms ease-out,
-        box-shadow 120ms ease-out,
-        background 120ms ease-out;
     }
 
     .composer textarea:focus {
-      border-color: #60a5fa;
-      box-shadow:
-        0 0 0 1px rgba(96, 165, 250, 0.7),
-        0 0 20px rgba(37, 99, 235, 0.35),
-        inset 0 1px 2px rgba(0, 0, 0, 1);
-      background: #020617;
+      border-color: #1d9bf0;
+      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
     }
 
     .composer-hint {
       font-size: 0.72rem;
-      color: #9ca3af;
+      color: #71767b;
       max-width: 100%;
       text-align: right;
     }
 
+    /* Weißer Post-Button */
     .btn-primary {
       border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #1d9bf0, #22c55e);
-      color: #020617;
-      font-weight: 700;
+      border: 1px solid #eff3f4;
+      background: #ffffff;
+      color: #0f1419;
+      font-weight: 600;
       padding: 0.45rem 0.95rem;
       font-size: 0.86rem;
       cursor: pointer;
       white-space: nowrap;
-      box-shadow:
-        0 6px 16px rgba(37, 99, 235, 0.7),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      transform: translateY(0);
-      transition:
-        transform 80ms ease-out,
-        box-shadow 80ms ease-out,
-        filter 80ms ease-out;
     }
 
     .btn-primary:hover:not(:disabled) {
-      filter: brightness(1.07);
-      transform: translateY(-0.5px);
-      box-shadow:
-        0 9px 22px rgba(37, 99, 235, 0.85),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-    }
-
-    .btn-primary:active:not(:disabled) {
-      transform: translateY(1px);
-      box-shadow:
-        0 4px 12px rgba(37, 99, 235, 0.7),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
+      background: #f0f0f0;
     }
 
     .btn-primary:disabled {
       opacity: 0.5;
       cursor: default;
-      box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
     }
 
     .debug-card {
@@ -438,7 +570,7 @@
       color: #71767b;
       max-height: 150px;
       overflow: hidden;
-      background: #020617;
+      background: #000;
     }
 
     .debug-card details {
@@ -455,7 +587,7 @@
     }
 
     .final-card {
-      border-top: 1px solid #4b5563;
+      border-top: 1px solid #2f3336;
       margin-top: 0.5rem;
     }
 
@@ -479,58 +611,393 @@
       margin-top: 0.2rem;
       white-space: pre-wrap;
     }
+
+    /* ========== RECHTES SIDEBAR (Trending / Who to follow) ========== */
+    .sidebar-right {
+      width: 320px;
+      padding: 0.75rem 0 0.75rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .right-search {
+      padding: 0.25rem 0.5rem;
+    }
+
+    .right-search input {
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      background: #202327;
+      color: #e7e9ea;
+      padding: 0.55rem 0.9rem;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .right-card {
+      background: #16181c;
+      border-radius: 1rem;
+      padding: 0.75rem 0.9rem;
+    }
+
+    .right-card h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+
+    .right-card-small {
+      font-size: 0.8rem;
+      color: #e7e9ea;
+    }
+
+    .right-card-small strong {
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    .right-trend {
+      padding: 0.35rem 0;
+      font-size: 0.82rem;
+      border-radius: 0.35rem;
+      cursor: pointer;
+    }
+
+    .right-trend:hover {
+      background: #1d1f23;
+    }
+
+    .right-trend-label {
+      color: #71767b;
+      font-size: 0.75rem;
+    }
+
+    .right-trend-topic {
+      font-weight: 600;
+      margin-top: 0.1rem;
+    }
+
+    .right-trend-count {
+      color: #71767b;
+      margin-top: 0.1rem;
+      font-size: 0.78rem;
+    }
+
+    .right-more {
+      margin-top: 0.4rem;
+      font-size: 0.82rem;
+      color: #1d9bf0;
+      cursor: pointer;
+    }
+
+    .right-follow-item {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.4rem 0;
+      border-radius: 0.35rem;
+      cursor: pointer;
+    }
+
+    .right-follow-item:hover {
+      background: #1d1f23;
+    }
+
+    .right-follow-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .right-follow-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .right-follow-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right-follow-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .right-follow-handle {
+      font-size: 0.8rem;
+      color: #71767b;
+    }
+
+    .right-follow-btn {
+      border-radius: 999px;
+      border: none;
+      background: #eff3f4;
+      color: #0f1419;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .right-follow-btn:hover {
+      background: #e6e9ea;
+    }
+
+    /* Responsive: Seitenleisten ausblenden auf kleineren Screens */
+    @media (max-width: 1100px) {
+      .sidebar-right {
+        display: none;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar-left {
+        width: 72px;
+        padding-right: 0.25rem;
+      }
+      .nav-label {
+        display: none;
+      }
+      .sidebar-post-btn {
+        padding-right: 0.25rem;
+      }
+      .sidebar-post-btn button {
+        padding-inline: 0;
+      }
+      .sidebar-profile-info {
+        display: none;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .sidebar-left {
+        display: none;
+      }
+      .timeline {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="timeline">
-      <div class="timeline-header">
-        <div class="x-logo">
-          <img src="images/x.png" alt="X Logo" />
-        </div>
-        <div class="timeline-header-title">
-          <h1>X – Shitstorm-Simulation</h1>
-          <span>Trainiere deine Krisenkommunikation</span>
-        </div>
-        <div class="pill" id="statusPill">Status: lädt …</div>
-      </div>
-
-      <div class="status-bar">
-        <div>Runde: <span id="roundText">–</span></div>
-        <div>Intensität: <span id="intensityText">–</span></div>
-      </div>
-
-      <div class="feed" id="feed"></div>
-
-      <div class="composer disabled" id="composer">
-        <div class="avatar company">
-          <img src="images/company.jpg" alt="Unternehmen" />
-        </div>
-        <div class="composer-main">
-          <div class="composer-row">
-            <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
-            <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+    <div class="layout">
+      <!-- Linke Sidebar -->
+      <aside class="sidebar-left">
+        <div class="sidebar-left-top">
+          <div class="sidebar-x-logo">
+            <img src="images/x.png" alt="X Logo" />
           </div>
-          <div class="composer-hint">
-            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
+          <nav>
+            <ul class="nav-list">
+              <li class="nav-item active">
+                <div class="nav-icon">🏠</div>
+                <span class="nav-label">Home</span>
+              </li>
+              <li class="nav-item">
+                <div class="nav-icon">#</div>
+                <span class="nav-label">Explore</span>
+              </li>
+              <li class="nav-item">
+                <div class="nav-icon">🔔</div>
+                <span class="nav-label">Notifications</span>
+              </li>
+              <li class="nav-item">
+                <div class="nav-icon">✉️</div>
+                <span class="nav-label">Messages</span>
+              </li>
+              <li class="nav-item">
+                <div class="nav-icon">📋</div>
+                <span class="nav-label">Lists</span>
+              </li>
+              <li class="nav-item">
+                <div class="nav-icon">🔖</div>
+                <span class="nav-label">Bookmarks</span>
+              </li>
+              <li class="nav-item">
+                <div class="nav-icon">👥</div>
+                <span class="nav-label">Communities</span>
+              </li>
+              <li class="nav-item">
+                <div class="nav-icon">★</div>
+                <span class="nav-label">Premium</span>
+              </li>
+              <li class="nav-item">
+                <div class="nav-icon">👤</div>
+                <span class="nav-label">Profile</span>
+              </li>
+              <li class="nav-item">
+                <div class="nav-icon">⋯</div>
+                <span class="nav-label">More</span>
+              </li>
+            </ul>
+          </nav>
+          <div class="sidebar-post-btn">
+            <button type="button">Post</button>
           </div>
         </div>
-      </div>
 
-      <div class="debug-card">
-        <details>
-          <summary>Debug-Antwort vom Server anzeigen</summary>
-          <pre id="debugOutput"></pre>
-        </details>
-      </div>
+        <div class="sidebar-left-bottom">
+          <div class="sidebar-profile">
+            <div class="sidebar-profile-avatar">
+              <img src="images/company.jpg" alt="Profil" />
+            </div>
+            <div class="sidebar-profile-info">
+              <span class="sidebar-profile-name">Fritz Schattel</span>
+              <span class="sidebar-profile-handle">@schattel18306</span>
+            </div>
+            <div class="sidebar-profile-more">⋯</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Zentrale Timeline (Simulation) -->
+      <main class="timeline">
+        <div class="timeline-header">
+          <div class="x-logo">
+            <img src="images/x.png" alt="X Logo" />
+          </div>
+          <div class="timeline-header-title">
+            <h1>Startseite</h1>
+            <span>X – Shitstorm-Simulation</span>
+          </div>
+          <div class="pill" id="statusPill">Status: lädt …</div>
+        </div>
+
+        <div class="status-bar">
+          <div>Runde: <span id="roundText">–</span></div>
+          <div>Intensität: <span id="intensityText">–</span></div>
+        </div>
+
+        <div class="feed" id="feed"></div>
+
+        <div class="composer disabled" id="composer">
+          <div class="avatar company">
+            <img src="images/company.jpg" alt="Unternehmen" />
+          </div>
+          <div class="composer-main">
+            <div class="composer-row">
+              <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
+              <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+            </div>
+            <div class="composer-hint">
+              Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
+            </div>
+          </div>
+        </div>
+
+        <div class="debug-card">
+          <details>
+            <summary>Debug-Antwort vom Server anzeigen</summary>
+            <pre id="debugOutput"></pre>
+          </details>
+        </div>
+      </main>
+
+      <!-- Rechte Sidebar -->
+      <aside class="sidebar-right">
+        <div class="right-search">
+          <input type="text" placeholder="Search" disabled />
+        </div>
+
+        <section class="right-card">
+          <h2>Get Premium for just $1</h2>
+          <div class="right-card-small">
+            <strong>It’s Premium’s 3rd birthday!</strong>
+            Have the best of X from $1 in your first month.
+          </div>
+        </section>
+
+        <section class="right-card">
+          <h2>What’s happening</h2>
+
+          <div class="right-trend">
+            <div class="right-trend-label">Trending in Austria</div>
+            <div class="right-trend-topic">Posts</div>
+            <div class="right-trend-count">223K posts</div>
+          </div>
+
+          <div class="right-trend">
+            <div class="right-trend-label">Politics · Trending</div>
+            <div class="right-trend-topic">Venezuela</div>
+            <div class="right-trend-count">333K posts</div>
+          </div>
+
+          <div class="right-trend">
+            <div class="right-trend-label">Trending in Austria</div>
+            <div class="right-trend-topic">Form</div>
+            <div class="right-trend-count">172K posts</div>
+          </div>
+
+          <div class="right-trend">
+            <div class="right-trend-label">Sports · Trending</div>
+            <div class="right-trend-topic">Elite</div>
+            <div class="right-trend-count">84.4K posts</div>
+          </div>
+
+          <div class="right-more">Show more</div>
+        </section>
+
+        <section class="right-card">
+          <h2>Who to follow</h2>
+
+          <div class="right-follow-item">
+            <div class="right-follow-avatar">
+              <img src="images/2.png" alt="Homes &amp; Gardens" />
+            </div>
+            <div class="right-follow-main">
+              <div class="right-follow-name">Homes &amp; Gardens</div>
+              <div class="right-follow-handle">@homesandgardens</div>
+            </div>
+            <button class="right-follow-btn" type="button">Follow</button>
+          </div>
+
+          <div class="right-follow-item">
+            <div class="right-follow-avatar">
+              <img src="images/3.png" alt="ntv Nachrichten" />
+            </div>
+            <div class="right-follow-main">
+              <div class="right-follow-name">ntv Nachrichten</div>
+              <div class="right-follow-handle">@ntvde</div>
+            </div>
+            <button class="right-follow-btn" type="button">Follow</button>
+          </div>
+
+          <div class="right-follow-item">
+            <div class="right-follow-avatar">
+              <img src="images/4.png" alt="Form Magazine" />
+            </div>
+            <div class="right-follow-main">
+              <div class="right-follow-name">Form Magazine</div>
+              <div class="right-follow-handle">@formmag</div>
+            </div>
+            <button class="right-follow-btn" type="button">Follow</button>
+          </div>
+
+          <div class="right-more">Show more</div>
+        </section>
+      </aside>
     </div>
   </div>
 
   <script>
     // ===================== KONFIGURATION ===========================
-const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                                // LangSmith Key oder leer
+    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
+    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
+    const API_KEY = "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";                             // LangSmith Key oder leer
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -660,20 +1127,26 @@ const API_KEY = "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";          
       return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
     }
 
+    // X-ähnliche Replies
     function createCommentsBlock(comments, label) {
       const details = document.createElement("details");
       details.className = "comments";
 
       const summary = document.createElement("summary");
       if (Array.isArray(comments) && comments.length) {
-        summary.textContent = `${label} (${comments.length})`;
+        details.open = true;
+        summary.textContent =
+          comments.length === 1
+            ? "1 Antwort"
+            : `${comments.length} Antworten`;
       } else {
-        summary.textContent = `${label} (keine)`;
+        summary.textContent = "Noch keine Antworten";
+        summary.style.color = "#71767b";
       }
       details.appendChild(summary);
 
       if (Array.isArray(comments) && comments.length) {
-        comments.forEach((c) => {
+        comments.forEach((c, idx) => {
           const row = document.createElement("div");
           row.className = "comment";
 
@@ -684,17 +1157,49 @@ const API_KEY = "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";          
           img.alt = "Community-User";
           av.appendChild(img);
 
-          const textSpan = document.createElement("span");
-          textSpan.textContent = c;
+          const body = document.createElement("div");
+          body.className = "comment-body";
+
+          const header = document.createElement("div");
+          header.className = "comment-header";
+
+          const name = document.createElement("span");
+          name.className = "comment-name";
+          name.textContent = `User${idx + 1}`;
+
+          const handle = document.createElement("span");
+          handle.className = "comment-handle";
+          handle.textContent = `@user${idx + 1}`;
+
+          const dot = document.createElement("span");
+          dot.className = "comment-dot";
+          dot.textContent = "·";
+
+          const meta = document.createElement("span");
+          meta.className = "comment-meta";
+          meta.textContent = "1 Std.";
+
+          header.appendChild(name);
+          header.appendChild(handle);
+          header.appendChild(dot);
+          header.appendChild(meta);
+
+          const text = document.createElement("div");
+          text.className = "comment-text";
+          text.textContent = c;
+
+          body.appendChild(header);
+          body.appendChild(text);
 
           row.appendChild(av);
-          row.appendChild(textSpan);
+          row.appendChild(body);
+
           details.appendChild(row);
         });
       } else {
         const info = document.createElement("div");
-        info.className = "comment comment-muted";
-        info.textContent = "Noch keine Kommentare.";
+        info.className = "comment-muted";
+        info.textContent = "Noch keine Antworten.";
         details.appendChild(info);
       }
 
