@@ -65,16 +65,9 @@
     }
 
     form {
-      display: grid;
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
-      gap: 1.5rem 2rem;
-      align-items: flex-start;
-    }
-
-    @media (max-width: 820px) {
-      form {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
     }
 
     .fields {
@@ -129,21 +122,8 @@
       overflow-y: auto;
     }
 
-    .two-col {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-    }
-
-    @media (max-width: 640px) {
-      .two-col {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    /* Plattform-Auswahl */
     .platform-section {
-      margin-top: 0.75rem;
+      margin-top: 0.25rem;
     }
 
     .platform-buttons {
@@ -195,86 +175,12 @@
       color: #6b7280;
     }
 
-    /* Seitenleiste rechts */
-    .summary-card {
-      background: linear-gradient(145deg, #eff6ff, #e0f2fe);
-      border-radius: 1.25rem;
-      padding: 1rem 1.1rem;
-      box-shadow:
-        0 10px 20px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(191, 219, 254, 0.9);
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .summary-card::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background:
-        radial-gradient(circle at top, rgba(59,130,246,0.16), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(59,130,246,0.12), transparent 55%);
-      z-index: 0;
-    }
-
-    .summary-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .summary-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-      color: #1e3a8a;
-    }
-
-    .summary-text {
-      font-size: 0.82rem;
-      color: #1e293b;
-      margin-bottom: 0.35rem;
-    }
-
-    .summary-list {
-      list-style: none;
-      padding: 0;
-      margin: 0.2rem 0 0.5rem;
-      font-size: 0.82rem;
-      color: #1f2937;
-    }
-
-    .summary-list li {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      margin-bottom: 0.25rem;
-    }
-
-    .summary-list li span.icon {
-      font-size: 0.85rem;
-    }
-
-    .badge-light {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.2rem 0.6rem;
-      font-size: 0.75rem;
-      background: rgba(255,255,255,0.75);
-      border-radius: 999px;
-      border: 1px solid rgba(191,219,254,0.9);
-      color: #1d4ed8;
-      font-weight: 500;
-    }
-
-    .actions {
-      margin-top: 0.75rem;
+    .actions-bottom {
+      margin-top: 1.25rem;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      align-items: flex-end;
     }
 
     .btn-primary {
@@ -292,7 +198,6 @@
       gap: 0.45rem;
       box-shadow: 0 12px 22px rgba(37, 99, 235, 0.45);
       transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
-      width: 100%;
     }
 
     .btn-primary:hover {
@@ -313,6 +218,7 @@
     .small-note {
       font-size: 0.76rem;
       color: #4b5563;
+      text-align: right;
     }
 
     .small-note strong {
@@ -430,59 +336,21 @@
         </div>
       </div>
 
-      <!-- Rechte Spalte: Zusammenfassung / Start -->
-      <aside class="summary-card">
-        <div class="summary-inner">
-          <div class="summary-title">Simulation starten</div>
-          <div class="summary-text">
-            Deine Angaben werden als Startzustand in die LangGraph-Simulation übergeben.
-            Du kannst danach direkt im Frontend reagieren wie ein Social-Media-Team.
-          </div>
-
-          <ul class="summary-list">
-            <li>
-              <span class="icon">🏢</span>
-              <span><strong>Unternehmen</strong>: <span id="previewCompany">–</span></span>
-            </li>
-            <li>
-              <span class="icon">🌐</span>
-              <span><strong>Plattform</strong>: <span id="previewPlatform">X / Twitter</span></span>
-            </li>
-            <li>
-              <span class="icon">⏱️</span>
-              <span>
-                <strong>Max. Reaktionszeit</strong>:
-                <span id="previewMaxMinutes">15</span> Minuten
-              </span>
-            </li>
-          </ul>
-
-          <div class="badge-light">
-            <span>Tip</span> ·
-            <span>Nutze mehrere Runden, um verschiedene Antwort-Strategien zu testen.</span>
-          </div>
-
-          <div class="actions">
-            <button type="submit" class="btn-primary">
-              <span class="icon">▶️</span>
-              <span>Simulation jetzt starten</span>
-            </button>
-            <div class="small-note">
-              Die Einstellungen werden per URL-Parameter an die gewählte Plattform-Seite übergeben
-              (<strong>company</strong>, <strong>cause</strong>, <strong>maxMinutes</strong>).
-            </div>
-          </div>
+      <div class="actions-bottom">
+        <button type="submit" class="btn-primary">
+          <span class="icon">▶️</span>
+          <span>Simulation jetzt starten</span>
+        </button>
+        <div class="small-note">
+          Die Einstellungen werden per URL-Parameter an die gewählte Plattform-Seite übergeben
+          (<strong>company</strong>, <strong>cause</strong>, <strong>maxMinutes</strong>).
         </div>
-      </aside>
+      </div>
     </form>
   </div>
 
   <script>
     const platformButtons = document.querySelectorAll(".platform-btn");
-    const previewCompany = document.getElementById("previewCompany");
-    const previewPlatform = document.getElementById("previewPlatform");
-    const previewMaxMinutes = document.getElementById("previewMaxMinutes");
-    const companyInput = document.getElementById("companyInput");
     const causeField = document.getElementById("causeField");
     const ytTitleField = document.getElementById("ytTitleField");
     const ytContentField = document.getElementById("ytContentField");
@@ -490,6 +358,7 @@
     const ytTitleInput = document.getElementById("ytTitle");
     const ytContentInput = document.getElementById("ytContent");
     const maxMinutesInput = document.getElementById("maxMinutes");
+    const companyInput = document.getElementById("companyInput");
     const form = document.getElementById("configForm");
 
     // -------- Plattform-Auswahl ----------
@@ -505,15 +374,10 @@
         causeField.style.display = "none";
         ytTitleField.style.display = "";
         ytContentField.style.display = "";
-        previewPlatform.textContent = "YouTube";
       } else {
         causeField.style.display = "";
         ytTitleField.style.display = "none";
         ytContentField.style.display = "none";
-
-        if (platform === "x") previewPlatform.textContent = "X / Twitter";
-        else if (platform === "instagram") previewPlatform.textContent = "Instagram";
-        else if (platform === "facebook") previewPlatform.textContent = "Facebook";
       }
     }
 
@@ -536,24 +400,8 @@
     [causeInput, ytContentInput].forEach((ta) => {
       if (!ta) return;
       ta.addEventListener("input", () => autoResizeTextarea(ta));
-      // initial
       autoResizeTextarea(ta);
     });
-
-    // -------- Live-Preview für Company & maxMinutes ----------
-    function updatePreview() {
-      const company = companyInput.value.trim() || "Dein Unternehmen";
-      previewCompany.textContent = company;
-
-      const minutesRaw = maxMinutesInput.value.trim();
-      const minutes = minutesRaw ? parseInt(minutesRaw, 10) : 15;
-      previewMaxMinutes.textContent = isNaN(minutes) ? 15 : minutes;
-    }
-
-    companyInput.addEventListener("input", updatePreview);
-    maxMinutesInput.addEventListener("input", updatePreview);
-
-    updatePreview();
 
     // -------- Form-Submit ----------
     form.addEventListener("submit", (e) => {
