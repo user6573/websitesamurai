@@ -24,46 +24,42 @@
       justify-content: center;
       width: 100%;
       max-width: 1100px;
-      padding: 1.25rem 0;
     }
 
+    /* Zentrale X-Timeline */
     .timeline {
-      width: min(700px, 100%);
-      border-radius: 1.25rem;
-      border: 1px solid #2f3336;
-      background: #050608;
-      box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.85);
-      max-height: calc(100vh - 2.5rem);
+      width: min(600px, 100%);
+      border-left: 1px solid #2f3336;
+      border-right: 1px solid #2f3336;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      background: #000;
     }
 
+    /* HEADER – wie "Home"-Header bei X */
     .timeline-header {
       position: sticky;
       top: 0;
       z-index: 10;
-      background: #050608;
-      backdrop-filter: blur(14px);
+      background: rgba(0, 0, 0, 0.97);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid #2f3336;
-      padding: 0.75rem 1rem;
+      padding: 0.6rem 1rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.7rem;
     }
 
     .x-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
       overflow: hidden;
       flex-shrink: 0;
-      box-shadow:
-        0 6px 14px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(148, 163, 184, 0.5);
-      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .x-logo img {
@@ -76,41 +72,34 @@
     .timeline-header-title {
       display: flex;
       flex-direction: column;
-      gap: 0.1rem;
     }
 
     .timeline-header-title h1 {
       margin: 0;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 700;
     }
 
     .timeline-header-title span {
       font-size: 0.78rem;
-      color: #9ca3af;
+      color: #71767b;
     }
 
     .pill {
-      border-radius: 999px;
-      border: 1px solid #4b5563;
-      padding: 0.18rem 0.7rem;
-      font-size: 0.75rem;
-      color: #e5e7eb;
       margin-left: auto;
-      white-space: nowrap;
-      background: linear-gradient(135deg, #020617, #111827);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+      font-size: 0.75rem;
+      color: #71767b;
     }
 
+    /* Kleine Statuszeile (Round & Intensität) */
     .status-bar {
-      font-size: 0.75rem;
-      color: #9ca3af;
-      padding: 0.35rem 1rem 0.45rem;
+      font-size: 0.8rem;
+      color: #71767b;
+      padding: 0.4rem 1rem;
       border-bottom: 1px solid #2f3336;
       display: flex;
       justify-content: space-between;
       gap: 0.5rem;
-      background: #050608;
     }
 
     .status-bar span {
@@ -123,9 +112,6 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      padding: 0.4rem 0.7rem 0.4rem;
-      scrollbar-width: thin;
-      scrollbar-color: #4b5563 transparent;
     }
 
     .feed::-webkit-scrollbar {
@@ -139,31 +125,12 @@
       border-radius: 999px;
     }
 
+    /* Tweet-Style – flach wie bei X */
     .tweet {
       display: flex;
-      padding: 0.7rem 0.8rem;
-      margin: 0.25rem 0.3rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #2f3336;
       gap: 0.6rem;
-      border-radius: 1rem;
-      border: 1px solid #2f3336;
-      background: #020617;
-      box-shadow:
-        0 12px 26px rgba(0, 0, 0, 0.9),
-        inset 0 0 0 1px rgba(15, 23, 42, 0.9);
-      transition:
-        transform 120ms ease-out,
-        box-shadow 120ms ease-out,
-        border-color 120ms ease-out,
-        background 150ms ease-out;
-    }
-
-    .tweet:hover {
-      transform: translateY(-1px);
-      box-shadow:
-        0 18px 34px rgba(0, 0, 0, 1),
-        0 0 0 1px rgba(148, 163, 184, 0.5);
-      border-color: #4b5563;
-      background: #030712;
     }
 
     .avatar {
@@ -171,15 +138,12 @@
       height: 40px;
       border-radius: 999px;
       background: #000;
-      border: 1px solid #4b5563;
+      border: 1px solid #2f3336;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       overflow: hidden;
-      box-shadow:
-        0 4px 10px rgba(0, 0, 0, 0.9),
-        inset 0 0 0 1px rgba(15, 23, 42, 0.9);
     }
 
     .avatar img {
@@ -190,19 +154,19 @@
     }
 
     .avatar.origin {
-      border-color: #e5e7eb;
+      border-color: #d1d5db;
     }
 
     .avatar.community {
-      border-color: #f97316;
+      border-color: #f91880;
     }
 
     .avatar.company {
-      border-color: #38bdf8;
+      border-color: #1d9bf0;
     }
 
     .avatar.coach {
-      border-color: #fbbf24;
+      border-color: #facc15;
     }
 
     .tweet-body {
@@ -214,7 +178,7 @@
       display: flex;
       align-items: baseline;
       gap: 0.35rem;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
     }
 
     .tweet-name {
@@ -222,19 +186,19 @@
     }
 
     .tweet-handle {
-      color: #9ca3af;
-      font-size: 0.78rem;
+      color: #71767b;
+      font-size: 0.8rem;
     }
 
     .tweet-meta {
-      color: #9ca3af;
+      color: #71767b;
       font-size: 0.75rem;
       margin-left: auto;
     }
 
     .tweet-text {
       margin-top: 0.25rem;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       white-space: pre-wrap;
       word-wrap: break-word;
     }
@@ -250,9 +214,8 @@
 
     .metric-label {
       border-radius: 999px;
-      border: 1px solid #4b5563;
+      border: 1px solid #2f3336;
       padding: 0.1rem 0.55rem;
-      background: #020617;
     }
 
     .delta-good {
@@ -276,10 +239,10 @@
     .likes {
       margin-top: 0.3rem;
       font-size: 0.8rem;
-      color: #fb7185;
-      text-shadow: 0 0 8px rgba(248, 113, 113, 0.35);
+      color: #f91880;
     }
 
+    /* ====== Kommentare / Replies – X-ähnlicher Look ====== */
     .comments {
       margin-top: 0.5rem;
       font-size: 0.82rem;
@@ -288,7 +251,8 @@
     .comments summary {
       cursor: pointer;
       list-style: none;
-      color: #60a5fa;
+      color: #1d9bf0;
+      font-size: 0.8rem;
     }
 
     .comments summary::-webkit-details-marker {
@@ -298,12 +262,10 @@
     .comment {
       display: flex;
       align-items: flex-start;
-      gap: 0.4rem;
-      margin-top: 0.35rem;
-      border-left: 2px solid #4b5563;
+      gap: 0.45rem;
+      margin-top: 0.45rem;
       padding-left: 0.5rem;
-      font-size: 0.85rem;
-      color: #e5e7eb;
+      border-left: 2px solid #2f3336;
     }
 
     .comment-avatar {
@@ -312,23 +274,68 @@
       flex-shrink: 0;
     }
 
+    .comment-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+      font-size: 0.78rem;
+    }
+
+    .comment-name {
+      font-weight: 600;
+    }
+
+    .comment-handle {
+      color: #71767b;
+      font-size: 0.78rem;
+    }
+
+    .comment-dot {
+      color: #71767b;
+      font-size: 0.8rem;
+    }
+
+    .comment-meta {
+      color: #71767b;
+      font-size: 0.75rem;
+      margin-left: auto;
+    }
+
+    .comment-text {
+      margin-top: 0.15rem;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
     .comment-muted {
       color: #6b7280;
       border-left-style: dashed;
+      padding-left: 0.5rem;
+      margin-top: 0.35rem;
+      font-size: 0.8rem;
     }
 
+    /* Composer unten – Stil wie Tweet-Composer, aber unten statt oben */
     .composer {
       border-top: 1px solid #2f3336;
-      padding: 0.7rem 1rem 0.85rem;
+      padding: 0.6rem 1rem 0.8rem;
       display: flex;
       gap: 0.6rem;
       align-items: flex-start;
-      background: #050608;
-      box-shadow: 0 -16px 34px rgba(0, 0, 0, 0.9);
+      background: #000;
     }
 
     .composer.disabled {
-      opacity: 0.55;
+      opacity: 0.6;
     }
 
     .composer-main {
@@ -350,12 +357,12 @@
     }
 
     .composer textarea {
-      border-radius: 0.9rem;
-      border: 1px solid #374151;
-      background: #020617;
+      border-radius: 1rem;
+      border: 1px solid #2f3336;
+      background: #000;
       color: #e7e9ea;
       font: inherit;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       padding: 0.45rem 0.65rem;
       min-height: 40px;
       max-height: 200px;
@@ -363,27 +370,16 @@
       overflow-y: auto;
       outline: none;
       box-sizing: border-box;
-      box-shadow:
-        inset 0 1px 2px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 1);
-      transition:
-        border-color 120ms ease-out,
-        box-shadow 120ms ease-out,
-        background 120ms ease-out;
     }
 
     .composer textarea:focus {
-      border-color: #60a5fa;
-      box-shadow:
-        0 0 0 1px rgba(96, 165, 250, 0.7),
-        0 0 20px rgba(37, 99, 235, 0.35),
-        inset 0 1px 2px rgba(0, 0, 0, 1);
-      background: #020617;
+      border-color: #1d9bf0;
+      box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.4);
     }
 
     .composer-hint {
       font-size: 0.72rem;
-      color: #9ca3af;
+      color: #71767b;
       max-width: 100%;
       text-align: right;
     }
@@ -391,44 +387,22 @@
     .btn-primary {
       border-radius: 999px;
       border: none;
-      background: linear-gradient(135deg, #1d9bf0, #22c55e);
-      color: #020617;
-      font-weight: 700;
+      background: #1d9bf0;
+      color: #fff;
+      font-weight: 600;
       padding: 0.45rem 0.95rem;
       font-size: 0.86rem;
       cursor: pointer;
       white-space: nowrap;
-      box-shadow:
-        0 6px 16px rgba(37, 99, 235, 0.7),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-      transform: translateY(0);
-      transition:
-        transform 80ms ease-out,
-        box-shadow 80ms ease-out,
-        filter 80ms ease-out;
     }
 
     .btn-primary:hover:not(:disabled) {
-      filter: brightness(1.07);
-      transform: translateY(-0.5px);
-      box-shadow:
-        0 9px 22px rgba(37, 99, 235, 0.85),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
-    }
-
-    .btn-primary:active:not(:disabled) {
-      transform: translateY(1px);
-      box-shadow:
-        0 4px 12px rgba(37, 99, 235, 0.7),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
+      background: #1a8cd8;
     }
 
     .btn-primary:disabled {
       opacity: 0.5;
       cursor: default;
-      box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(15, 23, 42, 0.9);
     }
 
     .debug-card {
@@ -438,7 +412,7 @@
       color: #71767b;
       max-height: 150px;
       overflow: hidden;
-      background: #020617;
+      background: #000;
     }
 
     .debug-card details {
@@ -455,7 +429,7 @@
     }
 
     .final-card {
-      border-top: 1px solid #4b5563;
+      border-top: 1px solid #2f3336;
       margin-top: 0.5rem;
     }
 
@@ -489,8 +463,8 @@
           <img src="images/x.png" alt="X Logo" />
         </div>
         <div class="timeline-header-title">
-          <h1>X – Shitstorm-Simulation</h1>
-          <span>Trainiere deine Krisenkommunikation</span>
+          <h1>Startseite</h1>
+          <span>X – Shitstorm-Simulation</span>
         </div>
         <div class="pill" id="statusPill">Status: lädt …</div>
       </div>
@@ -530,7 +504,7 @@
     // ===================== KONFIGURATION ===========================
 const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
 const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                                  // LangSmith Key oder leer
+const API_KEY = "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";                                   // LangSmith Key oder leer
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -660,20 +634,21 @@ const API_KEY = "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";          
       return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
     }
 
+    // X-ähnliche Replies
     function createCommentsBlock(comments, label) {
       const details = document.createElement("details");
       details.className = "comments";
 
       const summary = document.createElement("summary");
       if (Array.isArray(comments) && comments.length) {
-        summary.textContent = `${label} (${comments.length})`;
+        summary.textContent = `Antworten anzeigen (${comments.length})`;
       } else {
-        summary.textContent = `${label} (keine)`;
+        summary.textContent = "Antworten anzeigen (0)";
       }
       details.appendChild(summary);
 
       if (Array.isArray(comments) && comments.length) {
-        comments.forEach((c) => {
+        comments.forEach((c, idx) => {
           const row = document.createElement("div");
           row.className = "comment";
 
@@ -684,17 +659,49 @@ const API_KEY = "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";          
           img.alt = "Community-User";
           av.appendChild(img);
 
-          const textSpan = document.createElement("span");
-          textSpan.textContent = c;
+          const body = document.createElement("div");
+          body.className = "comment-body";
+
+          const header = document.createElement("div");
+          header.className = "comment-header";
+
+          const name = document.createElement("span");
+          name.className = "comment-name";
+          name.textContent = `User${idx + 1}`;
+
+          const handle = document.createElement("span");
+          handle.className = "comment-handle";
+          handle.textContent = ` @user${idx + 1}`;
+
+          const dot = document.createElement("span");
+          dot.className = "comment-dot";
+          dot.textContent = "·";
+
+          const meta = document.createElement("span");
+          meta.className = "comment-meta";
+          meta.textContent = "Antwort";
+
+          header.appendChild(name);
+          header.appendChild(handle);
+          header.appendChild(dot);
+          header.appendChild(meta);
+
+          const text = document.createElement("div");
+          text.className = "comment-text";
+          text.textContent = c;
+
+          body.appendChild(header);
+          body.appendChild(text);
 
           row.appendChild(av);
-          row.appendChild(textSpan);
+          row.appendChild(body);
+
           details.appendChild(row);
         });
       } else {
         const info = document.createElement("div");
-        info.className = "comment comment-muted";
-        info.textContent = "Noch keine Kommentare.";
+        info.className = "comment-muted";
+        info.textContent = "Noch keine Antworten.";
         details.appendChild(info);
       }
 
