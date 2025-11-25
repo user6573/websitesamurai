@@ -239,11 +239,6 @@
       font-weight: 700;
     }
 
-    .timeline-header-title span {
-      font-size: 0.78rem;
-      color: #71767b;
-    }
-
     .pill {
       margin-left: auto;
       font-size: 0.75rem;
@@ -872,7 +867,6 @@
           </div>
           <div class="timeline-header-title">
             <h1>Startseite</h1>
-            <span>X – Shitstorm-Simulation</span>
           </div>
           <div class="pill" id="statusPill">Status: lädt …</div>
         </div>
@@ -995,10 +989,9 @@
 
   <script>
     // ===================== KONFIGURATION ===========================
-
 const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
 const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                                // LangSmith Key oder leer                            // LangSmith Key oder leer
+const API_KEY = "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";                                 // LangSmith Key oder leer
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -1066,7 +1059,8 @@ const API_KEY = "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";          
       initialComments: [],
       responses: [],
       finalOutcome: "",
-      finalSummary: ""
+      finalSummary: "",
+      initialTimeoutDelta: 0
     };
 
     let prevIntensity = simulation.initialIntensity;
@@ -1120,6 +1114,7 @@ const API_KEY = "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";          
       simulation.responses = [];
       simulation.finalOutcome = "";
       simulation.finalSummary = "";
+      simulation.initialTimeoutDelta = 0;
       prevIntensity = simulation.initialIntensity;
 
       feedEl.innerHTML = "";
@@ -1312,6 +1307,17 @@ const API_KEY = "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";          
       causeBody.appendChild(causeText);
       causeBody.appendChild(causeLikes);
 
+      // Timeout-Effekt auf den Ausgangspost anzeigen (falls vorhanden)
+      if (typeof simulation.initialTimeoutDelta === "number" && simulation.initialTimeoutDelta > 0.05) {
+        const timeoutMetrics = document.createElement("div");
+        timeoutMetrics.className = "metrics";
+        const chip = document.createElement("span");
+        chip.className = "metric-label delta-bad";
+        chip.textContent = `Reaktionszeit-Überschreitung: +${simulation.initialTimeoutDelta.toFixed(1)} Intensität`;
+        timeoutMetrics.appendChild(chip);
+        causeBody.appendChild(timeoutMetrics);
+      }
+
       if (simulation.initialComments && simulation.initialComments.length) {
         const commentsBlock = createCommentsBlock(
           simulation.initialComments,
@@ -1391,6 +1397,14 @@ const API_KEY = "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";          
             deltaSpan.textContent = "Intensitätveränderung: ±0 (unverändert)";
           }
           metrics.appendChild(deltaSpan);
+        }
+
+        // NEU: Effekt von Reaktionszeit-Überschreitungen auf diese Runde
+        if (typeof resp.timeoutDelta === "number" && resp.timeoutDelta > 0.05) {
+          const timeoutSpan = document.createElement("span");
+          timeoutSpan.className = "metric-label delta-bad";
+          timeoutSpan.textContent = `Reaktionszeit-Überschreitung: +${resp.timeoutDelta.toFixed(1)} Intensität`;
+          metrics.appendChild(timeoutSpan);
         }
 
         const overallSpan = document.createElement("span");
@@ -1648,6 +1662,7 @@ const API_KEY = "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";          
     function processTimeoutResult(result) {
       const state = findState(result) || {};
 
+      // Neue Community-Kommentare
       let newComments = [];
       if (Array.isArray(state.last_community_comments)) {
         newComments = state.last_community_comments.slice();
@@ -1662,8 +1677,24 @@ const API_KEY = "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";          
         }
       }
 
+      // Intensitätsänderung durch Timeout erkennen
+      const oldIntensity = prevIntensity;
+      let delta = null;
       if (typeof state.intensity === "number") {
+        delta = state.intensity - oldIntensity;
         prevIntensity = state.intensity;
+      }
+
+      if (delta !== null && delta > 0.05) {
+        if (simulation.responses.length === 0) {
+          // Noch keine Unternehmensreaktion -> auf Ausgangspost buchen
+          simulation.initialTimeoutDelta =
+            (simulation.initialTimeoutDelta || 0) + delta;
+        } else {
+          // Auf letzte Unternehmensreaktion buchen
+          const lastResp = simulation.responses[simulation.responses.length - 1];
+          lastResp.timeoutDelta = (lastResp.timeoutDelta || 0) + delta;
+        }
       }
 
       updateStatusBar(state);
@@ -1757,7 +1788,8 @@ const API_KEY = "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";          
         overall: null,
         feedback: "",
         intensityAfter: null,
-        deltaIntensity: null
+        deltaIntensity: null,
+        timeoutDelta: 0
       };
       simulation.responses.push(resp);
       renderFeed();
