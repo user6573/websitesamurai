@@ -428,14 +428,20 @@
       font-size: 0.8rem;
     }
 
-    /* Composer unten – Stil wie Tweet-Composer, aber unten statt oben */
+    /* Composer unten – jetzt mit perfekter Ausrichtung */
     .composer {
       border-top: 1px solid #2f3336;
       padding: 0.6rem 1rem 0.8rem;
       display: flex;
-      gap: 0.6rem;
-      align-items: center; /* Avatar-Mitte mit Composer-Mitte ausrichten */
+      flex-direction: column;
+      gap: 0.3rem;
       background: #000;
+    }
+
+    .composer-top {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center; /* Avatar-Mitte = Mitte von Textfeld+Button */
     }
 
     .composer.disabled {
@@ -453,7 +459,7 @@
     .composer-row {
       display: flex;
       gap: 0.5rem;
-      align-items: center; /* Textfeld-Mitte mit Button-Mitte ausrichten */
+      align-items: center; /* Textfeld-Mitte = Button-Mitte */
     }
 
     .composer-row textarea {
@@ -821,17 +827,17 @@
         <div class="feed" id="feed"></div>
 
         <div class="composer disabled" id="composer">
-          <div class="avatar company">
-            <img src="images/company.jpg" alt="Unternehmen" />
-          </div>
-          <div class="composer-main">
+          <div class="composer-top">
+            <div class="avatar company">
+              <img src="images/company.jpg" alt="Unternehmen" />
+            </div>
             <div class="composer-row">
               <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
               <button class="btn-primary" id="sendBtn" disabled>Posten</button>
             </div>
-            <div class="composer-hint">
-              Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
-            </div>
+          </div>
+          <div class="composer-hint">
+            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
           </div>
         </div>
 
@@ -931,9 +937,9 @@
 
   <script>
     // ===================== KONFIGURATION ===========================
-const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                              // LangSmith Key oder leer
+    const BASE_URL = "https://DEIN-LANGGRAPH-SERVER";  // z.B. "https://xyz.eu.langgraph.app"
+    const ASSISTANT_ID = "shitstorm";                  // Name aus langgraph.json
+    const API_KEY = "";                                // LangSmith Key oder leer
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -1169,7 +1175,7 @@ const API_KEY = "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";          
 
           const meta = document.createElement("span");
           meta.className = "comment-meta";
-          meta.textContent = "neu"; // <--- statt "1 Std."
+          meta.textContent = "neu"; // alle neuen Kommentare als "neu"
           header.appendChild(name);
           header.appendChild(handle);
           header.appendChild(dot);
