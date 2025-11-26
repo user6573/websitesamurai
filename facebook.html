@@ -1,0 +1,1660 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <title>Facebook – Shitstorm-Simulation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color-scheme: light;
+    }
+
+    body {
+      margin: 0;
+      background: #e4e6eb;
+      color: #050505;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1200px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: transparent;
+    }
+
+    /* Header wie Facebook */
+    .fb-header {
+      height: 56px;
+      background: #ffffff;
+      border-bottom: 1px solid #d0d0d0;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      box-sizing: border-box;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .fb-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .fb-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: #1877f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 26px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .fb-search {
+      background: #f0f2f5;
+      border-radius: 999px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #65676b;
+      max-width: 240px;
+      flex: 1;
+    }
+
+    .fb-search span {
+      font-size: 15px;
+    }
+
+    .fb-header-center {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      flex: 1;
+    }
+
+    .fb-nav-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #65676b;
+      cursor: pointer;
+    }
+
+    .fb-nav-icon.active {
+      color: #1877f2;
+      border-bottom: 3px solid #1877f2;
+      border-radius: 0;
+    }
+
+    .fb-nav-icon:hover {
+      background: #f0f2f5;
+    }
+
+    .fb-header-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 1;
+    }
+
+    .fb-circle-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      background: #e4e6eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      color: #050505;
+    }
+
+    .fb-circle-btn:hover {
+      background: #d8dadf;
+    }
+
+    .fb-header-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .fb-header-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Statusbar für Runde & Intensität */
+    .status-bar {
+      font-size: 13px;
+      color: #65676b;
+      padding: 6px 0;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .status-pill {
+      background: #ffffff;
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid #d0d0d0;
+    }
+
+    .status-pill span {
+      font-weight: 600;
+      color: #050505;
+    }
+
+    /* Main */
+    .fb-main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 12px 12px 24px;
+      box-sizing: border-box;
+    }
+
+    .feed-container {
+      width: 100%;
+      max-width: 700px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feed {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feed::-webkit-scrollbar {
+      width: 6px;
+    }
+    .feed::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .feed::-webkit-scrollbar-thumb {
+      background: #b0b3b8;
+      border-radius: 999px;
+    }
+
+    /* Posts im Facebook-Stil */
+    .fb-post {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .fb-post-inner {
+      padding: 10px 12px 8px;
+    }
+
+    .fb-post-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid transparent;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .avatar.origin {
+      border-color: #42b72a;
+    }
+
+    .avatar.company {
+      border-color: #1877f2;
+    }
+
+    .avatar.coach {
+      border-color: #f7b928;
+    }
+
+    .fb-post-user {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .fb-post-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #050505;
+    }
+
+    .fb-post-meta {
+      font-size: 12px;
+      color: #65676b;
+    }
+
+    .fb-post-more {
+      margin-left: auto;
+      color: #65676b;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 999px;
+    }
+
+    .fb-post-more:hover {
+      background: #f0f2f5;
+    }
+
+    .fb-post-message {
+      font-size: 14px;
+      color: #050505;
+      margin-top: 4px;
+      margin-bottom: 8px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .fb-post-likes {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #65676b;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      border-top: 1px solid #d0d0d0;
+    }
+
+    .fb-likes-left {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .fb-like-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: #1877f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #ffffff;
+    }
+
+    .fb-likes-count {
+      font-weight: 500;
+    }
+
+    .fb-post-stats {
+      padding-top: 4px;
+      padding-bottom: 4px;
+      border-top: 1px solid #d0d0d0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-size: 12px;
+      color: #65676b;
+    }
+
+    .stat-chip {
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #d0d0d0;
+      background: #f0f2f5;
+      white-space: nowrap;
+    }
+
+    .stat-good {
+      border-color: #16a34a;
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .stat-bad {
+      border-color: #b91c1c;
+      color: #7f1d1d;
+      background: #fee2e2;
+    }
+
+    .fb-post-actions {
+      display: flex;
+      justify-content: space-around;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      border-top: 1px solid #d0d0d0;
+      font-size: 13px;
+      color: #65676b;
+    }
+
+    .fb-action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px 0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .fb-action-btn:hover {
+      background: #f0f2f5;
+    }
+
+    .fb-action-btn span:first-child {
+      font-size: 15px;
+    }
+
+    /* Kommentare */
+    .fb-comments {
+      padding-top: 4px;
+      font-size: 13px;
+      color: #050505;
+    }
+
+    .fb-comments summary {
+      list-style: none;
+      cursor: pointer;
+      color: #65676b;
+      font-size: 12px;
+      padding: 4px 0;
+    }
+
+    .fb-comments summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .comment {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .comment-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .comment-body {
+      background: #f0f2f5;
+      border-radius: 16px;
+      padding: 4px 8px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 12px;
+      color: #65676b;
+    }
+
+    .comment-name {
+      font-weight: 600;
+      color: #050505;
+    }
+
+    .comment-meta {
+      margin-left: auto;
+      font-size: 11px;
+      color: #65676b;
+    }
+
+    .comment-text {
+      margin-top: 2px;
+      font-size: 13px;
+      color: #050505;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .comment-muted {
+      font-size: 12px;
+      color: #65676b;
+      margin-top: 2px;
+      padding-left: 34px;
+    }
+
+    /* Finaler Auswertungs-Post */
+    .final-post {
+      border-top: 3px solid #1877f2;
+    }
+
+    .final-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .final-good {
+      color: #166534;
+    }
+
+    .final-bad {
+      color: #7f1d1d;
+    }
+
+    .final-summary {
+      font-size: 13px;
+      color: #050505;
+      white-space: pre-wrap;
+    }
+
+    /* Composer (Antwortfeld) */
+    .composer {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      padding: 8px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .composer.disabled {
+      opacity: 0.6;
+    }
+
+    .composer-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .composer-row {
+      display: flex;
+      flex: 1;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .composer-row textarea {
+      flex: 1;
+      width: 100%;
+    }
+
+    .composer textarea {
+      border-radius: 999px;
+      border: 1px solid #d0d0d0;
+      background: #f0f2f5;
+      color: #050505;
+      font: inherit;
+      font-size: 14px;
+      padding: 6px 12px;
+      min-height: 40px;
+      max-height: 180px;
+      resize: none;
+      overflow-y: auto;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .composer textarea:focus {
+      border-color: #1877f2;
+      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(24, 119, 242, 0.2);
+    }
+
+    .composer-hint {
+      font-size: 11px;
+      color: #65676b;
+      text-align: right;
+    }
+
+    .btn-primary {
+      border-radius: 999px;
+      border: none;
+      background: #1877f2;
+      color: #ffffff;
+      font-weight: 600;
+      padding: 6px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #166fe0;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    /* Debug-Karte */
+    .debug-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      padding: 6px 12px 10px;
+      font-size: 11px;
+      color: #65676b;
+      max-height: 150px;
+      overflow: hidden;
+    }
+
+    .debug-card details {
+      cursor: pointer;
+    }
+
+    .debug-card pre {
+      margin: 4px 0 0;
+      max-height: 110px;
+      overflow-y: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      color: #374151;
+    }
+
+    @media (max-width: 800px) {
+      .fb-header-center {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .fb-header-left {
+        flex: 0 0 auto;
+      }
+      .fb-search {
+        display: none;
+      }
+      .feed-container {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="fb-header">
+      <div class="fb-header-left">
+        <div class="fb-logo">f</div>
+        <div class="fb-search">
+          <span>🔍</span>
+          <span>Suche auf Facebook</span>
+        </div>
+      </div>
+      <div class="fb-header-center">
+        <div class="fb-nav-icon active">🏠</div>
+        <div class="fb-nav-icon">🎥</div>
+        <div class="fb-nav-icon">🛒</div>
+        <div class="fb-nav-icon">👥</div>
+        <div class="fb-nav-icon">🎮</div>
+      </div>
+      <div class="fb-header-right">
+        <div class="fb-circle-btn">＋</div>
+        <div class="fb-circle-btn">💬</div>
+        <div class="fb-circle-btn">🔔</div>
+        <div class="fb-header-avatar">
+          <img src="images/company.jpg" alt="Unternehmen" />
+        </div>
+      </div>
+    </header>
+
+    <div class="status-bar">
+      <div class="status-pill">Runde: <span id="roundText">–</span></div>
+      <div class="status-pill">Intensität: <span id="intensityText">–</span></div>
+    </div>
+
+    <main class="fb-main">
+      <div class="feed-container">
+        <div class="feed" id="feed"></div>
+
+        <div class="composer disabled" id="composer">
+          <div class="composer-top">
+            <div class="avatar company">
+              <img src="images/company.jpg" alt="Unternehmen" />
+            </div>
+            <div class="composer-row">
+              <textarea id="answerInput" placeholder="Schreibe eine Antwort im Namen des Unternehmens …" disabled></textarea>
+              <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+            </div>
+          </div>
+          <div class="composer-hint">
+            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte ankündigen.
+          </div>
+        </div>
+
+        <div class="debug-card">
+          <details>
+            <summary>Debug-Antwort vom Server anzeigen</summary>
+            <pre id="debugOutput"></pre>
+          </details>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ===================== KONFIGURATION ===========================
+
+const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
+const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
+const API_KEY = "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";                                  // x-api-key (falls benötigt) oder leer
+
+    const COMPANY_AVATAR_SRC = "images/company.jpg";
+    const CAUSE_AVATAR_SRC = "images/1.png";
+    const USER_AVATAR_COUNT = 13;
+    let userAvatarIndex = 2; // 2..13 für Community-User
+
+    // maximale Wartezeit (ms) bis automatische Community-Reaktion
+    let maxWaitMs = null;
+    let reactionTimerId = null;
+
+    // User, der den Shitstorm-Post absetzt
+    const CAUSE_USER = {
+      name: "Chris Müller",
+      handle: "Öffentlicher Beitrag"
+    };
+
+    // Sinnvolle Profile für Community-Kommentare
+    const COMMENT_PROFILES = [
+      { name: "Lena Weber" },
+      { name: "Jonas Müller" },
+      { name: "Sarah König" },
+      { name: "Ali Demir" },
+      { name: "Mara Hoffmann" },
+      { name: "Tom Richter" },
+      { name: "Julia Meier" },
+      { name: "David Schulz" },
+      { name: "Nina Bauer" },
+      { name: "Philipp Lang" }
+    ];
+
+    let commentProfileIndex = 0;
+    function nextCommentProfile() {
+      const profile = COMMENT_PROFILES[commentProfileIndex % COMMENT_PROFILES.length];
+      commentProfileIndex++;
+      return profile;
+    }
+
+    function nextUserAvatarSrc() {
+      const src = "images/" + userAvatarIndex + ".png";
+      userAvatarIndex++;
+      if (userAvatarIndex > USER_AVATAR_COUNT) userAvatarIndex = 2;
+      return src;
+    }
+
+    // ===================== STATE & DOM =============================
+    let threadId = null;
+    let waitingForAnswer = false;
+    let finished = false;
+
+    const feedEl = document.getElementById("feed");
+    const composerEl = document.getElementById("composer");
+    const answerInputEl = document.getElementById("answerInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const roundTextEl = document.getElementById("roundText");
+    const intensityTextEl = document.getElementById("intensityText");
+    const debugOutputEl = document.getElementById("debugOutput");
+
+    const simulation = {
+      company: "",
+      cause: "",
+      initialIntensity: 70,
+      initialComments: [],
+      responses: [],
+      finalOutcome: "",
+      finalSummary: "",
+      initialTimeoutDelta: 0
+    };
+
+    let prevIntensity = simulation.initialIntensity;
+
+    function buildHeaders() {
+      const h = { "Content-Type": "application/json" };
+      if (API_KEY && API_KEY.trim() !== "") {
+        h["x-api-key"] = API_KEY.trim();
+      }
+      return h;
+    }
+
+    function setStatus(_text) {
+      // aktuell keine sichtbare Statusanzeige; Hook falls du später was anzeigen willst
+    }
+
+    function setComposerEnabled(on) {
+      if (on) {
+        composerEl.classList.remove("disabled");
+        answerInputEl.disabled = false;
+        sendBtn.disabled = false;
+        autoResizeAnswer();
+      } else {
+        composerEl.classList.add("disabled");
+        answerInputEl.disabled = true;
+        sendBtn.disabled = true;
+      }
+    }
+
+    function clearReactionTimer() {
+      if (reactionTimerId !== null) {
+        clearTimeout(reactionTimerId);
+        reactionTimerId = null;
+      }
+    }
+
+    function scheduleReactionTimer() {
+      clearReactionTimer();
+      if (!maxWaitMs || maxWaitMs <= 0) return;
+      reactionTimerId = setTimeout(() => {
+        if (!waitingForAnswer || finished) return;
+        handleReactionTimeout();
+      }, maxWaitMs);
+    }
+
+    function resetSimulation() {
+      simulation.company = "";
+      simulation.cause = "";
+      simulation.initialIntensity = 70;
+      simulation.initialComments = [];
+      simulation.responses = [];
+      simulation.finalOutcome = "";
+      simulation.finalSummary = "";
+      simulation.initialTimeoutDelta = 0;
+      prevIntensity = simulation.initialIntensity;
+
+      feedEl.innerHTML = "";
+      roundTextEl.textContent = "–";
+      intensityTextEl.textContent = "–";
+      debugOutputEl.textContent = "";
+
+      threadId = null;
+      waitingForAnswer = false;
+      finished = false;
+      setComposerEnabled(false);
+      userAvatarIndex = 2;
+      commentProfileIndex = 0;
+      clearReactionTimer();
+
+      answerInputEl.value = "";
+      autoResizeAnswer();
+    }
+
+    // =============== Auto-Resize für Company-Textfeld ==============
+    function autoResizeAnswer() {
+      const el = answerInputEl;
+      if (!el) return;
+      const max = 180;
+      el.style.height = "auto";
+      const newHeight = Math.min(el.scrollHeight, max);
+      el.style.height = newHeight + "px";
+    }
+
+    // ===================== RENDERING ===============================
+
+    function clampLikes(n) {
+      return Math.max(3, Math.min(9999, Math.round(n)));
+    }
+
+    function likesForCause(intensity) {
+      const base = 60;
+      const scaled = typeof intensity === "number" ? intensity * 1.4 : 70;
+      return clampLikes(base + scaled);
+    }
+
+    function likesForResponse(resp) {
+      const intensity = typeof resp.intensityAfter === "number" ? resp.intensityAfter : prevIntensity;
+      const overall = typeof resp.overall === "number" ? resp.overall : 50;
+      const delta = typeof resp.deltaIntensity === "number" ? resp.deltaIntensity : 0;
+      const score = overall + (delta < 0 ? -delta * 1.5 : -delta);
+      const base = 30 + (100 - intensity) * 0.25;
+      return clampLikes(base + score / 3);
+    }
+
+    function classifyOverall(overall) {
+      if (typeof overall !== "number") return "Noch keine Bewertung verfügbar.";
+      if (overall >= 80) return "Sehr starke Reaktion – deutliche Deeskalation.";
+      if (overall >= 65) return "Gute Reaktion – Shitstorm beruhigt sich spürbar.";
+      if (overall >= 50) return "Durchwachsene Reaktion – nur leichte Entspannung.";
+      if (overall >= 35) return "Schwache Reaktion – Lage bleibt angespannt.";
+      return "Sehr schwache Reaktion – Shitstorm eskaliert weiter.";
+    }
+
+    function createCommentsBlock(comments, shouldOpen) {
+      const details = document.createElement("details");
+      details.className = "fb-comments";
+      if (shouldOpen) details.open = true;
+
+      const summary = document.createElement("summary");
+      if (Array.isArray(comments) && comments.length) {
+        summary.textContent =
+          comments.length === 1
+            ? "1 Kommentar ansehen"
+            : `Alle ${comments.length} Kommentare ansehen`;
+      } else {
+        summary.textContent = "Noch keine Kommentare";
+        summary.style.color = "#9e9e9e";
+      }
+      details.appendChild(summary);
+
+      if (Array.isArray(comments) && comments.length) {
+        comments.forEach((c) => {
+          const row = document.createElement("div");
+          row.className = "comment";
+
+          const cav = document.createElement("div");
+          cav.className = "comment-avatar";
+          const img = document.createElement("img");
+          img.src = nextUserAvatarSrc();
+          img.alt = "Community";
+          cav.appendChild(img);
+
+          const body = document.createElement("div");
+          body.className = "comment-body";
+
+          const header = document.createElement("div");
+          header.className = "comment-header";
+
+          const profile = nextCommentProfile();
+
+          const name = document.createElement("span");
+          name.className = "comment-name";
+          name.textContent = profile.name;
+
+          const meta = document.createElement("span");
+          meta.className = "comment-meta";
+          meta.textContent = "Neu";
+
+          header.appendChild(name);
+          header.appendChild(meta);
+
+          const text = document.createElement("div");
+          text.className = "comment-text";
+          text.textContent = c;
+
+          body.appendChild(header);
+          body.appendChild(text);
+
+          row.appendChild(cav);
+          row.appendChild(body);
+
+          details.appendChild(row);
+        });
+      } else {
+        const info = document.createElement("div");
+        info.className = "comment-muted";
+        info.textContent = "Noch keine Kommentare.";
+        details.appendChild(info);
+      }
+
+      return details;
+    }
+
+    function renderFeed() {
+      feedEl.innerHTML = "";
+
+      if (!simulation.cause) return;
+
+      const newestIndex = simulation.responses.length;
+
+      // 1) Ausgangspost des Nutzers
+      const causePost = document.createElement("article");
+      causePost.className = "fb-post";
+
+      const inner = document.createElement("div");
+      inner.className = "fb-post-inner";
+
+      const header = document.createElement("div");
+      header.className = "fb-post-header";
+
+      const av = document.createElement("div");
+      av.classList.add("avatar", "origin");
+      const img = document.createElement("img");
+      img.src = CAUSE_AVATAR_SRC;
+      img.alt = "User";
+      av.appendChild(img);
+
+      const userBox = document.createElement("div");
+      userBox.className = "fb-post-user";
+
+      const nameEl = document.createElement("div");
+      nameEl.className = "fb-post-name";
+      nameEl.textContent = CAUSE_USER.name;
+
+      const metaEl = document.createElement("div");
+      metaEl.className = "fb-post-meta";
+      metaEl.textContent = CAUSE_USER.handle + " · Auslöser des Shitstorms";
+
+      userBox.appendChild(nameEl);
+      userBox.appendChild(metaEl);
+
+      const more = document.createElement("div");
+      more.className = "fb-post-more";
+      more.textContent = "⋯";
+
+      header.appendChild(av);
+      header.appendChild(userBox);
+      header.appendChild(more);
+
+      const message = document.createElement("div");
+      message.className = "fb-post-message";
+      message.textContent = simulation.cause;
+
+      inner.appendChild(header);
+      inner.appendChild(message);
+
+      // Likes & Stats für Ausgangspost
+      const likesRow = document.createElement("div");
+      likesRow.className = "fb-post-likes";
+
+      const likesLeft = document.createElement("div");
+      likesLeft.className = "fb-likes-left";
+
+      const likeBadge = document.createElement("div");
+      likeBadge.className = "fb-like-badge";
+      likeBadge.textContent = "👍";
+
+      const likesCount = document.createElement("div");
+      likesCount.className = "fb-likes-count";
+      likesCount.textContent = likesForCause(simulation.initialIntensity);
+
+      likesLeft.appendChild(likeBadge);
+      likesLeft.appendChild(likesCount);
+
+      likesRow.appendChild(likesLeft);
+      // rechts leer, könnte Shares anzeigen
+      const likesRight = document.createElement("div");
+      likesRow.appendChild(likesRight);
+
+      inner.appendChild(likesRow);
+
+      const statsRow = document.createElement("div");
+      statsRow.className = "fb-post-stats";
+
+      if (typeof simulation.initialTimeoutDelta === "number" && simulation.initialTimeoutDelta > 0.05) {
+        const chip = document.createElement("span");
+        chip.className = "stat-chip stat-bad";
+        chip.textContent = `Reaktionszeit überschritten: +${simulation.initialTimeoutDelta.toFixed(1)} Intensität`;
+        statsRow.appendChild(chip);
+      }
+
+      if (statsRow.childElementCount) {
+        inner.appendChild(statsRow);
+      }
+
+      const actionsRow = document.createElement("div");
+      actionsRow.className = "fb-post-actions";
+      actionsRow.innerHTML = `
+        <div class="fb-action-btn"><span>👍</span><span>Gefällt mir</span></div>
+        <div class="fb-action-btn"><span>💬</span><span>Kommentieren</span></div>
+        <div class="fb-action-btn"><span>↗</span><span>Teilen</span></div>
+      `;
+      inner.appendChild(actionsRow);
+
+      const commentsBlock = createCommentsBlock(
+        simulation.initialComments,
+        newestIndex === 0
+      );
+      inner.appendChild(commentsBlock);
+
+      causePost.appendChild(inner);
+      feedEl.appendChild(causePost);
+
+      // 2) Unternehmens-Reaktionen
+      simulation.responses.forEach((resp, index) => {
+        const roundNumber = index + 1;
+        const isNewest = (roundNumber === newestIndex);
+
+        const post = document.createElement("article");
+        post.className = "fb-post";
+
+        const innerC = document.createElement("div");
+        innerC.className = "fb-post-inner";
+
+        const headerC = document.createElement("div");
+        headerC.className = "fb-post-header";
+
+        const avC = document.createElement("div");
+        avC.classList.add("avatar", "company");
+        const imgC = document.createElement("img");
+        imgC.src = COMPANY_AVATAR_SRC;
+        imgC.alt = "Unternehmen";
+        avC.appendChild(imgC);
+
+        const userBoxC = document.createElement("div");
+        userBoxC.className = "fb-post-user";
+
+        const cname = document.createElement("div");
+        cname.className = "fb-post-name";
+        cname.textContent = simulation.company || "Unternehmen";
+
+        const cmeta = document.createElement("div");
+        cmeta.className = "fb-post-meta";
+        cmeta.textContent = `Antwort des Unternehmens · Runde ${roundNumber}`;
+
+        userBoxC.appendChild(cname);
+        userBoxC.appendChild(cmeta);
+
+        const moreC = document.createElement("div");
+        moreC.className = "fb-post-more";
+        moreC.textContent = "⋯";
+
+        headerC.appendChild(avC);
+        headerC.appendChild(userBoxC);
+        headerC.appendChild(moreC);
+
+        const msgC = document.createElement("div");
+        msgC.className = "fb-post-message";
+        msgC.textContent = resp.answer;
+
+        innerC.appendChild(headerC);
+        innerC.appendChild(msgC);
+
+        const likesRowC = document.createElement("div");
+        likesRowC.className = "fb-post-likes";
+
+        const likesLeftC = document.createElement("div");
+        likesLeftC.className = "fb-likes-left";
+
+        const likeBadgeC = document.createElement("div");
+        likeBadgeC.className = "fb-like-badge";
+        likeBadgeC.textContent = "👍";
+
+        const likesCountC = document.createElement("div");
+        likesCountC.className = "fb-likes-count";
+        likesCountC.textContent = likesForResponse(resp);
+
+        likesLeftC.appendChild(likeBadgeC);
+        likesLeftC.appendChild(likesCountC);
+
+        likesRowC.appendChild(likesLeftC);
+        likesRowC.appendChild(document.createElement("div"));
+        innerC.appendChild(likesRowC);
+
+        const statsC = document.createElement("div");
+        statsC.className = "fb-post-stats";
+
+        if (typeof resp.intensityAfter === "number") {
+          const chip = document.createElement("span");
+          chip.className = "stat-chip";
+          chip.textContent = `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
+          statsC.appendChild(chip);
+        }
+
+        if (typeof resp.deltaIntensity === "number") {
+          const delta = resp.deltaIntensity;
+          const chip = document.createElement("span");
+          chip.className = "stat-chip";
+          const deltaText = (delta >= 0 ? "+" : "") + delta.toFixed(1);
+          if (delta < 0) {
+            chip.classList.add("stat-good");
+            chip.textContent = `Intensitätsänderung: ${deltaText} (entschärft)`;
+          } else if (delta > 0) {
+            chip.classList.add("stat-bad");
+            chip.textContent = `Intensitätsänderung: ${deltaText} (verschärft)`;
+          } else {
+            chip.textContent = "Intensitätsänderung: ±0 (unverändert)";
+          }
+          statsC.appendChild(chip);
+        }
+
+        if (typeof resp.timeoutDelta === "number" && resp.timeoutDelta > 0.05) {
+          const chipT = document.createElement("span");
+          chipT.className = "stat-chip stat-bad";
+          chipT.textContent = `Reaktionszeit überschritten: +${resp.timeoutDelta.toFixed(1)} Intensität`;
+          statsC.appendChild(chipT);
+        }
+
+        if (typeof resp.overall === "number") {
+          const chipO = document.createElement("span");
+          chipO.className = "stat-chip";
+          const classification = classifyOverall(resp.overall);
+          chipO.textContent = classification;
+          if (resp.overall >= 65) chipO.classList.add("stat-good");
+          else if (resp.overall < 50) chipO.classList.add("stat-bad");
+          statsC.appendChild(chipO);
+        }
+
+        if (statsC.childElementCount) innerC.appendChild(statsC);
+
+        const actionsC = document.createElement("div");
+        actionsC.className = "fb-post-actions";
+        actionsC.innerHTML = `
+          <div class="fb-action-btn"><span>👍</span><span>Gefällt mir</span></div>
+          <div class="fb-action-btn"><span>💬</span><span>Kommentieren</span></div>
+          <div class="fb-action-btn"><span>↗</span><span>Teilen</span></div>
+        `;
+        innerC.appendChild(actionsC);
+
+        const commentsBlockC = createCommentsBlock(
+          resp.comments || [],
+          isNewest
+        );
+        innerC.appendChild(commentsBlockC);
+
+        post.appendChild(innerC);
+        feedEl.appendChild(post);
+      });
+
+      // 3) Finale Auswertung
+      if (simulation.finalOutcome) {
+        const finalPost = document.createElement("article");
+        finalPost.className = "fb-post final-post";
+
+        const innerF = document.createElement("div");
+        innerF.className = "fb-post-inner";
+
+        const headerF = document.createElement("div");
+        headerF.className = "fb-post-header";
+
+        const avF = document.createElement("div");
+        avF.classList.add("avatar", "coach");
+        const imgF = document.createElement("img");
+        imgF.src = COMPANY_AVATAR_SRC;
+        imgF.alt = "Coach";
+        avF.appendChild(imgF);
+
+        const userBoxF = document.createElement("div");
+        userBoxF.className = "fb-post-user";
+
+        const titleEl = document.createElement("div");
+        titleEl.className = "final-title";
+        if (simulation.finalOutcome.includes("abgeflacht")) {
+          titleEl.classList.add("final-good");
+        } else {
+          titleEl.classList.add("final-bad");
+        }
+        titleEl.textContent = simulation.finalOutcome;
+
+        const metaF = document.createElement("div");
+        metaF.className = "fb-post-meta";
+        metaF.textContent = "Auswertung der Shitstorm-Simulation";
+
+        userBoxF.appendChild(titleEl);
+        userBoxF.appendChild(metaF);
+
+        headerF.appendChild(avF);
+        headerF.appendChild(userBoxF);
+
+        innerF.appendChild(headerF);
+
+        if (simulation.finalSummary) {
+          const sumEl = document.createElement("div");
+          sumEl.className = "final-summary";
+          sumEl.textContent = simulation.finalSummary;
+          innerF.appendChild(sumEl);
+        }
+
+        finalPost.appendChild(innerF);
+        feedEl.appendChild(finalPost);
+      }
+    }
+
+    // ===================== HTTP / UTILS ============================
+
+    async function createThread() {
+      const res = await fetch(`${BASE_URL}/threads`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: "{}"
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`Thread-Erstellung fehlgeschlagen: ${res.status} – ${txt}`);
+      }
+      const data = await res.json();
+      return data.thread_id || data.id;
+    }
+
+    async function runWait(body) {
+      if (!threadId) {
+        threadId = await createThread();
+      }
+
+      const res = await fetch(`${BASE_URL}/threads/${threadId}/runs/wait`, {
+        method: "POST",
+        headers: buildHeaders(),
+        body: JSON.stringify(Object.assign({ assistant_id: ASSISTANT_ID }, body))
+      });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        const txt = await res.text();
+        throw new Error("Antwort keine gültige JSON: " + txt);
+      }
+
+      debugOutputEl.textContent = JSON.stringify(data, null, 2);
+
+      if (!res.ok || data.__error__) {
+        const errMsg =
+          data.__error__ && (data.__error__.message || data.__error__.error)
+            ? data.__error__.message || data.__error__.error
+            : res.statusText;
+        throw new Error("Server-Fehler: " + errMsg);
+      }
+
+      return data;
+    }
+
+    function findState(obj, depth = 0) {
+      if (!obj || typeof obj !== "object" || depth > 6) return null;
+
+      const hasStateShape =
+        Object.prototype.hasOwnProperty.call(obj, "last_community_comments") ||
+        (Object.prototype.hasOwnProperty.call(obj, "platform") &&
+          Object.prototype.hasOwnProperty.call(obj, "cause") &&
+          Object.prototype.hasOwnProperty.call(obj, "intensity"));
+
+      if (hasStateShape) return obj;
+
+      for (const key of Object.keys(obj)) {
+        const child = obj[key];
+        if (child && typeof child === "object") {
+          const found = findState(child, depth + 1);
+          if (found) return found;
+        }
+      }
+
+      return null;
+    }
+
+    function hasInterrupt(result) {
+      return Array.isArray(result.__interrupt__) && result.__interrupt__.length > 0;
+    }
+
+    function extractLastCoachFeedback(history) {
+      if (!Array.isArray(history)) return "";
+      const coachEntries = history.filter((h) => h.actor === "coach");
+      if (!coachEntries.length) return "";
+      return coachEntries[coachEntries.length - 1].content || "";
+    }
+
+    function updateStatusBar(state) {
+      if (typeof state.round === "number") {
+        roundTextEl.textContent = String(state.round);
+      }
+      if (typeof state.intensity === "number") {
+        intensityTextEl.textContent = state.intensity.toFixed(1) + " / 100";
+      }
+    }
+
+    // ===================== RESULT-HANDLING =========================
+
+    function processInitialResult(result) {
+      const state = findState(result) || {};
+      simulation.initialIntensity =
+        typeof state.intensity === "number" ? state.intensity : 70;
+      prevIntensity = simulation.initialIntensity;
+
+      if (Array.isArray(state.last_community_comments)) {
+        simulation.initialComments = state.last_community_comments.slice();
+      } else {
+        simulation.initialComments = [];
+      }
+
+      updateStatusBar(state);
+      renderFeed();
+
+      if (hasInterrupt(result)) {
+        waitingForAnswer = true;
+        setComposerEnabled(true);
+        setStatus("erste Antwort ist gefragt");
+        answerInputEl.focus();
+        autoResizeAnswer();
+        scheduleReactionTimer();
+      } else {
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        if (state.status && state.status !== "running") {
+          setStatus("beendet");
+        } else {
+          setStatus("läuft …");
+        }
+      }
+    }
+
+    function processResponseResult(result, resp) {
+      const state = findState(result) || {};
+
+      if (typeof state.politeness_score === "number") {
+        resp.politeness = state.politeness_score;
+      }
+      if (typeof state.responsibility_score === "number") {
+        resp.responsibility = state.responsibility_score;
+      }
+      if (typeof state.reaction_score === "number") {
+        resp.overall = state.reaction_score;
+      }
+
+      if (typeof state.intensity === "number") {
+        resp.intensityAfter = state.intensity;
+        resp.deltaIntensity = state.intensity - prevIntensity;
+        prevIntensity = state.intensity;
+      }
+
+      resp.feedback = extractLastCoachFeedback(state.history) || "";
+
+      if (Array.isArray(state.last_community_comments)) {
+        resp.comments = state.last_community_comments.slice();
+      } else {
+        resp.comments = resp.comments || [];
+      }
+
+      updateStatusBar(state);
+
+      if (state.status && state.status !== "running") {
+        finished = true;
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        simulation.finalOutcome =
+          state.status === "user_won"
+            ? "Der Shitstorm ist abgeflacht."
+            : "Der Shitstorm ist außer Kontrolle geraten.";
+        simulation.finalSummary = state.summary || "";
+        setStatus("beendet");
+      } else if (hasInterrupt(result)) {
+        waitingForAnswer = true;
+        setComposerEnabled(true);
+        setStatus("nächste Antwort ist gefragt");
+        answerInputEl.focus();
+        autoResizeAnswer();
+        scheduleReactionTimer();
+      } else {
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        setStatus("läuft …");
+      }
+
+      renderFeed();
+    }
+
+    function processTimeoutResult(result) {
+      const state = findState(result) || {};
+
+      let newComments = [];
+      if (Array.isArray(state.last_community_comments)) {
+        newComments = state.last_community_comments.slice();
+      }
+
+      if (newComments.length) {
+        if (simulation.responses.length === 0) {
+          simulation.initialComments = (simulation.initialComments || []).concat(newComments);
+        } else {
+          const lastResp = simulation.responses[simulation.responses.length - 1];
+          lastResp.comments = (lastResp.comments || []).concat(newComments);
+        }
+      }
+
+      const oldIntensity = prevIntensity;
+      let delta = null;
+      if (typeof state.intensity === "number") {
+        delta = state.intensity - oldIntensity;
+        prevIntensity = state.intensity;
+      }
+
+      if (delta !== null && delta > 0.05) {
+        if (simulation.responses.length === 0) {
+          simulation.initialTimeoutDelta =
+            (simulation.initialTimeoutDelta || 0) + delta;
+        } else {
+          const lastResp = simulation.responses[simulation.responses.length - 1];
+          lastResp.timeoutDelta = (lastResp.timeoutDelta || 0) + delta;
+        }
+      }
+
+      updateStatusBar(state);
+
+      if (state.status && state.status !== "running") {
+        finished = true;
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        simulation.finalOutcome =
+          state.status === "user_won"
+            ? "Der Shitstorm ist abgeflacht."
+            : "Der Shitstorm ist außer Kontrolle geraten.";
+        simulation.finalSummary = state.summary || "";
+        setStatus("beendet");
+      } else if (hasInterrupt(result)) {
+        waitingForAnswer = true;
+        setComposerEnabled(true);
+        setStatus("Community hat erneut reagiert – jetzt bist du wieder dran");
+        answerInputEl.focus();
+        autoResizeAnswer();
+        scheduleReactionTimer();
+      } else {
+        waitingForAnswer = false;
+        setComposerEnabled(false);
+        clearReactionTimer();
+        setStatus("läuft …");
+      }
+
+      renderFeed();
+    }
+
+    // ===================== SIMULATION FLOW =========================
+
+    async function startSimulation(companyParam, causeParam) {
+      resetSimulation();
+      simulation.company = (companyParam || "Dein Unternehmen").trim();
+      simulation.cause = (causeParam || "Kritischer Facebook-Post").trim();
+
+      setStatus("startet …");
+      renderFeed();
+
+      const initialState = {
+        platform: "Facebook",
+        cause: simulation.cause,
+        company_name: simulation.company,
+        round: 0,
+        history: [],
+        last_company_response: "",
+        last_community_comments: [],
+        politeness_score: 0.0,
+        responsibility_score: 0.0,
+        reaction_score: 0.0,
+        intensity: 70.0,
+        status: "running",
+        summary: ""
+      };
+
+      try {
+        const result = await runWait({ input: initialState });
+        processInitialResult(result);
+      } catch (err) {
+        appendError(err.message);
+        setStatus("Fehler");
+      }
+    }
+
+    async function sendAnswer() {
+      if (!waitingForAnswer || finished) return;
+      const answer = answerInputEl.value.trim();
+      if (!answer) return;
+
+      const resp = {
+        id: simulation.responses.length + 1,
+        answer,
+        comments: [],
+        politeness: null,
+        responsibility: null,
+        overall: null,
+        feedback: "",
+        intensityAfter: null,
+        deltaIntensity: null,
+        timeoutDelta: 0
+      };
+      simulation.responses.push(resp);
+      renderFeed();
+
+      answerInputEl.value = "";
+      autoResizeAnswer();
+
+      setComposerEnabled(false);
+      waitingForAnswer = false;
+      setStatus("läuft …");
+      clearReactionTimer();
+
+      try {
+        const result = await runWait({ command: { resume: answer } });
+        processResponseResult(result, resp);
+      } catch (err) {
+        appendError(err.message);
+        setStatus("Fehler");
+        setComposerEnabled(false);
+      }
+    }
+
+    async function handleReactionTimeout() {
+      if (!waitingForAnswer || finished) return;
+      clearReactionTimer();
+      waitingForAnswer = false;
+      setComposerEnabled(false);
+      setStatus("Reaktionszeit überschritten – Community reagiert weiter …");
+
+      try {
+        const result = await runWait({
+          command: {
+            resume: "[AUTOMATISCHE COMMUNITY-REAKTION: Unternehmen hat nicht innerhalb der vereinbarten Zeit geantwortet]"
+          }
+        });
+        processTimeoutResult(result);
+      } catch (err) {
+        appendError(err.message);
+        setStatus("Fehler");
+      }
+    }
+
+    function appendError(message) {
+      const post = document.createElement("article");
+      post.className = "fb-post";
+
+      const inner = document.createElement("div");
+      inner.className = "fb-post-inner";
+
+      const header = document.createElement("div");
+      header.className = "fb-post-header";
+
+      const av = document.createElement("div");
+      av.className = "avatar";
+      const img = document.createElement("img");
+      img.src = COMPANY_AVATAR_SRC;
+      img.alt = "System";
+      av.appendChild(img);
+
+      const userBox = document.createElement("div");
+      userBox.className = "fb-post-user";
+
+      const name = document.createElement("div");
+      name.className = "fb-post-name";
+      name.textContent = "Systemfehler";
+
+      const meta = document.createElement("div");
+      meta.className = "fb-post-meta";
+      meta.textContent = "Simulationsfehler";
+
+      userBox.appendChild(name);
+      userBox.appendChild(meta);
+
+      header.appendChild(av);
+      header.appendChild(userBox);
+
+      const body = document.createElement("div");
+      body.className = "fb-post-message";
+      body.textContent = message;
+
+      inner.appendChild(header);
+      inner.appendChild(body);
+
+      post.appendChild(inner);
+      feedEl.appendChild(post);
+      feedEl.scrollTop = feedEl.scrollHeight;
+    }
+
+    // ===================== EVENTS / AUTOSTART ======================
+
+    sendBtn.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      sendAnswer();
+    });
+
+    answerInputEl.addEventListener("keydown", (ev) => {
+      if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
+        ev.preventDefault();
+        sendAnswer();
+      }
+    });
+
+    answerInputEl.addEventListener("input", autoResizeAnswer);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const companyParam = params.get("company") || "Dein Unternehmen";
+      const causeParam   = params.get("cause")   || "Kritischer Facebook-Post";
+
+      const maxParam = parseInt(params.get("maxMinutes") || "15", 10);
+      if (!isNaN(maxParam) && maxParam > 0) {
+        maxWaitMs = maxParam * 60 * 1000;
+      } else {
+        maxWaitMs = 15 * 60 * 1000;
+      }
+
+      autoResizeAnswer();
+
+      setTimeout(() => {
+        startSimulation(companyParam, causeParam);
+      }, 0);
+    });
+  </script>
+</body>
+</html>
