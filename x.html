@@ -186,7 +186,7 @@
       font-size: 1.1rem;
     }
 
-    /* ========== ZENTRALE TIMELINE (deine Simulation) ========== */
+    /* ========== ZENTRALE TIMELINE (Simulation) ========== */
     .timeline {
       width: min(600px, 100%);
       border-left: 1px solid #2f3336;
@@ -346,7 +346,7 @@
       color: #f91880;
     }
 
-    /* ====== Kommentare / Replies – X-ähnlicher Look ====== */
+    /* Kommentare / Replies – X-ähnlicher Look */
     .comments {
       margin-top: 0.5rem;
       font-size: 0.82rem;
@@ -428,7 +428,7 @@
       font-size: 0.8rem;
     }
 
-    /* Composer unten – jetzt mit perfekter Ausrichtung */
+    /* Composer unten – mit breitem Textfeld */
     .composer {
       border-top: 1px solid #2f3336;
       padding: 0.6rem 1rem 0.8rem;
@@ -441,7 +441,7 @@
     .composer-top {
       display: flex;
       gap: 0.6rem;
-      align-items: center; /* Avatar-Mitte = Mitte von Textfeld+Button */
+      align-items: center;
     }
 
     .composer.disabled {
@@ -458,14 +458,14 @@
 
     .composer-row {
       display: flex;
-      flex: 1;              /* nimmt die ganze Breite neben dem Avatar ein */
+      flex: 1;
       gap: 0.5rem;
-      align-items: center;  /* Textfeld-Mitte = Button-Mitte */
+      align-items: center;
     }
 
     .composer-row textarea {
       flex: 1;
-      width: 100%;          /* stellt sicher, dass das Feld schön breit ist */
+      width: 100%;
     }
 
     .composer textarea {
@@ -567,7 +567,7 @@
       white-space: pre-wrap;
     }
 
-    /* ========== RECHTES SIDEBAR (Trending / Who to follow) ========== */
+    /* ========== RECHTES SIDEBAR ========== */
     .sidebar-right {
       width: 320px;
       padding: 0.75rem 0 0.75rem 0.75rem;
@@ -711,7 +711,7 @@
       background: #e6e9ea;
     }
 
-    /* Responsive: Seitenleisten ausblenden auf kleineren Screens */
+    /* Responsive */
     @media (max-width: 1100px) {
       .sidebar-right {
         display: none;
@@ -819,7 +819,7 @@
         </div>
       </aside>
 
-      <!-- Zentrale Timeline (Simulation) -->
+      <!-- Zentrale Timeline -->
       <main class="timeline">
         <div class="status-bar">
           <div>Runde: <span id="roundText">–</span></div>
@@ -942,7 +942,7 @@
 
 const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
 const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                                // LangSmith Key oder leer                          // LangSmith Key oder leer
+const API_KEY = "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";                                // LangSmith Key oder leer                              // LangSmith-Key oder leer
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -992,6 +992,11 @@ const API_KEY = "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";          
     let waitingForAnswer = false;
     let finished = false;
 
+    // aktuelle Runde laut State
+    let currentRound = 0;
+    // ob die Likes des Auslöser-Posts schon „wirklich“ bekannt sind
+    let causeLikesKnown = false;
+
     const feedEl = document.getElementById("feed");
     const composerEl = document.getElementById("composer");
     const answerInputEl = document.getElementById("answerInput");
@@ -1006,8 +1011,8 @@ const API_KEY = "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";          
       company: "",
       cause: "",
       initialIntensity: 70,
-      initialComments: [],
-      responses: [],
+      initialComments: [],   // wird zu Array von { text, round }
+      responses: [],         // jedes Element: { answer, comments:[{text,round}], ... }
       finalOutcome: "",
       finalSummary: "",
       initialTimeoutDelta: 0
@@ -1023,8 +1028,8 @@ const API_KEY = "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";          
       return h;
     }
 
-    function setStatus(text) {
-      // aktuell keine sichtbare Status-Anzeige
+    function setStatus(_text) {
+      // aktuell keine sichtbare Statusanzeige; Hook falls du später etwas anzeigen willst
     }
 
     function setComposerEnabled(on) {
@@ -1079,6 +1084,8 @@ const API_KEY = "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";          
       userAvatarIndex = 2;
       commentProfileIndex = 0;
       clearReactionTimer();
+      currentRound = 0;
+      causeLikesKnown = false;
 
       answerInputEl.value = "";
       autoResizeAnswer();
@@ -1124,8 +1131,16 @@ const API_KEY = "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";          
       return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
     }
 
-    // X-ähnliche Replies mit sinnvollen Namen
-    function createCommentsBlock(comments, label, shouldOpen) {
+    // Alterslabel für Kommentare („neu“, „1st“, „2st“, …)
+    function getCommentAgeLabel(commentRound) {
+      if (!commentRound || !currentRound) return "neu";
+      const diff = currentRound - commentRound;
+      if (diff <= 0) return "neu";
+      return diff + "st";
+    }
+
+    // X-ähnliche Replies mit sinnvollen Namen + Alterslabel
+    function createCommentsBlock(comments, _label, shouldOpen) {
       const details = document.createElement("details");
       details.className = "comments";
       if (shouldOpen) {
@@ -1146,6 +1161,13 @@ const API_KEY = "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";          
 
       if (Array.isArray(comments) && comments.length) {
         comments.forEach((c) => {
+          // Unterstützt sowohl String als auch {text, round}
+          const textValue = (c && typeof c === "object" && "text" in c) ? String(c.text) : String(c);
+          const appearedRound = (c && typeof c === "object" && typeof c.round === "number")
+            ? c.round
+            : null;
+          const ageLabel = getCommentAgeLabel(appearedRound);
+
           const row = document.createElement("div");
           row.className = "comment";
 
@@ -1178,7 +1200,8 @@ const API_KEY = "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";          
 
           const meta = document.createElement("span");
           meta.className = "comment-meta";
-          meta.textContent = "neu"; // alle neuen Kommentare als "neu"
+          meta.textContent = ageLabel; // „neu“, „1st“, „2st“ …
+
           header.appendChild(name);
           header.appendChild(handle);
           header.appendChild(dot);
@@ -1186,7 +1209,7 @@ const API_KEY = "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";          
 
           const text = document.createElement("div");
           text.className = "comment-text";
-          text.textContent = c;
+          text.textContent = textValue;
 
           body.appendChild(header);
           body.appendChild(text);
@@ -1213,7 +1236,7 @@ const API_KEY = "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";          
         return;
       }
 
-      // Index des "jüngsten Posts":
+      // Index des „jüngsten Posts“:
       // 0 = Auslöser-Post, 1..n = Responses
       const newestIndex = simulation.responses.length;
 
@@ -1256,22 +1279,16 @@ const API_KEY = "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";          
 
       const causeLikes = document.createElement("div");
       causeLikes.className = "likes";
-      causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
+      if (causeLikesKnown) {
+        causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
+      } else {
+        // Solange wir die „echte“ Intensität/Herzanzahl nicht kennen: ohne Zahl.
+        causeLikes.textContent = "❤️ Likes";
+      }
 
       causeBody.appendChild(causeHeader);
       causeBody.appendChild(causeText);
       causeBody.appendChild(causeLikes);
-
-      // Timeout-Effekt auf den Ausgangspost anzeigen (falls vorhanden)
-      if (typeof simulation.initialTimeoutDelta === "number" && simulation.initialTimeoutDelta > 0.05) {
-        const timeoutMetrics = document.createElement("div");
-        timeoutMetrics.className = "metrics";
-        const chip = document.createElement("span");
-        chip.className = "metric-label delta-bad";
-        chip.textContent = `Reaktionszeit-Überschreitung: +${simulation.initialTimeoutDelta.toFixed(1)} Intensität`;
-        timeoutMetrics.appendChild(chip);
-        causeBody.appendChild(timeoutMetrics);
-      }
 
       if (simulation.initialComments && simulation.initialComments.length) {
         const commentsBlock = createCommentsBlock(
@@ -1286,7 +1303,7 @@ const API_KEY = "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";          
       causeTweet.appendChild(causeBody);
       feedEl.appendChild(causeTweet);
 
-      // 2) Für jede Unternehmensreaktion eine Runde
+      // 2) Unternehmensreaktionen als X-Posts
       simulation.responses.forEach((resp, index) => {
         const roundNumber = index + 1;
         const isNewest = (roundNumber === newestIndex);
@@ -1381,7 +1398,13 @@ const API_KEY = "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";          
 
         const likesDiv = document.createElement("div");
         likesDiv.className = "likes";
-        likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
+        if (resp.likesKnown) {
+          // „echte“ Likeszahl anzeigen
+          likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
+        } else {
+          // solange die Reaktion noch nicht bewertet wurde, nur Herz ohne Zahl
+          likesDiv.textContent = "❤️ Likes";
+        }
 
         body.appendChild(header);
         body.appendChild(text);
@@ -1522,6 +1545,7 @@ const API_KEY = "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";          
 
     function updateStatusBar(state) {
       if (typeof state.round === "number") {
+        currentRound = state.round;
         roundTextEl.textContent = String(state.round);
       }
       if (typeof state.intensity === "number") {
@@ -1537,13 +1561,23 @@ const API_KEY = "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";          
         typeof state.intensity === "number" ? state.intensity : 70;
       prevIntensity = simulation.initialIntensity;
 
+      updateStatusBar(state);
+
+      const roundForComments =
+        currentRound || (typeof state.round === "number" ? state.round : 1);
+
       if (Array.isArray(state.last_community_comments)) {
-        simulation.initialComments = state.last_community_comments.slice();
+        simulation.initialComments = state.last_community_comments.map((c) => ({
+          text: String(c),
+          round: roundForComments
+        }));
       } else {
         simulation.initialComments = [];
       }
 
-      updateStatusBar(state);
+      // Jetzt kennen wir die „echte“ Intensität des Auslöser-Posts -> Likes mit Zahl möglich
+      causeLikesKnown = true;
+
       renderFeed();
 
       if (hasInterrupt(result)) {
@@ -1586,13 +1620,22 @@ const API_KEY = "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";          
 
       resp.feedback = extractLastCoachFeedback(state.history) || "";
 
+      updateStatusBar(state);
+
+      const roundForComments =
+        currentRound || (typeof state.round === "number" ? state.round : 0);
+
       if (Array.isArray(state.last_community_comments)) {
-        resp.comments = state.last_community_comments.slice();
+        resp.comments = state.last_community_comments.map((c) => ({
+          text: String(c),
+          round: roundForComments
+        }));
       } else {
         resp.comments = resp.comments || [];
       }
 
-      updateStatusBar(state);
+      // Ab jetzt kennen wir die „echten“ Likes für diese Reaktion
+      resp.likesKnown = true;
 
       if (state.status && state.status !== "running") {
         finished = true;
@@ -1625,10 +1668,15 @@ const API_KEY = "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";          
     function processTimeoutResult(result) {
       const state = findState(result) || {};
 
-      // Neue Community-Kommentare
+      const roundForComments =
+        typeof state.round === "number" ? state.round : currentRound;
+
       let newComments = [];
       if (Array.isArray(state.last_community_comments)) {
-        newComments = state.last_community_comments.slice();
+        newComments = state.last_community_comments.map((c) => ({
+          text: String(c),
+          round: roundForComments
+        }));
       }
 
       if (newComments.length) {
@@ -1640,7 +1688,6 @@ const API_KEY = "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";          
         }
       }
 
-      // Intensitätsänderung durch Timeout erkennen
       const oldIntensity = prevIntensity;
       let delta = null;
       if (typeof state.intensity === "number") {
@@ -1650,11 +1697,9 @@ const API_KEY = "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";          
 
       if (delta !== null && delta > 0.05) {
         if (simulation.responses.length === 0) {
-          // Noch keine Unternehmensreaktion -> auf Ausgangspost buchen
           simulation.initialTimeoutDelta =
             (simulation.initialTimeoutDelta || 0) + delta;
         } else {
-          // Auf letzte Unternehmensreaktion buchen
           const lastResp = simulation.responses[simulation.responses.length - 1];
           lastResp.timeoutDelta = (lastResp.timeoutDelta || 0) + delta;
         }
@@ -1710,7 +1755,8 @@ const API_KEY = "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";          
       if (sidebarProfileHandleEl) sidebarProfileHandleEl.textContent = "@" + handleText;
 
       setStatus("startet …");
-      renderFeed();
+      renderFeed();  // zeigt den Auslöser-Post, Likes noch ohne Zahl
+      causeLikesKnown = false;
 
       const initialState = {
         platform: "X/Twitter",
@@ -1752,10 +1798,11 @@ const API_KEY = "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";          
         feedback: "",
         intensityAfter: null,
         deltaIntensity: null,
-        timeoutDelta: 0
+        timeoutDelta: 0,
+        likesKnown: false   // Likes erst nach Bewertung anzeigen
       };
       simulation.responses.push(resp);
-      renderFeed();
+      renderFeed(); // zeigt den Post mit „❤️ Likes“ ohne Zahl
 
       answerInputEl.value = "";
       autoResizeAnswer();
