@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="de">
 <head>
@@ -23,85 +22,50 @@
       flex-direction: column;
     }
 
-    /* ======= HEADER (Facebook Top-Bar) ======= */
+    /* ======= HEADER (schmal, zentriert) ======= */
     .fb-header {
-      height: 56px;
       background: #ffffff;
       border-bottom: 1px solid #dcdfe3;
       display: flex;
-      align-items: center;
-      padding: 0 16px;
+      justify-content: center;
+      padding: 6px 12px;
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 10;
+    }
+
+    .fb-header-inner {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
 
     .fb-header-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .fb-logo {
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
       border-radius: 999px;
       background: #1877f2;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
+      font-size: 22px;
       font-weight: 700;
       color: #ffffff;
     }
 
-    .fb-search {
-      margin-left: 8px;
-      background: #f0f2f5;
-      border-radius: 999px;
-      padding: 0 12px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #65676b;
-      font-size: 0.9rem;
-    }
-
-    .fb-search input {
-      background: transparent;
-      border: none;
-      outline: none;
+    .fb-header-title {
+      font-size: 0.95rem;
+      font-weight: 600;
       color: #050505;
-      font-size: 0.9rem;
-      width: 160px;
-    }
-
-    .fb-header-center {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-    }
-
-    .fb-header-icon {
-      width: 110px;
-      text-align: center;
-      color: #65676b;
-      font-size: 1.2rem;
-      padding: 6px 0;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .fb-header-icon.active {
-      border-bottom: 3px solid #2374e1;
-      color: #2374e1;
-      border-radius: 0;
-    }
-
-    .fb-header-icon:hover:not(.active) {
-      background: #f2f2f2;
     }
 
     .fb-header-right {
@@ -110,40 +74,19 @@
       gap: 8px;
     }
 
-    .fb-header-action {
-      width: 36px;
-      height: 36px;
-      border-radius: 999px;
-      background: #e4e6eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      cursor: pointer;
-      color: #050505;
-    }
-
-    .fb-header-action:hover {
-      background: #d8dadf;
-    }
-
     .fb-header-profile {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: #e4e6eb;
-      border-radius: 999px;
       padding: 2px 8px 2px 2px;
-      cursor: pointer;
-    }
-
-    .fb-header-profile:hover {
-      background: #d8dadf;
+      border-radius: 999px;
+      background: #e4e6eb;
+      cursor: default;
     }
 
     .fb-header-profile-avatar {
-      width: 30px;
-      height: 30px;
+      width: 26px;
+      height: 26px;
       border-radius: 999px;
       overflow: hidden;
       flex-shrink: 0;
@@ -157,128 +100,25 @@
     }
 
     .fb-header-profile-name {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #050505;
-    }
-
-    /* ======= PAGE LAYOUT ======= */
-    .fb-layout {
-      display: flex;
-      max-width: 1200px;
-      margin: 12px auto;
-      padding: 0 12px;
-      box-sizing: border-box;
-      gap: 12px;
-    }
-
-    /* LEFT SIDEBAR */
-    .fb-sidebar-left {
-      width: 260px;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .fb-nav-section {
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 8px 8px 4px;
-      border: 1px solid #dcdfe3;
-    }
-
-    .fb-nav-title {
       font-size: 0.85rem;
       font-weight: 600;
-      color: #65676b;
-      margin: 0 0 6px;
-    }
-
-    .fb-nav-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .fb-nav-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 4px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
       color: #050505;
     }
 
-    .fb-nav-item:hover {
-      background: #f2f2f2;
-    }
-
-    .fb-nav-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      background: #e4e6eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      flex-shrink: 0;
-      color: #050505;
-    }
-
-    .fb-nav-label {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .fb-sidebar-post {
-      margin-top: 4px;
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 8px;
-      border: 1px solid #dcdfe3;
-    }
-
-    .fb-sidebar-post-title {
-      font-size: 0.8rem;
-      color: #65676b;
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
-
-    .fb-sidebar-post button {
-      width: 100%;
-      border-radius: 999px;
-      border: none;
-      background: #2374e1;
-      color: #ffffff;
-      font-weight: 600;
-      padding: 8px 0;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-
-    .fb-sidebar-post button:hover:not(:disabled) {
-      background: #1b5fd0;
-    }
-
-    .fb-sidebar-post button:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    /* Pause-Button spezieller Stil */
+    /* Pause-Button sichtbar im Header */
     #pauseBtn {
+      border-radius: 999px;
+      border: 1px solid #f02849;
+      background: #ffffff;
+      color: #f02849;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 10px;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 6px;
-      background: #ffffff;
-      border: 1px solid #f02849;
-      color: #f02849;
+      white-space: nowrap;
     }
 
     #pauseBtn.paused {
@@ -292,74 +132,16 @@
       cursor: default;
     }
 
-    /* RIGHT SIDEBAR */
-    .fb-sidebar-right {
-      width: 280px;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .fb-card {
-      background: #ffffff;
-      border-radius: 8px;
-      padding: 10px;
-      border: 1px solid #dcdfe3;
-    }
-
-    .fb-card-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #050505;
-    }
-
-    .fb-card-sub {
-      font-size: 0.8rem;
-      color: #65676b;
-    }
-
-    .fb-contact-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 0;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .fb-contact-item:hover {
-      background: #f2f2f2;
-    }
-
-    .fb-contact-avatar {
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .fb-contact-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .fb-contact-name {
-      font-size: 0.9rem;
-      color: #050505;
-    }
-
-    /* MAIN CONTENT (Feed + Composer) */
+    /* ======= MAIN EINSPALTIG ======= */
     .fb-main {
-      flex: 1;
-      min-width: 0;
+      width: 100%;
+      max-width: 720px;
+      margin: 12px auto 24px;
+      padding: 0 12px;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
 
     .status-bar {
@@ -391,7 +173,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-height: calc(100vh - 220px);
+      max-height: calc(100vh - 260px);
       overflow-y: auto;
       padding-right: 4px;
     }
@@ -747,165 +529,76 @@
       white-space: pre-wrap;
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 1100px) {
-      .fb-sidebar-right {
+    @media (max-width: 600px) {
+      .fb-header-inner {
+        gap: 4px;
+      }
+      .fb-header-title {
         display: none;
       }
-    }
-
-    @media (max-width: 900px) {
-      .fb-sidebar-left {
-        display: none;
+      .fb-main {
+        margin-top: 8px;
       }
-      .fb-layout {
-        max-width: 100%;
+      #pauseBtn {
+        padding-inline: 8px;
       }
     }
   </style>
 </head>
 <body>
   <div class="fb-app">
-    <!-- HEADER -->
+    <!-- HEADER (einspaltig, zentriert) -->
     <header class="fb-header">
-      <div class="fb-header-left">
-        <div class="fb-logo">f</div>
-        <div class="fb-search">
-          🔍
-          <input type="text" placeholder="Facebook durchsuchen" disabled />
+      <div class="fb-header-inner">
+        <div class="fb-header-left">
+          <div class="fb-logo">f</div>
+          <div class="fb-header-title">Shitstorm-Simulation</div>
         </div>
-      </div>
-      <div class="fb-header-center">
-        <div class="fb-header-icon active">🏠</div>
-        <div class="fb-header-icon">📺</div>
-        <div class="fb-header-icon">🛒</div>
-        <div class="fb-header-icon">👥</div>
-        <div class="fb-header-icon">🕹️</div>
-      </div>
-      <div class="fb-header-right">
-        <div class="fb-header-action">◎</div>
-        <div class="fb-header-action">💬</div>
-        <div class="fb-header-action">🔔</div>
-        <div class="fb-header-profile">
-          <div class="fb-header-profile-avatar">
-            <img src="images/company.jpg" alt="Unternehmen" />
+        <div class="fb-header-right">
+          <button type="button" id="pauseBtn">⏸ Reaktionszeit pausieren</button>
+          <div class="fb-header-profile">
+            <div class="fb-header-profile-avatar">
+              <img src="images/company.jpg" alt="Unternehmen" />
+            </div>
+            <div class="fb-header-profile-name" id="headerProfileName">Unternehmen</div>
           </div>
-          <div class="fb-header-profile-name" id="headerProfileName">Unternehmen</div>
         </div>
       </div>
     </header>
 
-    <div class="fb-layout">
-      <!-- LEFT SIDEBAR -->
-      <aside class="fb-sidebar-left">
-        <section class="fb-nav-section">
-          <div class="fb-nav-title">Menü</div>
-          <ul class="fb-nav-list">
-            <li class="fb-nav-item">
-              <div class="fb-nav-icon">👤</div>
-              <div class="fb-nav-label" id="sidebarProfileName">Unternehmen</div>
-            </li>
-            <li class="fb-nav-item">
-              <div class="fb-nav-icon">👥</div>
-              <div class="fb-nav-label">Freunde</div>
-            </li>
-            <li class="fb-nav-item">
-              <div class="fb-nav-icon">📺</div>
-              <div class="fb-nav-label">Watch</div>
-            </li>
-            <li class="fb-nav-item">
-              <div class="fb-nav-icon">🏬</div>
-              <div class="fb-nav-label">Marketplace</div>
-            </li>
-            <li class="fb-nav-item">
-              <div class="fb-nav-icon">🕹️</div>
-              <div class="fb-nav-label">Gaming</div>
-            </li>
-          </ul>
-        </section>
+    <!-- MAIN EINSPALTIG -->
+    <main class="fb-main">
+      <div class="status-bar">
+        <div>Runde: <span id="roundText">–</span></div>
+        <div>Intensität: <span id="intensityText">–</span></div>
+      </div>
 
-        <section class="fb-sidebar-post">
-          <div class="fb-sidebar-post-title">Shitstorm-Reaktionszeit</div>
-          <!-- Pausiert / setzt Reaktionszeit fort -->
-          <button type="button" id="pauseBtn">⏸ Reaktionszeit pausieren</button>
-        </section>
-      </aside>
+      <div class="feed-wrapper">
+        <div class="feed" id="feed"></div>
 
-      <!-- MAIN -->
-      <main class="fb-main">
-        <div class="status-bar">
-          <div>Runde: <span id="roundText">–</span></div>
-          <div>Intensität: <span id="intensityText">–</span></div>
+        <div class="composer disabled" id="composer">
+          <div class="composer-top">
+            <div class="avatar company">
+              <img src="images/company.jpg" alt="Unternehmen" />
+            </div>
+            <div class="composer-row">
+              <textarea id="answerInput" placeholder="Schreibe eine Antwort im Namen des Unternehmens …" disabled></textarea>
+              <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+            </div>
+          </div>
+          <div class="composer-hint">
+            Strg + Enter zum Posten. Reaktionszeit kannst du oben pausieren.
+          </div>
         </div>
 
-        <div class="feed-wrapper">
-          <div class="feed" id="feed"></div>
-
-          <div class="composer disabled" id="composer">
-            <div class="composer-top">
-              <div class="avatar company">
-                <img src="images/company.jpg" alt="Unternehmen" />
-              </div>
-              <div class="composer-row">
-                <textarea id="answerInput" placeholder="Schreibe eine Antwort im Namen des Unternehmens …" disabled></textarea>
-                <button class="btn-primary" id="sendBtn" disabled>Posten</button>
-              </div>
-            </div>
-            <div class="composer-hint">
-              Strg + Enter zum Posten. Reaktionszeit kannst du links pausieren.
-            </div>
-          </div>
-
-          <div class="debug-card">
-            <details>
-              <summary>Debug-Antwort vom Server anzeigen</summary>
-              <pre id="debugOutput"></pre>
-            </details>
-          </div>
+        <div class="debug-card">
+          <details>
+            <summary>Debug-Antwort vom Server anzeigen</summary>
+            <pre id="debugOutput"></pre>
+          </details>
         </div>
-      </main>
-
-      <!-- RIGHT SIDEBAR -->
-      <aside class="fb-sidebar-right">
-        <section class="fb-card">
-          <div class="fb-card-title">Shitstorm-Training</div>
-          <div class="fb-card-sub">
-            Simuliere kritische Kommentarspalten und übe professionelle Krisenkommunikation.
-          </div>
-        </section>
-
-        <section class="fb-card">
-          <div class="fb-card-title">Kontakte</div>
-          <div class="fb-contact-item">
-            <div class="fb-contact-avatar">
-              <img src="images/2.png" alt="Kontakt" />
-            </div>
-            <div class="fb-contact-name">Homes &amp; Gardens</div>
-          </div>
-          <div class="fb-contact-item">
-            <div class="fb-contact-avatar">
-              <img src="images/3.png" alt="Kontakt" />
-            </div>
-            <div class="fb-contact-name">ntv Nachrichten</div>
-          </div>
-          <div class="fb-contact-item">
-            <div class="fb-contact-avatar">
-              <img src="images/4.png" alt="Kontakt" />
-            </div>
-            <div class="fb-contact-name">Form Magazine</div>
-          </div>
-        </section>
-
-        <section class="fb-card">
-          <div class="fb-card-title">Kurz notiert</div>
-          <div class="fb-card-sub">
-            • Likes reagieren auf die Shitstorm-Intensität.<br />
-            • Kommentare altern: neu, 1 Std., 2 Std., …<br />
-            • Reaktionszeitüberschreitungen verschärfen den Shitstorm.
-          </div>
-        </section>
-      </aside>
-    </div>
+      </div>
+    </main>
   </div>
 
   <script>
@@ -979,7 +672,6 @@
     const roundTextEl = document.getElementById("roundText");
     const intensityTextEl = document.getElementById("intensityText");
     const debugOutputEl = document.getElementById("debugOutput");
-    const sidebarProfileNameEl = document.getElementById("sidebarProfileName");
     const headerProfileNameEl = document.getElementById("headerProfileName");
 
     const simulation = {
@@ -1282,7 +974,7 @@
 
       const originMeta = document.createElement("span");
       originMeta.className = "post-meta";
-      originMeta.textContent = "hat einen Beitrag in deiner Seite kommentiert · Auslöser";
+      originMeta.textContent = "hat einen Beitrag auf deiner Seite kommentiert · Auslöser";
 
       originHeader.appendChild(originName);
       originHeader.appendChild(originMeta);
@@ -1750,8 +1442,6 @@
         (causeParam || "Unangemessener Umgang mit Kund:innen").trim();
 
       const companyName = simulation.company || "Dein Unternehmen";
-
-      if (sidebarProfileNameEl) sidebarProfileNameEl.textContent = companyName;
       if (headerProfileNameEl) headerProfileNameEl.textContent = companyName;
 
       setStatus("startet …");
@@ -1928,4 +1618,3 @@
   </script>
 </body>
 </html>
-```
