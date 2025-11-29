@@ -7,46 +7,38 @@
   <style>
     :root {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color-scheme: light;
+      color-scheme: dark;
     }
 
     body {
       margin: 0;
-      background: #e4e6eb;
-      color: #050505;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
+      background: #18191a;
+      color: #e4e6eb;
     }
 
-    .app {
-      width: 100%;
-      max-width: 1200px;
+    .fb-app {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: transparent;
     }
 
-    /* Header wie Facebook */
+    /* ======= HEADER (Facebook Top-Bar) ======= */
     .fb-header {
       height: 56px;
-      background: #ffffff;
-      border-bottom: 1px solid #d0d0d0;
+      background: #242526;
+      border-bottom: 1px solid #3a3b3c;
       display: flex;
       align-items: center;
       padding: 0 16px;
-      box-sizing: border-box;
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 20;
     }
 
     .fb-header-left {
       display: flex;
       align-items: center;
-      gap: 12px;
-      flex: 1;
+      gap: 10px;
     }
 
     .fb-logo {
@@ -57,142 +49,307 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ffffff;
-      font-weight: 900;
       font-size: 26px;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 700;
+      color: #fff;
     }
 
     .fb-search {
-      background: #f0f2f5;
+      margin-left: 8px;
+      background: #3a3b3c;
       border-radius: 999px;
-      padding: 6px 10px;
+      padding: 0 12px;
+      height: 36px;
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 13px;
-      color: #65676b;
-      max-width: 240px;
-      flex: 1;
+      color: #b0b3b8;
+      font-size: 0.9rem;
     }
 
-    .fb-search span {
-      font-size: 15px;
+    .fb-search input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #e4e6eb;
+      font-size: 0.9rem;
+      width: 160px;
     }
 
     .fb-header-center {
-      display: flex;
-      gap: 32px;
-      justify-content: center;
       flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
     }
 
-    .fb-nav-icon {
-      width: 40px;
-      height: 40px;
+    .fb-header-icon {
+      width: 110px;
+      text-align: center;
+      color: #b0b3b8;
+      font-size: 1.2rem;
+      padding: 6px 0;
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      color: #65676b;
       cursor: pointer;
     }
 
-    .fb-nav-icon.active {
-      color: #1877f2;
-      border-bottom: 3px solid #1877f2;
+    .fb-header-icon.active {
+      border-bottom: 3px solid #2374e1;
+      color: #2374e1;
       border-radius: 0;
     }
 
-    .fb-nav-icon:hover {
-      background: #f0f2f5;
+    .fb-header-icon:hover:not(.active) {
+      background: #3a3b3c;
     }
 
     .fb-header-right {
       display: flex;
-      gap: 8px;
       align-items: center;
-      justify-content: flex-end;
-      flex: 1;
+      gap: 8px;
     }
 
-    .fb-circle-btn {
+    .fb-header-action {
       width: 36px;
       height: 36px;
       border-radius: 999px;
-      background: #e4e6eb;
+      background: #3a3b3c;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 1.1rem;
       cursor: pointer;
-      color: #050505;
     }
 
-    .fb-circle-btn:hover {
-      background: #d8dadf;
+    .fb-header-action:hover {
+      background: #4e4f50;
     }
 
-    .fb-header-avatar {
-      width: 36px;
-      height: 36px;
+    .fb-header-profile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #3a3b3c;
+      border-radius: 999px;
+      padding: 2px 8px 2px 2px;
+      cursor: pointer;
+    }
+
+    .fb-header-profile-avatar {
+      width: 30px;
+      height: 30px;
       border-radius: 999px;
       overflow: hidden;
       flex-shrink: 0;
     }
 
-    .fb-header-avatar img {
+    .fb-header-profile-avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
 
-    /* Statusbar für Runde & Intensität */
-    .status-bar {
-      font-size: 13px;
-      color: #65676b;
-      padding: 6px 0;
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-    }
-
-    .status-pill {
-      background: #ffffff;
-      border-radius: 999px;
-      padding: 4px 10px;
-      border: 1px solid #d0d0d0;
-    }
-
-    .status-pill span {
+    .fb-header-profile-name {
+      font-size: 0.9rem;
       font-weight: 600;
-      color: #050505;
     }
 
-    /* Main */
-    .fb-main {
-      flex: 1;
+    /* ======= PAGE LAYOUT ======= */
+    .fb-layout {
       display: flex;
-      justify-content: center;
-      padding: 12px 12px 24px;
+      max-width: 1200px;
+      margin: 12px auto;
+      padding: 0 12px;
       box-sizing: border-box;
+      gap: 12px;
     }
 
-    .feed-container {
-      width: 100%;
-      max-width: 700px;
+    /* LEFT SIDEBAR */
+    .fb-sidebar-left {
+      width: 260px;
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
+    }
+
+    .fb-nav-section {
+      background: #242526;
+      border-radius: 8px;
+      padding: 8px 8px 4px;
+    }
+
+    .fb-nav-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #b0b3b8;
+      margin: 0 0 6px;
+    }
+
+    .fb-nav-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .fb-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .fb-nav-item:hover {
+      background: #3a3b3c;
+    }
+
+    .fb-nav-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: #3a3b3c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .fb-nav-label {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .fb-sidebar-post {
+      margin-top: 4px;
+      background: #242526;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .fb-sidebar-post button {
+      width: 100%;
+      border-radius: 999px;
+      border: none;
+      background: #2374e1;
+      color: #fff;
+      font-weight: 600;
+      padding: 8px 0;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .fb-sidebar-post button:hover:not(:disabled) {
+      background: #1b5fd0;
+    }
+
+    .fb-sidebar-post button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    /* RIGHT SIDEBAR */
+    .fb-sidebar-right {
+      width: 280px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .fb-card {
+      background: #242526;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .fb-card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .fb-card-sub {
+      font-size: 0.8rem;
+      color: #b0b3b8;
+    }
+
+    .fb-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .fb-contact-item:hover {
+      background: #3a3b3c;
+    }
+
+    .fb-contact-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .fb-contact-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .fb-contact-name {
+      font-size: 0.9rem;
+    }
+
+    /* MAIN CONTENT (Feed + Composer) */
+    .fb-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .status-bar {
+      background: #242526;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      color: #b0b3b8;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .status-bar span {
+      font-weight: 500;
+      color: #e4e6eb;
+    }
+
+    .feed-wrapper {
+      background: transparent;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .feed {
-      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
     .feed::-webkit-scrollbar {
@@ -202,27 +359,16 @@
       background: transparent;
     }
     .feed::-webkit-scrollbar-thumb {
-      background: #b0b3b8;
+      background: #4b5563;
       border-radius: 999px;
     }
 
-    /* Posts im Facebook-Stil */
-    .fb-post {
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-    }
-
-    .fb-post-inner {
+    .post {
+      background: #242526;
+      border-radius: 8px;
       padding: 10px 12px 8px;
-    }
-
-    .fb-post-header {
       display: flex;
-      align-items: center;
       gap: 8px;
-      margin-bottom: 6px;
     }
 
     .avatar {
@@ -242,169 +388,122 @@
     }
 
     .avatar.origin {
-      border-color: #42b72a;
+      border-color: #e4e6eb;
     }
 
     .avatar.company {
-      border-color: #1877f2;
+      border-color: #2d88ff;
+    }
+
+    .avatar.community {
+      border-color: #f02849;
     }
 
     .avatar.coach {
-      border-color: #f7b928;
+      border-color: #45bd62;
     }
 
-    .fb-post-user {
-      display: flex;
-      flex-direction: column;
+    .post-body {
+      flex: 1;
       min-width: 0;
     }
 
-    .fb-post-name {
-      font-size: 14px;
+    .post-header {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+
+    .post-name {
       font-weight: 600;
-      color: #050505;
     }
 
-    .fb-post-meta {
-      font-size: 12px;
-      color: #65676b;
-    }
-
-    .fb-post-more {
+    .post-meta {
+      font-size: 0.78rem;
+      color: #b0b3b8;
       margin-left: auto;
-      color: #65676b;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 999px;
     }
 
-    .fb-post-more:hover {
-      background: #f0f2f5;
-    }
-
-    .fb-post-message {
-      font-size: 14px;
-      color: #050505;
+    .post-text {
       margin-top: 4px;
-      margin-bottom: 8px;
+      font-size: 0.95rem;
       white-space: pre-wrap;
       word-wrap: break-word;
     }
 
-    .fb-post-likes {
+    .post-footer {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: #b0b3b8;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 13px;
-      color: #65676b;
-      padding-top: 4px;
-      padding-bottom: 4px;
-      border-top: 1px solid #d0d0d0;
-    }
-
-    .fb-likes-left {
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 4px;
     }
 
-    .fb-like-badge {
+    .likes {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #b0b3b8;
+    }
+
+    .likes-icon {
       width: 20px;
       height: 20px;
       border-radius: 999px;
-      background: #1877f2;
+      background: #2374e1;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
-      color: #ffffff;
+      font-size: 0.75rem;
     }
 
-    .fb-likes-count {
-      font-weight: 500;
-    }
-
-    .fb-post-stats {
-      padding-top: 4px;
-      padding-bottom: 4px;
-      border-top: 1px solid #d0d0d0;
+    .metrics {
       display: flex;
       flex-wrap: wrap;
       gap: 4px;
-      font-size: 12px;
-      color: #65676b;
+      font-size: 0.78rem;
     }
 
-    .stat-chip {
-      padding: 2px 8px;
+    .metric-label {
       border-radius: 999px;
-      border: 1px solid #d0d0d0;
-      background: #f0f2f5;
-      white-space: nowrap;
+      border: 1px solid #3a3b3c;
+      padding: 1px 8px;
+      color: #e4e6eb;
     }
 
-    .stat-good {
-      border-color: #16a34a;
-      color: #166534;
-      background: #dcfce7;
+    .delta-good {
+      border-color: #45bd62;
+      color: #45bd62;
     }
 
-    .stat-bad {
-      border-color: #b91c1c;
-      color: #7f1d1d;
-      background: #fee2e2;
+    .delta-bad {
+      border-color: #f02849;
+      color: #f02849;
     }
 
-    .fb-post-actions {
-      display: flex;
-      justify-content: space-around;
+    /* COMMENTS */
+    .comments {
+      margin-top: 6px;
+      border-top: 1px solid #3a3b3c;
       padding-top: 4px;
-      padding-bottom: 4px;
-      border-top: 1px solid #d0d0d0;
-      font-size: 13px;
-      color: #65676b;
+      font-size: 0.82rem;
     }
 
-    .fb-action-btn {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      padding: 4px 0;
-      border-radius: 4px;
+    .comments summary {
       cursor: pointer;
-    }
-
-    .fb-action-btn:hover {
-      background: #f0f2f5;
-    }
-
-    .fb-action-btn span:first-child {
-      font-size: 15px;
-    }
-
-    /* Kommentare */
-    .fb-comments {
-      padding-top: 4px;
-      font-size: 13px;
-      color: #050505;
-    }
-
-    .fb-comments summary {
       list-style: none;
-      cursor: pointer;
-      color: #65676b;
-      font-size: 12px;
-      padding: 4px 0;
+      color: #4599ff;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
     }
 
-    .fb-comments summary::-webkit-details-marker {
+    .comments summary::-webkit-details-marker {
       display: none;
     }
 
-    .comment {
+    .comment-row {
       display: flex;
       align-items: flex-start;
       gap: 6px;
@@ -417,6 +516,7 @@
       border-radius: 999px;
       overflow: hidden;
       flex-shrink: 0;
+      border: 1px solid #3a3b3c;
     }
 
     .comment-avatar img {
@@ -427,9 +527,9 @@
     }
 
     .comment-body {
-      background: #f0f2f5;
+      background: #3a3b3c;
       border-radius: 16px;
-      padding: 4px 8px;
+      padding: 6px 10px;
       flex: 1;
       min-width: 0;
     }
@@ -437,67 +537,38 @@
     .comment-header {
       display: flex;
       align-items: baseline;
-      gap: 6px;
-      font-size: 12px;
-      color: #65676b;
+      gap: 4px;
+      font-size: 0.78rem;
     }
 
     .comment-name {
       font-weight: 600;
-      color: #050505;
     }
 
     .comment-meta {
       margin-left: auto;
-      font-size: 11px;
-      color: #65676b;
+      color: #b0b3b8;
+      font-size: 0.75rem;
     }
 
     .comment-text {
       margin-top: 2px;
-      font-size: 13px;
-      color: #050505;
+      font-size: 0.88rem;
+      color: #e4e6eb;
       white-space: pre-wrap;
       word-wrap: break-word;
     }
 
     .comment-muted {
-      font-size: 12px;
-      color: #65676b;
-      margin-top: 2px;
-      padding-left: 34px;
+      color: #b0b3b8;
+      font-size: 0.8rem;
+      margin-top: 4px;
     }
 
-    /* Finaler Auswertungs-Post */
-    .final-post {
-      border-top: 3px solid #1877f2;
-    }
-
-    .final-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .final-good {
-      color: #166534;
-    }
-
-    .final-bad {
-      color: #7f1d1d;
-    }
-
-    .final-summary {
-      font-size: 13px;
-      color: #050505;
-      white-space: pre-wrap;
-    }
-
-    /* Composer (Antwortfeld) */
+    /* COMPOSER */
     .composer {
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      background: #242526;
+      border-radius: 8px;
       padding: 8px 12px 10px;
       display: flex;
       flex-direction: column;
@@ -505,20 +576,20 @@
     }
 
     .composer.disabled {
-      opacity: 0.6;
+      opacity: 0.7;
     }
 
     .composer-top {
       display: flex;
-      align-items: center;
       gap: 8px;
+      align-items: center;
     }
 
     .composer-row {
-      display: flex;
       flex: 1;
-      gap: 8px;
+      display: flex;
       align-items: center;
+      gap: 8px;
     }
 
     .composer-row textarea {
@@ -527,15 +598,15 @@
     }
 
     .composer textarea {
-      border-radius: 999px;
-      border: 1px solid #d0d0d0;
-      background: #f0f2f5;
-      color: #050505;
+      border-radius: 20px;
+      border: 1px solid #3a3b3c;
+      background: #3a3b3c;
+      color: #e4e6eb;
       font: inherit;
-      font-size: 14px;
-      padding: 6px 12px;
+      font-size: 0.95rem;
+      padding: 8px 10px;
       min-height: 40px;
-      max-height: 180px;
+      max-height: 200px;
       resize: none;
       overflow-y: auto;
       outline: none;
@@ -543,31 +614,30 @@
     }
 
     .composer textarea:focus {
-      border-color: #1877f2;
-      background: #ffffff;
-      box-shadow: 0 0 0 1px rgba(24, 119, 242, 0.2);
+      border-color: #2d88ff;
+      box-shadow: 0 0 0 1px rgba(45, 136, 255, 0.4);
     }
 
     .composer-hint {
-      font-size: 11px;
-      color: #65676b;
+      font-size: 0.75rem;
+      color: #b0b3b8;
       text-align: right;
     }
 
     .btn-primary {
       border-radius: 999px;
       border: none;
-      background: #1877f2;
-      color: #ffffff;
+      background: #2d88ff;
+      color: #fff;
       font-weight: 600;
       padding: 6px 14px;
-      font-size: 13px;
+      font-size: 0.86rem;
       cursor: pointer;
       white-space: nowrap;
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: #166fe0;
+      background: #1b5fd0;
     }
 
     .btn-primary:disabled {
@@ -575,14 +645,13 @@
       cursor: default;
     }
 
-    /* Debug-Karte */
     .debug-card {
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-      padding: 6px 12px 10px;
-      font-size: 11px;
-      color: #65676b;
+      margin-top: 4px;
+      background: #242526;
+      border-radius: 8px;
+      padding: 6px 12px 8px;
+      font-size: 0.75rem;
+      color: #b0b3b8;
       max-height: 150px;
       overflow: hidden;
     }
@@ -596,124 +665,231 @@
       max-height: 110px;
       overflow-y: auto;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 11px;
-      color: #374151;
+      font-size: 0.72rem;
+      color: #e4e6eb;
     }
 
-    @media (max-width: 800px) {
-      .fb-header-center {
+    .final-card {
+      border: 1px solid #3a3b3c;
+    }
+
+    .final-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .final-good {
+      color: #45bd62;
+    }
+
+    .final-bad {
+      color: #f02849;
+    }
+
+    .final-summary {
+      margin-top: 4px;
+      font-size: 0.9rem;
+      color: #e4e6eb;
+      white-space: pre-wrap;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+      .fb-sidebar-right {
         display: none;
       }
     }
 
-    @media (max-width: 600px) {
-      .fb-header-left {
-        flex: 0 0 auto;
-      }
-      .fb-search {
+    @media (max-width: 900px) {
+      .fb-sidebar-left {
         display: none;
       }
-      .feed-container {
+      .fb-layout {
         max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="fb-app">
+    <!-- HEADER -->
     <header class="fb-header">
       <div class="fb-header-left">
         <div class="fb-logo">f</div>
         <div class="fb-search">
-          <span>🔍</span>
-          <span>Suche auf Facebook</span>
+          🔍
+          <input type="text" placeholder="Facebook durchsuchen" disabled />
         </div>
       </div>
       <div class="fb-header-center">
-        <div class="fb-nav-icon active">🏠</div>
-        <div class="fb-nav-icon">🎥</div>
-        <div class="fb-nav-icon">🛒</div>
-        <div class="fb-nav-icon">👥</div>
-        <div class="fb-nav-icon">🎮</div>
+        <div class="fb-header-icon active">🏠</div>
+        <div class="fb-header-icon">📺</div>
+        <div class="fb-header-icon">🛒</div>
+        <div class="fb-header-icon">👥</div>
+        <div class="fb-header-icon">🕹️</div>
       </div>
       <div class="fb-header-right">
-        <div class="fb-circle-btn">＋</div>
-        <div class="fb-circle-btn">💬</div>
-        <div class="fb-circle-btn">🔔</div>
-        <div class="fb-header-avatar">
-          <img src="images/company.jpg" alt="Unternehmen" />
+        <div class="fb-header-action">◎</div>
+        <div class="fb-header-action">💬</div>
+        <div class="fb-header-action">🔔</div>
+        <div class="fb-header-profile">
+          <div class="fb-header-profile-avatar">
+            <img src="images/company.jpg" alt="Unternehmen" />
+          </div>
+          <div class="fb-header-profile-name" id="headerProfileName">Unternehmen</div>
         </div>
       </div>
     </header>
 
-    <div class="status-bar">
-      <div class="status-pill">Runde: <span id="roundText">–</span></div>
-      <div class="status-pill">Intensität: <span id="intensityText">–</span></div>
+    <div class="fb-layout">
+      <!-- LEFT SIDEBAR -->
+      <aside class="fb-sidebar-left">
+        <section class="fb-nav-section">
+          <div class="fb-nav-title">Menü</div>
+          <ul class="fb-nav-list">
+            <li class="fb-nav-item">
+              <div class="fb-nav-icon">👤</div>
+              <div class="fb-nav-label" id="sidebarProfileName">Unternehmen</div>
+            </li>
+            <li class="fb-nav-item">
+              <div class="fb-nav-icon">👥</div>
+              <div class="fb-nav-label">Freunde</div>
+            </li>
+            <li class="fb-nav-item">
+              <div class="fb-nav-icon">📺</div>
+              <div class="fb-nav-label">Watch</div>
+            </li>
+            <li class="fb-nav-item">
+              <div class="fb-nav-icon">🏬</div>
+              <div class="fb-nav-label">Marketplace</div>
+            </li>
+            <li class="fb-nav-item">
+              <div class="fb-nav-icon">🕹️</div>
+              <div class="fb-nav-label">Gaming</div>
+            </li>
+          </ul>
+        </section>
+
+        <section class="fb-sidebar-post">
+          <!-- Pausiert / setzt Reaktionszeit fort -->
+          <button type="button" id="pauseBtn">Reaktionszeit pausieren</button>
+        </section>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="fb-main">
+        <div class="status-bar">
+          <div>Runde: <span id="roundText">–</span></div>
+          <div>Intensität: <span id="intensityText">–</span></div>
+        </div>
+
+        <div class="feed-wrapper">
+          <div class="feed" id="feed"></div>
+
+          <div class="composer disabled" id="composer">
+            <div class="composer-top">
+              <div class="avatar company">
+                <img src="images/company.jpg" alt="Unternehmen" />
+              </div>
+              <div class="composer-row">
+                <textarea id="answerInput" placeholder="Schreibe eine Antwort im Namen des Unternehmens …" disabled></textarea>
+                <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+              </div>
+            </div>
+            <div class="composer-hint">
+              Strg + Enter zum Posten. Reaktionszeit kannst du links pausieren.
+            </div>
+          </div>
+
+          <div class="debug-card">
+            <details>
+              <summary>Debug-Antwort vom Server anzeigen</summary>
+              <pre id="debugOutput"></pre>
+            </details>
+          </div>
+        </div>
+      </main>
+
+      <!-- RIGHT SIDEBAR -->
+      <aside class="fb-sidebar-right">
+        <section class="fb-card">
+          <div class="fb-card-title">Shitstorm-Training</div>
+          <div class="fb-card-sub">
+            Simuliere kritische Kommentarspalten und übe professionelle Krisenkommunikation.
+          </div>
+        </section>
+
+        <section class="fb-card">
+          <div class="fb-card-title">Kontakte</div>
+          <div class="fb-contact-item">
+            <div class="fb-contact-avatar">
+              <img src="images/2.png" alt="Kontakt" />
+            </div>
+            <div class="fb-contact-name">Homes &amp; Gardens</div>
+          </div>
+          <div class="fb-contact-item">
+            <div class="fb-contact-avatar">
+              <img src="images/3.png" alt="Kontakt" />
+            </div>
+            <div class="fb-contact-name">ntv Nachrichten</div>
+          </div>
+          <div class="fb-contact-item">
+            <div class="fb-contact-avatar">
+              <img src="images/4.png" alt="Kontakt" />
+            </div>
+            <div class="fb-contact-name">Form Magazine</div>
+          </div>
+        </section>
+
+        <section class="fb-card">
+          <div class="fb-card-title">Kurz notiert</div>
+          <div class="fb-card-sub">
+            • Likes reagieren auf die Shitstorm-Intensität.<br />
+            • Kommentare altern: neu, 1st, 2st, …<br />
+            • Reaktionszeitüberschreitungen verschärfen den Shitstorm.
+          </div>
+        </section>
+      </aside>
     </div>
-
-    <main class="fb-main">
-      <div class="feed-container">
-        <div class="feed" id="feed"></div>
-
-        <div class="composer disabled" id="composer">
-          <div class="composer-top">
-            <div class="avatar company">
-              <img src="images/company.jpg" alt="Unternehmen" />
-            </div>
-            <div class="composer-row">
-              <textarea id="answerInput" placeholder="Schreibe eine Antwort im Namen des Unternehmens …" disabled></textarea>
-              <button class="btn-primary" id="sendBtn" disabled>Posten</button>
-            </div>
-          </div>
-          <div class="composer-hint">
-            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte ankündigen.
-          </div>
-        </div>
-
-        <div class="debug-card">
-          <details>
-            <summary>Debug-Antwort vom Server anzeigen</summary>
-            <pre id="debugOutput"></pre>
-          </details>
-        </div>
-      </div>
-    </main>
   </div>
 
   <script>
     // ===================== KONFIGURATION ===========================
 
-const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                                  // x-api-key (falls benötigt) oder leer
+    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";
+    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";
+    const API_KEY = "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";
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
     const USER_AVATAR_COUNT = 13;
-    let userAvatarIndex = 2; // 2..13 für Community-User
+    let userAvatarIndex = 2; // 2..13 für Kommentare
 
     // maximale Wartezeit (ms) bis automatische Community-Reaktion
     let maxWaitMs = null;
     let reactionTimerId = null;
+    let reactionDeadline = null;
+    let remainingWaitMs = null;
+    let reactionPaused = false;
 
-    // User, der den Shitstorm-Post absetzt
+    // Nutzer, der den ursprünglichen Shitstorm-Post absetzt
     const CAUSE_USER = {
-      name: "Chris Müller",
-      handle: "Öffentlicher Beitrag"
+      name: "Chris Wagner",
+      handle: "chris.wagner"
     };
 
     // Sinnvolle Profile für Community-Kommentare
     const COMMENT_PROFILES = [
-      { name: "Lena Weber" },
-      { name: "Jonas Müller" },
-      { name: "Sarah König" },
-      { name: "Ali Demir" },
-      { name: "Mara Hoffmann" },
-      { name: "Tom Richter" },
-      { name: "Julia Meier" },
-      { name: "David Schulz" },
-      { name: "Nina Bauer" },
-      { name: "Philipp Lang" }
+      { name: "Lena Weber",    handle: "lena.weber" },
+      { name: "Jonas Müller",  handle: "jonas.mueller" },
+      { name: "Sarah König",   handle: "sarah.koenig" },
+      { name: "Ali Demir",     handle: "ali.demir" },
+      { name: "Mara Hoffmann", handle: "mara.hoffmann" },
+      { name: "Tom Richter",   handle: "tom.richter" },
+      { name: "Julia Meier",   handle: "julia.meier" },
+      { name: "David Schulz",  handle: "david.schulz" },
+      { name: "Nina Bauer",    handle: "nina.bauer" },
+      { name: "Philipp Lang",  handle: "philipp.lang" }
     ];
 
     let commentProfileIndex = 0;
@@ -735,20 +911,28 @@ const API_KEY = "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";          
     let waitingForAnswer = false;
     let finished = false;
 
+    // aktuelle Runde laut State
+    let currentRound = 0;
+    // ob die Likes des Auslöser-Posts schon „wirklich“ bekannt sind
+    let causeLikesKnown = false;
+
     const feedEl = document.getElementById("feed");
     const composerEl = document.getElementById("composer");
     const answerInputEl = document.getElementById("answerInput");
     const sendBtn = document.getElementById("sendBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
     const roundTextEl = document.getElementById("roundText");
     const intensityTextEl = document.getElementById("intensityText");
     const debugOutputEl = document.getElementById("debugOutput");
+    const sidebarProfileNameEl = document.getElementById("sidebarProfileName");
+    const headerProfileNameEl = document.getElementById("headerProfileName");
 
     const simulation = {
       company: "",
       cause: "",
       initialIntensity: 70,
-      initialComments: [],
-      responses: [],
+      initialComments: [],   // Array von { text, round }
+      responses: [],         // { answer, comments:[{text,round}], intensityAfter, deltaIntensity, timeoutDelta, likesKnown }
       finalOutcome: "",
       finalSummary: "",
       initialTimeoutDelta: 0
@@ -765,7 +949,7 @@ const API_KEY = "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";          
     }
 
     function setStatus(_text) {
-      // aktuell keine sichtbare Statusanzeige; Hook falls du später was anzeigen willst
+      // aktuell keine sichtbare Statusanzeige
     }
 
     function setComposerEnabled(on) {
@@ -779,6 +963,7 @@ const API_KEY = "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";          
         answerInputEl.disabled = true;
         sendBtn.disabled = true;
       }
+      updatePauseButton();
     }
 
     function clearReactionTimer() {
@@ -786,15 +971,70 @@ const API_KEY = "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";          
         clearTimeout(reactionTimerId);
         reactionTimerId = null;
       }
+      reactionDeadline = null;
+      remainingWaitMs = null;
+      reactionPaused = false;
+      updatePauseButton();
+    }
+
+    function armReactionTimer() {
+      if (!remainingWaitMs || remainingWaitMs <= 0) {
+        handleReactionTimeout();
+        return;
+      }
+      reactionDeadline = Date.now() + remainingWaitMs;
+      reactionTimerId = setTimeout(() => {
+        reactionTimerId = null;
+        reactionDeadline = null;
+        remainingWaitMs = null;
+        if (!waitingForAnswer || finished) return;
+        handleReactionTimeout();
+      }, remainingWaitMs);
     }
 
     function scheduleReactionTimer() {
       clearReactionTimer();
       if (!maxWaitMs || maxWaitMs <= 0) return;
-      reactionTimerId = setTimeout(() => {
-        if (!waitingForAnswer || finished) return;
-        handleReactionTimeout();
-      }, maxWaitMs);
+      reactionPaused = false;
+      remainingWaitMs = maxWaitMs;
+      armReactionTimer();
+      updatePauseButton();
+    }
+
+    function updatePauseButton() {
+      if (!pauseBtn) return;
+      if (!maxWaitMs || finished || !waitingForAnswer) {
+        pauseBtn.disabled = true;
+        pauseBtn.textContent = "Reaktionszeit pausieren";
+        return;
+      }
+      pauseBtn.disabled = false;
+      pauseBtn.textContent = reactionPaused
+        ? "Reaktionszeit fortsetzen"
+        : "Reaktionszeit pausieren";
+    }
+
+    function toggleReactionPause() {
+      if (!pauseBtn || !waitingForAnswer || finished || !maxWaitMs) return;
+
+      if (!reactionPaused) {
+        // Pausieren
+        if (reactionTimerId !== null && reactionDeadline) {
+          const now = Date.now();
+          remainingWaitMs = Math.max(0, reactionDeadline - now);
+          clearTimeout(reactionTimerId);
+          reactionTimerId = null;
+        }
+        reactionPaused = true;
+      } else {
+        // Fortsetzen
+        if (!remainingWaitMs || remainingWaitMs <= 0) {
+          remainingWaitMs = maxWaitMs;
+        }
+        reactionPaused = false;
+        armReactionTimer();
+      }
+      updatePauseButton();
     }
 
     function resetSimulation() {
@@ -820,6 +1060,8 @@ const API_KEY = "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";          
       userAvatarIndex = 2;
       commentProfileIndex = 0;
       clearReactionTimer();
+      currentRound = 0;
+      causeLikesKnown = false;
 
       answerInputEl.value = "";
       autoResizeAnswer();
@@ -829,21 +1071,20 @@ const API_KEY = "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";          
     function autoResizeAnswer() {
       const el = answerInputEl;
       if (!el) return;
-      const max = 180;
+      const max = 200; // muss zu max-height in CSS passen
       el.style.height = "auto";
       const newHeight = Math.min(el.scrollHeight, max);
       el.style.height = newHeight + "px";
     }
 
     // ===================== RENDERING ===============================
-
     function clampLikes(n) {
-      return Math.max(3, Math.min(9999, Math.round(n)));
+      return Math.max(3, Math.min(999, Math.round(n)));
     }
 
     function likesForCause(intensity) {
-      const base = 60;
-      const scaled = typeof intensity === "number" ? intensity * 1.4 : 70;
+      const base = 30;
+      const scaled = typeof intensity === "number" ? intensity * 1.5 : 70;
       return clampLikes(base + scaled);
     }
 
@@ -851,48 +1092,63 @@ const API_KEY = "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";          
       const intensity = typeof resp.intensityAfter === "number" ? resp.intensityAfter : prevIntensity;
       const overall = typeof resp.overall === "number" ? resp.overall : 50;
       const delta = typeof resp.deltaIntensity === "number" ? resp.deltaIntensity : 0;
-      const score = overall + (delta < 0 ? -delta * 1.5 : -delta);
-      const base = 30 + (100 - intensity) * 0.25;
+      const score = overall + (delta < 0 ? -delta * 2 : -delta);
+      const base = 15 + (100 - intensity) * 0.3;
       return clampLikes(base + score / 3);
     }
 
     function classifyOverall(overall) {
       if (typeof overall !== "number") return "Noch keine Bewertung verfügbar.";
-      if (overall >= 80) return "Sehr starke Reaktion – deutliche Deeskalation.";
-      if (overall >= 65) return "Gute Reaktion – Shitstorm beruhigt sich spürbar.";
-      if (overall >= 50) return "Durchwachsene Reaktion – nur leichte Entspannung.";
-      if (overall >= 35) return "Schwache Reaktion – Lage bleibt angespannt.";
-      return "Sehr schwache Reaktion – Shitstorm eskaliert weiter.";
+      if (overall >= 80) return "Sehr gute Reaktion – starke Deeskalation.";
+      if (overall >= 65) return "Gute Reaktion – der Shitstorm beruhigt sich.";
+      if (overall >= 50) return "Durchwachsene Reaktion – leichte Entspannung.";
+      if (overall >= 35) return "Problematische Reaktion – die Lage bleibt kritisch.";
+      return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
     }
 
-    function createCommentsBlock(comments, shouldOpen) {
+    function getCommentAgeLabel(commentRound) {
+      if (!commentRound || !currentRound) return "neu";
+      const diff = currentRound - commentRound;
+      if (diff <= 0) return "neu";
+      return diff + "st";
+    }
+
+    function createCommentsBlock(comments, _label, shouldOpen) {
       const details = document.createElement("details");
-      details.className = "fb-comments";
+      details.className = "comments";
       if (shouldOpen) details.open = true;
 
       const summary = document.createElement("summary");
       if (Array.isArray(comments) && comments.length) {
         summary.textContent =
           comments.length === 1
-            ? "1 Kommentar ansehen"
-            : `Alle ${comments.length} Kommentare ansehen`;
+            ? "1 Kommentar"
+            : `${comments.length} Kommentare`;
       } else {
-        summary.textContent = "Noch keine Kommentare";
-        summary.style.color = "#9e9e9e";
+        summary.textContent = "Keine Kommentare";
+        summary.style.color = "#b0b3b8";
       }
       details.appendChild(summary);
 
       if (Array.isArray(comments) && comments.length) {
         comments.forEach((c) => {
-          const row = document.createElement("div");
-          row.className = "comment";
+          const textValue =
+            c && typeof c === "object" && "text" in c ? String(c.text) : String(c);
+          const appearedRound =
+            c && typeof c === "object" && typeof c.round === "number"
+              ? c.round
+              : null;
+          const ageLabel = getCommentAgeLabel(appearedRound);
 
-          const cav = document.createElement("div");
-          cav.className = "comment-avatar";
+          const row = document.createElement("div");
+          row.className = "comment-row";
+
+          const avatar = document.createElement("div");
+          avatar.className = "comment-avatar";
           const img = document.createElement("img");
           img.src = nextUserAvatarSrc();
-          img.alt = "Community";
-          cav.appendChild(img);
+          img.alt = "Kommentarprofil";
+          avatar.appendChild(img);
 
           const body = document.createElement("div");
           body.className = "comment-body";
@@ -901,337 +1157,252 @@ const API_KEY = "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";          
           header.className = "comment-header";
 
           const profile = nextCommentProfile();
-
           const name = document.createElement("span");
           name.className = "comment-name";
           name.textContent = profile.name;
 
           const meta = document.createElement("span");
           meta.className = "comment-meta";
-          meta.textContent = "Neu";
+          meta.textContent = ageLabel;
 
           header.appendChild(name);
           header.appendChild(meta);
 
           const text = document.createElement("div");
           text.className = "comment-text";
-          text.textContent = c;
+          text.textContent = textValue;
 
           body.appendChild(header);
           body.appendChild(text);
 
-          row.appendChild(cav);
+          row.appendChild(avatar);
           row.appendChild(body);
-
           details.appendChild(row);
         });
       } else {
         const info = document.createElement("div");
         info.className = "comment-muted";
-        info.textContent = "Noch keine Kommentare.";
+        info.textContent = "Noch keine Kommentare vorhanden.";
         details.appendChild(info);
       }
-
       return details;
     }
 
     function renderFeed() {
       feedEl.innerHTML = "";
-
       if (!simulation.cause) return;
 
       const newestIndex = simulation.responses.length;
 
-      // 1) Ausgangspost des Nutzers
-      const causePost = document.createElement("article");
-      causePost.className = "fb-post";
+      // 1) Ursprungspost (Auslöser)
+      const originPost = document.createElement("article");
+      originPost.className = "post";
 
-      const inner = document.createElement("div");
-      inner.className = "fb-post-inner";
+      const originAvatar = document.createElement("div");
+      originAvatar.classList.add("avatar", "origin");
+      const originImg = document.createElement("img");
+      originImg.src = CAUSE_AVATAR_SRC;
+      originImg.alt = "Nutzer";
+      originAvatar.appendChild(originImg);
 
-      const header = document.createElement("div");
-      header.className = "fb-post-header";
+      const originBody = document.createElement("div");
+      originBody.className = "post-body";
 
-      const av = document.createElement("div");
-      av.classList.add("avatar", "origin");
-      const img = document.createElement("img");
-      img.src = CAUSE_AVATAR_SRC;
-      img.alt = "User";
-      av.appendChild(img);
+      const originHeader = document.createElement("div");
+      originHeader.className = "post-header";
 
-      const userBox = document.createElement("div");
-      userBox.className = "fb-post-user";
+      const originName = document.createElement("span");
+      originName.className = "post-name";
+      originName.textContent = CAUSE_USER.name;
 
-      const nameEl = document.createElement("div");
-      nameEl.className = "fb-post-name";
-      nameEl.textContent = CAUSE_USER.name;
+      const originMeta = document.createElement("span");
+      originMeta.className = "post-meta";
+      originMeta.textContent = "hat einen Beitrag in deiner Seite kommentiert · Auslöser";
 
-      const metaEl = document.createElement("div");
-      metaEl.className = "fb-post-meta";
-      metaEl.textContent = CAUSE_USER.handle + " · Auslöser des Shitstorms";
+      originHeader.appendChild(originName);
+      originHeader.appendChild(originMeta);
 
-      userBox.appendChild(nameEl);
-      userBox.appendChild(metaEl);
+      const originText = document.createElement("div");
+      originText.className = "post-text";
+      originText.textContent = simulation.cause;
 
-      const more = document.createElement("div");
-      more.className = "fb-post-more";
-      more.textContent = "⋯";
+      const originFooter = document.createElement("div");
+      originFooter.className = "post-footer";
 
-      header.appendChild(av);
-      header.appendChild(userBox);
-      header.appendChild(more);
+      const originLikes = document.createElement("div");
+      originLikes.className = "likes";
+      const originLikesIcon = document.createElement("div");
+      originLikesIcon.className = "likes-icon";
+      originLikesIcon.textContent = "👍";
+      const originLikesText = document.createElement("span");
+      if (causeLikesKnown) {
+        originLikesText.textContent = `${likesForCause(simulation.initialIntensity)} Reaktionen`;
+      } else {
+        originLikesText.textContent = "Gefällt das";
+      }
+      originLikes.appendChild(originLikesIcon);
+      originLikes.appendChild(originLikesText);
+      originFooter.appendChild(originLikes);
 
-      const message = document.createElement("div");
-      message.className = "fb-post-message";
-      message.textContent = simulation.cause;
+      originBody.appendChild(originHeader);
+      originBody.appendChild(originText);
+      originBody.appendChild(originFooter);
 
-      inner.appendChild(header);
-      inner.appendChild(message);
-
-      // Likes & Stats für Ausgangspost
-      const likesRow = document.createElement("div");
-      likesRow.className = "fb-post-likes";
-
-      const likesLeft = document.createElement("div");
-      likesLeft.className = "fb-likes-left";
-
-      const likeBadge = document.createElement("div");
-      likeBadge.className = "fb-like-badge";
-      likeBadge.textContent = "👍";
-
-      const likesCount = document.createElement("div");
-      likesCount.className = "fb-likes-count";
-      likesCount.textContent = likesForCause(simulation.initialIntensity);
-
-      likesLeft.appendChild(likeBadge);
-      likesLeft.appendChild(likesCount);
-
-      likesRow.appendChild(likesLeft);
-      // rechts leer, könnte Shares anzeigen
-      const likesRight = document.createElement("div");
-      likesRow.appendChild(likesRight);
-
-      inner.appendChild(likesRow);
-
-      const statsRow = document.createElement("div");
-      statsRow.className = "fb-post-stats";
-
-      if (typeof simulation.initialTimeoutDelta === "number" && simulation.initialTimeoutDelta > 0.05) {
-        const chip = document.createElement("span");
-        chip.className = "stat-chip stat-bad";
-        chip.textContent = `Reaktionszeit überschritten: +${simulation.initialTimeoutDelta.toFixed(1)} Intensität`;
-        statsRow.appendChild(chip);
+      if (simulation.initialComments && simulation.initialComments.length) {
+        const commentsBlock = createCommentsBlock(
+          simulation.initialComments,
+          "Kommentare zum Auslöser",
+          newestIndex === 0
+        );
+        originBody.appendChild(commentsBlock);
       }
 
-      if (statsRow.childElementCount) {
-        inner.appendChild(statsRow);
-      }
+      originPost.appendChild(originAvatar);
+      originPost.appendChild(originBody);
+      feedEl.appendChild(originPost);
 
-      const actionsRow = document.createElement("div");
-      actionsRow.className = "fb-post-actions";
-      actionsRow.innerHTML = `
-        <div class="fb-action-btn"><span>👍</span><span>Gefällt mir</span></div>
-        <div class="fb-action-btn"><span>💬</span><span>Kommentieren</span></div>
-        <div class="fb-action-btn"><span>↗</span><span>Teilen</span></div>
-      `;
-      inner.appendChild(actionsRow);
-
-      const commentsBlock = createCommentsBlock(
-        simulation.initialComments,
-        newestIndex === 0
-      );
-      inner.appendChild(commentsBlock);
-
-      causePost.appendChild(inner);
-      feedEl.appendChild(causePost);
-
-      // 2) Unternehmens-Reaktionen
+      // 2) Unternehmensantworten
       simulation.responses.forEach((resp, index) => {
         const roundNumber = index + 1;
-        const isNewest = (roundNumber === newestIndex);
+        const isNewest = roundNumber === newestIndex;
 
         const post = document.createElement("article");
-        post.className = "fb-post";
+        post.className = "post";
 
-        const innerC = document.createElement("div");
-        innerC.className = "fb-post-inner";
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "company");
+        const avatarImg = document.createElement("img");
+        avatarImg.src = COMPANY_AVATAR_SRC;
+        avatarImg.alt = "Unternehmen";
+        avatar.appendChild(avatarImg);
 
-        const headerC = document.createElement("div");
-        headerC.className = "fb-post-header";
+        const body = document.createElement("div");
+        body.className = "post-body";
 
-        const avC = document.createElement("div");
-        avC.classList.add("avatar", "company");
-        const imgC = document.createElement("img");
-        imgC.src = COMPANY_AVATAR_SRC;
-        imgC.alt = "Unternehmen";
-        avC.appendChild(imgC);
+        const header = document.createElement("div");
+        header.className = "post-header";
 
-        const userBoxC = document.createElement("div");
-        userBoxC.className = "fb-post-user";
+        const name = document.createElement("span");
+        name.className = "post-name";
+        name.textContent = simulation.company || "Unternehmen";
 
-        const cname = document.createElement("div");
-        cname.className = "fb-post-name";
-        cname.textContent = simulation.company || "Unternehmen";
+        const meta = document.createElement("span");
+        meta.className = "post-meta";
+        meta.textContent = `Antwort des Unternehmens · Runde ${roundNumber}`;
 
-        const cmeta = document.createElement("div");
-        cmeta.className = "fb-post-meta";
-        cmeta.textContent = `Antwort des Unternehmens · Runde ${roundNumber}`;
+        header.appendChild(name);
+        header.appendChild(meta);
 
-        userBoxC.appendChild(cname);
-        userBoxC.appendChild(cmeta);
+        const text = document.createElement("div");
+        text.className = "post-text";
+        text.textContent = resp.answer;
 
-        const moreC = document.createElement("div");
-        moreC.className = "fb-post-more";
-        moreC.textContent = "⋯";
+        const footer = document.createElement("div");
+        footer.className = "post-footer";
 
-        headerC.appendChild(avC);
-        headerC.appendChild(userBoxC);
-        headerC.appendChild(moreC);
-
-        const msgC = document.createElement("div");
-        msgC.className = "fb-post-message";
-        msgC.textContent = resp.answer;
-
-        innerC.appendChild(headerC);
-        innerC.appendChild(msgC);
-
-        const likesRowC = document.createElement("div");
-        likesRowC.className = "fb-post-likes";
-
-        const likesLeftC = document.createElement("div");
-        likesLeftC.className = "fb-likes-left";
-
-        const likeBadgeC = document.createElement("div");
-        likeBadgeC.className = "fb-like-badge";
-        likeBadgeC.textContent = "👍";
-
-        const likesCountC = document.createElement("div");
-        likesCountC.className = "fb-likes-count";
-        likesCountC.textContent = likesForResponse(resp);
-
-        likesLeftC.appendChild(likeBadgeC);
-        likesLeftC.appendChild(likesCountC);
-
-        likesRowC.appendChild(likesLeftC);
-        likesRowC.appendChild(document.createElement("div"));
-        innerC.appendChild(likesRowC);
-
-        const statsC = document.createElement("div");
-        statsC.className = "fb-post-stats";
+        const metrics = document.createElement("div");
+        metrics.className = "metrics";
 
         if (typeof resp.intensityAfter === "number") {
-          const chip = document.createElement("span");
-          chip.className = "stat-chip";
-          chip.textContent = `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
-          statsC.appendChild(chip);
+          const intensitySpan = document.createElement("span");
+          intensitySpan.className = "metric-label";
+          intensitySpan.textContent =
+            `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
+          metrics.appendChild(intensitySpan);
         }
 
         if (typeof resp.deltaIntensity === "number") {
+          const deltaSpan = document.createElement("span");
+          deltaSpan.className = "metric-label";
           const delta = resp.deltaIntensity;
-          const chip = document.createElement("span");
-          chip.className = "stat-chip";
           const deltaText = (delta >= 0 ? "+" : "") + delta.toFixed(1);
           if (delta < 0) {
-            chip.classList.add("stat-good");
-            chip.textContent = `Intensitätsänderung: ${deltaText} (entschärft)`;
+            deltaSpan.classList.add("delta-good");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (entschärft)`;
           } else if (delta > 0) {
-            chip.classList.add("stat-bad");
-            chip.textContent = `Intensitätsänderung: ${deltaText} (verschärft)`;
+            deltaSpan.classList.add("delta-bad");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (verschärft)`;
           } else {
-            chip.textContent = "Intensitätsänderung: ±0 (unverändert)";
+            deltaSpan.textContent = "Intensitätveränderung: ±0 (unverändert)";
           }
-          statsC.appendChild(chip);
+          metrics.appendChild(deltaSpan);
         }
 
         if (typeof resp.timeoutDelta === "number" && resp.timeoutDelta > 0.05) {
-          const chipT = document.createElement("span");
-          chipT.className = "stat-chip stat-bad";
-          chipT.textContent = `Reaktionszeit überschritten: +${resp.timeoutDelta.toFixed(1)} Intensität`;
-          statsC.appendChild(chipT);
+          const timeoutSpan = document.createElement("span");
+          timeoutSpan.className = "metric-label delta-bad";
+          timeoutSpan.textContent =
+            `Reaktionszeit-Überschreitung: +${resp.timeoutDelta.toFixed(1)} Intensität`;
+          metrics.appendChild(timeoutSpan);
         }
 
-        if (typeof resp.overall === "number") {
-          const chipO = document.createElement("span");
-          chipO.className = "stat-chip";
-          const classification = classifyOverall(resp.overall);
-          chipO.textContent = classification;
-          if (resp.overall >= 65) chipO.classList.add("stat-good");
-          else if (resp.overall < 50) chipO.classList.add("stat-bad");
-          statsC.appendChild(chipO);
+        footer.appendChild(metrics);
+
+        const likesDiv = document.createElement("div");
+        likesDiv.className = "likes";
+        const likesIcon = document.createElement("div");
+        likesIcon.className = "likes-icon";
+        likesIcon.textContent = "👍";
+        const likesText = document.createElement("span");
+        if (resp.likesKnown) {
+          likesText.textContent = `${likesForResponse(resp)} Reaktionen`;
+        } else {
+          likesText.textContent = "Gefällt das";
         }
+        likesDiv.appendChild(likesIcon);
+        likesDiv.appendChild(likesText);
+        footer.appendChild(likesDiv);
 
-        if (statsC.childElementCount) innerC.appendChild(statsC);
+        body.appendChild(header);
+        body.appendChild(text);
+        body.appendChild(footer);
 
-        const actionsC = document.createElement("div");
-        actionsC.className = "fb-post-actions";
-        actionsC.innerHTML = `
-          <div class="fb-action-btn"><span>👍</span><span>Gefällt mir</span></div>
-          <div class="fb-action-btn"><span>💬</span><span>Kommentieren</span></div>
-          <div class="fb-action-btn"><span>↗</span><span>Teilen</span></div>
-        `;
-        innerC.appendChild(actionsC);
-
-        const commentsBlockC = createCommentsBlock(
+        const commentsBlock = createCommentsBlock(
           resp.comments || [],
+          "Kommentare zur Antwort",
           isNewest
         );
-        innerC.appendChild(commentsBlockC);
+        body.appendChild(commentsBlock);
 
-        post.appendChild(innerC);
+        post.appendChild(avatar);
+        post.appendChild(body);
         feedEl.appendChild(post);
       });
 
-      // 3) Finale Auswertung
+      // 3) Finale Karte
       if (simulation.finalOutcome) {
-        const finalPost = document.createElement("article");
-        finalPost.className = "fb-post final-post";
+        const post = document.createElement("article");
+        post.className = "post final-card";
 
-        const innerF = document.createElement("div");
-        innerF.className = "fb-post-inner";
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "coach");
+        const img = document.createElement("img");
+        img.src = COMPANY_AVATAR_SRC;
+        img.alt = "Coach";
+        avatar.appendChild(img);
 
-        const headerF = document.createElement("div");
-        headerF.className = "fb-post-header";
+        const body = document.createElement("div");
+        body.className = "post-body";
 
-        const avF = document.createElement("div");
-        avF.classList.add("avatar", "coach");
-        const imgF = document.createElement("img");
-        imgF.src = COMPANY_AVATAR_SRC;
-        imgF.alt = "Coach";
-        avF.appendChild(imgF);
-
-        const userBoxF = document.createElement("div");
-        userBoxF.className = "fb-post-user";
-
-        const titleEl = document.createElement("div");
-        titleEl.className = "final-title";
+        const title = document.createElement("div");
+        title.className = "final-title";
         if (simulation.finalOutcome.includes("abgeflacht")) {
-          titleEl.classList.add("final-good");
+          title.classList.add("final-good");
         } else {
-          titleEl.classList.add("final-bad");
+          title.classList.add("final-bad");
         }
-        titleEl.textContent = simulation.finalOutcome;
+        title.textContent = simulation.finalOutcome;
 
-        const metaF = document.createElement("div");
-        metaF.className = "fb-post-meta";
-        metaF.textContent = "Auswertung der Shitstorm-Simulation";
+        const summary = document.createElement("div");
+        summary.className = "final-summary";
+        summary.textContent = simulation.finalSummary || "";
 
-        userBoxF.appendChild(titleEl);
-        userBoxF.appendChild(metaF);
+        body.appendChild(title);
+        if (simulation.finalSummary) body.appendChild(summary);
 
-        headerF.appendChild(avF);
-        headerF.appendChild(userBoxF);
-
-        innerF.appendChild(headerF);
-
-        if (simulation.finalSummary) {
-          const sumEl = document.createElement("div");
-          sumEl.className = "final-summary";
-          sumEl.textContent = simulation.finalSummary;
-          innerF.appendChild(sumEl);
-        }
-
-        finalPost.appendChild(innerF);
-        feedEl.appendChild(finalPost);
+        post.appendChild(avatar);
+        post.appendChild(body);
+        feedEl.appendChild(post);
       }
     }
 
@@ -1318,6 +1489,7 @@ const API_KEY = "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";          
 
     function updateStatusBar(state) {
       if (typeof state.round === "number") {
+        currentRound = state.round;
         roundTextEl.textContent = String(state.round);
       }
       if (typeof state.intensity === "number") {
@@ -1333,13 +1505,23 @@ const API_KEY = "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";          
         typeof state.intensity === "number" ? state.intensity : 70;
       prevIntensity = simulation.initialIntensity;
 
+      updateStatusBar(state);
+
+      const roundForComments =
+        currentRound || (typeof state.round === "number" ? state.round : 1);
+
       if (Array.isArray(state.last_community_comments)) {
-        simulation.initialComments = state.last_community_comments.slice();
+        simulation.initialComments = state.last_community_comments.map((c) => ({
+          text: String(c),
+          round: roundForComments
+        }));
       } else {
         simulation.initialComments = [];
       }
 
-      updateStatusBar(state);
+      // jetzt echte Intensität -> Likes anzeigen
+      causeLikesKnown = true;
+
       renderFeed();
 
       if (hasInterrupt(result)) {
@@ -1382,13 +1564,22 @@ const API_KEY = "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";          
 
       resp.feedback = extractLastCoachFeedback(state.history) || "";
 
+      updateStatusBar(state);
+
+      const roundForComments =
+        currentRound || (typeof state.round === "number" ? state.round : 0);
+
       if (Array.isArray(state.last_community_comments)) {
-        resp.comments = state.last_community_comments.slice();
+        resp.comments = state.last_community_comments.map((c) => ({
+          text: String(c),
+          round: roundForComments
+        }));
       } else {
         resp.comments = resp.comments || [];
       }
 
-      updateStatusBar(state);
+      // Ab jetzt „echte“ Likes anzeigen
+      resp.likesKnown = true;
 
       if (state.status && state.status !== "running") {
         finished = true;
@@ -1420,10 +1611,15 @@ const API_KEY = "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";          
 
     function processTimeoutResult(result) {
       const state = findState(result) || {};
+      const roundForComments =
+        typeof state.round === "number" ? state.round : currentRound;
 
       let newComments = [];
       if (Array.isArray(state.last_community_comments)) {
-        newComments = state.last_community_comments.slice();
+        newComments = state.last_community_comments.map((c) => ({
+          text: String(c),
+          round: roundForComments
+        }));
       }
 
       if (newComments.length) {
@@ -1487,10 +1683,17 @@ const API_KEY = "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";          
     async function startSimulation(companyParam, causeParam) {
       resetSimulation();
       simulation.company = (companyParam || "Dein Unternehmen").trim();
-      simulation.cause = (causeParam || "Kritischer Facebook-Post").trim();
+      simulation.cause =
+        (causeParam || "Unangemessener Umgang mit Kund:innen").trim();
+
+      const companyName = simulation.company || "Dein Unternehmen";
+
+      if (sidebarProfileNameEl) sidebarProfileNameEl.textContent = companyName;
+      if (headerProfileNameEl) headerProfileNameEl.textContent = companyName;
 
       setStatus("startet …");
       renderFeed();
+      causeLikesKnown = false;
 
       const initialState = {
         platform: "Facebook",
@@ -1532,10 +1735,11 @@ const API_KEY = "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";          
         feedback: "",
         intensityAfter: null,
         deltaIntensity: null,
-        timeoutDelta: 0
+        timeoutDelta: 0,
+        likesKnown: false
       };
       simulation.responses.push(resp);
-      renderFeed();
+      renderFeed(); // zeigt Post schon, Likes ohne Zahl
 
       answerInputEl.value = "";
       autoResizeAnswer();
@@ -1577,46 +1781,40 @@ const API_KEY = "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";          
 
     function appendError(message) {
       const post = document.createElement("article");
-      post.className = "fb-post";
+      post.className = "post";
 
-      const inner = document.createElement("div");
-      inner.className = "fb-post-inner";
-
-      const header = document.createElement("div");
-      header.className = "fb-post-header";
-
-      const av = document.createElement("div");
-      av.className = "avatar";
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
       const img = document.createElement("img");
       img.src = COMPANY_AVATAR_SRC;
       img.alt = "System";
-      av.appendChild(img);
-
-      const userBox = document.createElement("div");
-      userBox.className = "fb-post-user";
-
-      const name = document.createElement("div");
-      name.className = "fb-post-name";
-      name.textContent = "Systemfehler";
-
-      const meta = document.createElement("div");
-      meta.className = "fb-post-meta";
-      meta.textContent = "Simulationsfehler";
-
-      userBox.appendChild(name);
-      userBox.appendChild(meta);
-
-      header.appendChild(av);
-      header.appendChild(userBox);
+      avatar.appendChild(img);
 
       const body = document.createElement("div");
-      body.className = "fb-post-message";
-      body.textContent = message;
+      body.className = "post-body";
 
-      inner.appendChild(header);
-      inner.appendChild(body);
+      const header = document.createElement("div");
+      header.className = "post-header";
 
-      post.appendChild(inner);
+      const name = document.createElement("span");
+      name.className = "post-name";
+      name.textContent = "Systemfehler";
+
+      const meta = document.createElement("span");
+      meta.className = "post-meta";
+      meta.textContent = "@simulation";
+
+      header.appendChild(name);
+      header.appendChild(meta);
+
+      const text = document.createElement("div");
+      text.className = "post-text";
+      text.textContent = message;
+
+      body.appendChild(header);
+      body.appendChild(text);
+      post.appendChild(avatar);
+      post.appendChild(body);
       feedEl.appendChild(post);
       feedEl.scrollTop = feedEl.scrollHeight;
     }
@@ -1627,6 +1825,13 @@ const API_KEY = "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";          
       ev.preventDefault();
       sendAnswer();
     });
+
+    if (pauseBtn) {
+      pauseBtn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        toggleReactionPause();
+      });
+    }
 
     answerInputEl.addEventListener("keydown", (ev) => {
       if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
@@ -1640,7 +1845,8 @@ const API_KEY = "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";          
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const companyParam = params.get("company") || "Dein Unternehmen";
-      const causeParam   = params.get("cause")   || "Kritischer Facebook-Post";
+      const causeParam =
+        params.get("cause") || "Unangemessener Umgang mit Kund:innen";
 
       const maxParam = parseInt(params.get("maxMinutes") || "15", 10);
       if (!isNaN(maxParam) && maxParam > 0) {
@@ -1650,6 +1856,7 @@ const API_KEY = "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";          
       }
 
       autoResizeAnswer();
+      updatePauseButton();
 
       setTimeout(() => {
         startSimulation(companyParam, causeParam);
