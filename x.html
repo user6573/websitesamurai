@@ -1,3 +1,16 @@
+Hier ist deine **angepasste x.html**, in der der frühere **Post-Button jetzt die Reaktionszeit pausiert/fortsetzt**.
+Posten geht weiterhin über **Strg + Enter** (bzw. Cmd + Enter), der Button steuert nur noch den Timer.
+
+Änderungen im Überblick:
+
+* Button-Text: „Reaktionszeit pausieren“ / „Reaktionszeit fortsetzen“ (je nach Status)
+* Der Button pausiert/resumiert nur, wenn gerade eine Antwort von dir erwartet wird (`waitingForAnswer === true`)
+* Beim Pausieren wird die **Restzeit** gespeichert, beim Fortsetzen läuft genau diese Restzeit weiter
+* Beim Senden einer Antwort oder beim Timeout wird der Timer sauber zurückgesetzt und der Button deaktiviert
+
+> Du musst nur diese Datei als `x.html` speichern – `BASE_URL`, `ASSISTANT_ID` und `API_KEY` habe ich wie in deinem Code gelassen.
+
+```html
 <!doctype html>
 <html lang="de">
 <head>
@@ -448,14 +461,6 @@
       opacity: 0.6;
     }
 
-    .composer-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-      min-width: 0;
-    }
-
     .composer-row {
       display: flex;
       flex: 1;
@@ -496,7 +501,7 @@
       text-align: right;
     }
 
-    /* Weißer Post-Button */
+    /* Weißer Button (jetzt Pause/Weiter) */
     .btn-primary {
       border-radius: 999px;
       border: 1px solid #eff3f4;
@@ -835,11 +840,12 @@
             </div>
             <div class="composer-row">
               <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
-              <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+              <!-- Button: pausiert/fortsetzt nur noch die Reaktionszeit -->
+              <button class="btn-primary" id="sendBtn" disabled>Reaktionszeit pausieren</button>
             </div>
           </div>
           <div class="composer-hint">
-            Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
+            Strg + Enter zum Posten. Button pausiert nur die Reaktionszeit.
           </div>
         </div>
 
@@ -940,9 +946,9 @@
   <script>
     // ===================== KONFIGURATION ===========================
 
-const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";                                // LangSmith Key oder leer                              // LangSmith-Key oder leer
+    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";
+    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";
+    const API_KEY = "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";
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -952,6 +958,9 @@ const API_KEY = "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";          
     // maximale Wartezeit (ms) bis automatische Community-Reaktion
     let maxWaitMs = null;
     let reactionTimerId = null;
+    let reactionDeadline = null;
+    let remainingWaitMs = null;
+    let reactionPaused = false;
 
     // Nutzer, der den ursprünglichen Shitstorm-Post absetzt
     const CAUSE_USER = {
@@ -1029,20 +1038,19 @@ const API_KEY = "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";          
     }
 
     function setStatus(_text) {
-      // aktuell keine sichtbare Statusanzeige; Hook falls du später etwas anzeigen willst
+      // optionaler Hook für Statusanzeigen
     }
 
     function setComposerEnabled(on) {
       if (on) {
         composerEl.classList.remove("disabled");
         answerInputEl.disabled = false;
-        sendBtn.disabled = false;
         autoResizeAnswer();
       } else {
         composerEl.classList.add("disabled");
         answerInputEl.disabled = true;
-        sendBtn.disabled = true;
       }
+      updatePauseButton();
     }
 
     function clearReactionTimer() {
@@ -1050,15 +1058,76 @@ const API_KEY = "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";          
         clearTimeout(reactionTimerId);
         reactionTimerId = null;
       }
+      reactionDeadline = null;
+      remainingWaitMs = null;
+      reactionPaused = false;
+      updatePauseButton();
     }
 
     function scheduleReactionTimer() {
       clearReactionTimer();
       if (!maxWaitMs || maxWaitMs <= 0) return;
+      reactionPaused = false;
+      remainingWaitMs = maxWaitMs;
+      armReactionTimer();
+      updatePauseButton();
+    }
+
+    function armReactionTimer() {
+      if (!remainingWaitMs || remainingWaitMs <= 0) {
+        // falls Zeit bereits verstrichen -> sofort Timeout auslösen
+        handleReactionTimeout();
+        return;
+      }
+      reactionDeadline = Date.now() + remainingWaitMs;
       reactionTimerId = setTimeout(() => {
+        reactionTimerId = null;
+        reactionDeadline = null;
+        remainingWaitMs = null;
         if (!waitingForAnswer || finished) return;
         handleReactionTimeout();
-      }, maxWaitMs);
+      }, remainingWaitMs);
+    }
+
+    function updatePauseButton() {
+      if (!sendBtn) return;
+
+      // Button nur aktiv, wenn eine Antwort erwartet wird
+      if (!maxWaitMs || finished || !waitingForAnswer) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Reaktionszeit pausieren";
+        return;
+      }
+
+      sendBtn.disabled = false;
+      if (reactionPaused) {
+        sendBtn.textContent = "Reaktionszeit fortsetzen";
+      } else {
+        sendBtn.textContent = "Reaktionszeit pausieren";
+      }
+    }
+
+    function toggleReactionPause() {
+      if (!waitingForAnswer || finished || !maxWaitMs) return;
+
+      if (!reactionPaused) {
+        // pausieren: Restzeit berechnen und Timer stoppen
+        if (reactionTimerId !== null && reactionDeadline) {
+          const now = Date.now();
+          remainingWaitMs = Math.max(0, reactionDeadline - now);
+          clearTimeout(reactionTimerId);
+          reactionTimerId = null;
+        }
+        reactionPaused = true;
+      } else {
+        // fortsetzen: mit Restzeit weiterlaufen
+        if (!remainingWaitMs || remainingWaitMs <= 0) {
+          remainingWaitMs = maxWaitMs;
+        }
+        reactionPaused = false;
+        armReactionTimer();
+      }
+      updatePauseButton();
     }
 
     function resetSimulation() {
@@ -1161,7 +1230,6 @@ const API_KEY = "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";          
 
       if (Array.isArray(comments) && comments.length) {
         comments.forEach((c) => {
-          // Unterstützt sowohl String als auch {text, round}
           const textValue = (c && typeof c === "object" && "text" in c) ? String(c.text) : String(c);
           const appearedRound = (c && typeof c === "object" && typeof c.round === "number")
             ? c.round
@@ -1200,7 +1268,7 @@ const API_KEY = "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";          
 
           const meta = document.createElement("span");
           meta.className = "comment-meta";
-          meta.textContent = ageLabel; // „neu“, „1st“, „2st“ …
+          meta.textContent = ageLabel;
 
           header.appendChild(name);
           header.appendChild(handle);
@@ -1282,7 +1350,6 @@ const API_KEY = "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";          
       if (causeLikesKnown) {
         causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
       } else {
-        // Solange wir die „echte“ Intensität/Herzanzahl nicht kennen: ohne Zahl.
         causeLikes.textContent = "❤️ Likes";
       }
 
@@ -1325,11 +1392,11 @@ const API_KEY = "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";          
         header.classList.add("tweet-header");
 
         const name = document.createElement("span");
-        name.classList.add("tweet-name");
+        name.className = "tweet-name";
         name.textContent = simulation.company || "Unternehmen";
 
         const handle = document.createElement("span");
-        handle.classList.add("tweet-handle");
+        handle.className = "tweet-handle";
         handle.textContent =
           " @" +
           (simulation.company || "brand").replace(/\s+/g, "").toLowerCase().replace(/[^a-z0-9_]/g, "");
@@ -1373,7 +1440,6 @@ const API_KEY = "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";          
           metrics.appendChild(deltaSpan);
         }
 
-        // Effekt von Reaktionszeit-Überschreitungen auf diese Runde
         if (typeof resp.timeoutDelta === "number" && resp.timeoutDelta > 0.05) {
           const timeoutSpan = document.createElement("span");
           timeoutSpan.className = "metric-label delta-bad";
@@ -1381,7 +1447,6 @@ const API_KEY = "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";          
           metrics.appendChild(timeoutSpan);
         }
 
-        // Nur anzeigen, wenn es wirklich eine Bewertung gibt
         if (typeof resp.overall === "number") {
           const overallSpan = document.createElement("span");
           overallSpan.className = "metric-label";
@@ -1399,10 +1464,8 @@ const API_KEY = "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";          
         const likesDiv = document.createElement("div");
         likesDiv.className = "likes";
         if (resp.likesKnown) {
-          // „echte“ Likeszahl anzeigen
           likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
         } else {
-          // solange die Reaktion noch nicht bewertet wurde, nur Herz ohne Zahl
           likesDiv.textContent = "❤️ Likes";
         }
 
@@ -1884,11 +1947,13 @@ const API_KEY = "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";          
 
     // ===================== EVENTS / AUTOSTART ======================
 
+    // Button pausiert/fortsetzt den Reaktions-Timer
     sendBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
-      sendAnswer();
+      toggleReactionPause();
     });
 
+    // Posten bleibt über Strg + Enter
     answerInputEl.addEventListener("keydown", (ev) => {
       if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
         ev.preventDefault();
@@ -1912,6 +1977,7 @@ const API_KEY = "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";          
       }
 
       autoResizeAnswer();
+      updatePauseButton();
 
       setTimeout(() => {
         startSimulation(companyParam, causeParam);
@@ -1920,3 +1986,4 @@ const API_KEY = "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";          
   </script>
 </body>
 </html>
+```
