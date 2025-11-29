@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="de">
 <head>
@@ -129,8 +128,13 @@
       cursor: pointer;
     }
 
-    .sidebar-post-btn button:hover {
+    .sidebar-post-btn button:hover:not(:disabled) {
       background: #f0f0f0;
+    }
+
+    .sidebar-post-btn button:disabled {
+      opacity: 0.5;
+      cursor: default;
     }
 
     .sidebar-left-bottom {
@@ -333,14 +337,6 @@
       border-color: #b91c1c;
     }
 
-    .reaction-good {
-      color: #4ade80;
-    }
-
-    .reaction-bad {
-      color: #f97373;
-    }
-
     .likes {
       margin-top: 0.3rem;
       font-size: 0.8rem;
@@ -489,7 +485,7 @@
       text-align: right;
     }
 
-    /* Weißer Button (jetzt Pause/Weiter) */
+    /* Weißer Post-Button im Composer */
     .btn-primary {
       border-radius: 999px;
       border: 1px solid #eff3f4;
@@ -794,7 +790,8 @@
             </ul>
           </nav>
           <div class="sidebar-post-btn">
-            <button type="button">Post</button>
+            <!-- Dieser Button pausiert/fortsetzt jetzt die Reaktionszeit -->
+            <button type="button" id="pauseBtn">Reaktionszeit pausieren</button>
           </div>
         </div>
 
@@ -828,12 +825,11 @@
             </div>
             <div class="composer-row">
               <textarea id="answerInput" placeholder="Antworte der Community im Namen des Unternehmens …" disabled></textarea>
-              <!-- Button: pausiert/fortsetzt nur noch die Reaktionszeit -->
-              <button class="btn-primary" id="sendBtn" disabled>Reaktionszeit pausieren</button>
+              <button class="btn-primary" id="sendBtn" disabled>Posten</button>
             </div>
           </div>
           <div class="composer-hint">
-            Strg + Enter zum Posten. Button pausiert nur die Reaktionszeit.
+            Strg + Enter zum Posten. Reaktionszeit kannst du über den Post-Button links pausieren.
           </div>
         </div>
 
@@ -934,9 +930,9 @@
   <script>
     // ===================== KONFIGURATION ===========================
 
-    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";
-    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";
-    const API_KEY = "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";
+    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
+    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
+    const API_KEY = "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";        // LangSmith Key oder leer
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
@@ -998,6 +994,7 @@
     const composerEl = document.getElementById("composer");
     const answerInputEl = document.getElementById("answerInput");
     const sendBtn = document.getElementById("sendBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
     const roundTextEl = document.getElementById("roundText");
     const intensityTextEl = document.getElementById("intensityText");
     const debugOutputEl = document.getElementById("debugOutput");
@@ -1026,17 +1023,19 @@
     }
 
     function setStatus(_text) {
-      // optionaler Hook für Statusanzeigen
+      // aktuell keine sichtbare Statusanzeige; Hook falls du später etwas anzeigen willst
     }
 
     function setComposerEnabled(on) {
       if (on) {
         composerEl.classList.remove("disabled");
         answerInputEl.disabled = false;
+        sendBtn.disabled = false;
         autoResizeAnswer();
       } else {
         composerEl.classList.add("disabled");
         answerInputEl.disabled = true;
+        sendBtn.disabled = true;
       }
       updatePauseButton();
     }
@@ -1052,18 +1051,8 @@
       updatePauseButton();
     }
 
-    function scheduleReactionTimer() {
-      clearReactionTimer();
-      if (!maxWaitMs || maxWaitMs <= 0) return;
-      reactionPaused = false;
-      remainingWaitMs = maxWaitMs;
-      armReactionTimer();
-      updatePauseButton();
-    }
-
     function armReactionTimer() {
       if (!remainingWaitMs || remainingWaitMs <= 0) {
-        // falls Zeit bereits verstrichen -> sofort Timeout auslösen
         handleReactionTimeout();
         return;
       }
@@ -1077,26 +1066,34 @@
       }, remainingWaitMs);
     }
 
-    function updatePauseButton() {
-      if (!sendBtn) return;
+    function scheduleReactionTimer() {
+      clearReactionTimer();
+      if (!maxWaitMs || maxWaitMs <= 0) return;
+      reactionPaused = false;
+      remainingWaitMs = maxWaitMs;
+      armReactionTimer();
+      updatePauseButton();
+    }
 
-      // Button nur aktiv, wenn eine Antwort erwartet wird
+    function updatePauseButton() {
+      if (!pauseBtn) return;
+
       if (!maxWaitMs || finished || !waitingForAnswer) {
-        sendBtn.disabled = true;
-        sendBtn.textContent = "Reaktionszeit pausieren";
+        pauseBtn.disabled = true;
+        pauseBtn.textContent = "Reaktionszeit pausieren";
         return;
       }
 
-      sendBtn.disabled = false;
+      pauseBtn.disabled = false;
       if (reactionPaused) {
-        sendBtn.textContent = "Reaktionszeit fortsetzen";
+        pauseBtn.textContent = "Reaktionszeit fortsetzen";
       } else {
-        sendBtn.textContent = "Reaktionszeit pausieren";
+        pauseBtn.textContent = "Reaktionszeit pausieren";
       }
     }
 
     function toggleReactionPause() {
-      if (!waitingForAnswer || finished || !maxWaitMs) return;
+      if (!pauseBtn || !waitingForAnswer || finished || !maxWaitMs) return;
 
       if (!reactionPaused) {
         // pausieren: Restzeit berechnen und Timer stoppen
@@ -1218,6 +1215,7 @@
 
       if (Array.isArray(comments) && comments.length) {
         comments.forEach((c) => {
+          // Unterstützt sowohl String als auch {text, round}
           const textValue = (c && typeof c === "object" && "text" in c) ? String(c.text) : String(c);
           const appearedRound = (c && typeof c === "object" && typeof c.round === "number")
             ? c.round
@@ -1256,7 +1254,7 @@
 
           const meta = document.createElement("span");
           meta.className = "comment-meta";
-          meta.textContent = ageLabel;
+          meta.textContent = ageLabel; // „neu“, „1st“, „2st“ …
 
           header.appendChild(name);
           header.appendChild(handle);
@@ -1338,6 +1336,7 @@
       if (causeLikesKnown) {
         causeLikes.textContent = `❤️ ${likesForCause(simulation.initialIntensity)} Likes`;
       } else {
+        // Solange wir die „echte“ Intensität/Herzanzahl nicht kennen: ohne Zahl.
         causeLikes.textContent = "❤️ Likes";
       }
 
@@ -1428,6 +1427,7 @@
           metrics.appendChild(deltaSpan);
         }
 
+        // Effekt von Reaktionszeit-Überschreitungen auf diese Runde
         if (typeof resp.timeoutDelta === "number" && resp.timeoutDelta > 0.05) {
           const timeoutSpan = document.createElement("span");
           timeoutSpan.className = "metric-label delta-bad";
@@ -1435,25 +1435,15 @@
           metrics.appendChild(timeoutSpan);
         }
 
-        if (typeof resp.overall === "number") {
-          const overallSpan = document.createElement("span");
-          overallSpan.className = "metric-label";
-          const classification = classifyOverall(resp.overall);
-          overallSpan.textContent = classification;
-
-          if (resp.overall >= 65) {
-            overallSpan.classList.add("reaction-good");
-          } else if (resp.overall < 50) {
-            overallSpan.classList.add("reaction-bad");
-          }
-          metrics.appendChild(overallSpan);
-        }
+        // Keine separate Textbewertung („Durchwachsene Reaktion …“) mehr anzeigen
 
         const likesDiv = document.createElement("div");
         likesDiv.className = "likes";
         if (resp.likesKnown) {
+          // „echte“ Likeszahl anzeigen
           likesDiv.textContent = `❤️ ${likesForResponse(resp)} Likes`;
         } else {
+          // solange die Reaktion noch nicht bewertet wurde, nur Herz ohne Zahl
           likesDiv.textContent = "❤️ Likes";
         }
 
@@ -1935,13 +1925,20 @@
 
     // ===================== EVENTS / AUTOSTART ======================
 
-    // Button pausiert/fortsetzt den Reaktions-Timer
+    // Composer-Post-Button: Antwort senden
     sendBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
-      toggleReactionPause();
+      sendAnswer();
     });
 
-    // Posten bleibt über Strg + Enter
+    // Linker „Post“-Button: Reaktionszeit pausieren/fortsetzen
+    if (pauseBtn) {
+      pauseBtn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        toggleReactionPause();
+      });
+    }
+
     answerInputEl.addEventListener("keydown", (ev) => {
       if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
         ev.preventDefault();
