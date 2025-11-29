@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="de">
 <head>
@@ -22,7 +23,7 @@
       flex-direction: column;
     }
 
-    /* ======= HEADER (schmal, zentriert) ======= */
+    /* ======= HEADER – sehr Facebook-nah ======= */
     .fb-header {
       background: #ffffff;
       border-bottom: 1px solid #dcdfe3;
@@ -36,11 +37,11 @@
 
     .fb-header-inner {
       width: 100%;
-      max-width: 720px;
+      max-width: 900px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 12px;
     }
 
     .fb-header-left {
@@ -50,28 +51,110 @@
     }
 
     .fb-logo {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       border-radius: 999px;
       background: #1877f2;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 700;
       color: #ffffff;
     }
 
-    .fb-header-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #050505;
+    .fb-search-box {
+      background: #f0f2f5;
+      border-radius: 999px;
+      padding: 0 10px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #65676b;
+      font-size: 0.85rem;
+    }
+
+    .fb-search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.85rem;
+      width: 140px;
+    }
+
+    .fb-header-center {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 1.2rem;
+      color: #65676b;
+    }
+
+    .fb-header-center-icon {
+      width: 80px;
+      text-align: center;
+      padding: 4px 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .fb-header-center-icon.active {
+      border-bottom: 3px solid #2374e1;
+      color: #2374e1;
+      border-radius: 0;
+    }
+
+    .fb-header-center-icon:hover:not(.active) {
+      background: #f2f2f2;
     }
 
     .fb-header-right {
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    #pauseBtn {
+      border-radius: 999px;
+      border: 1px solid #f02849;
+      background: #ffffff;
+      color: #f02849;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    #pauseBtn.paused {
+      border-color: #45bd62;
+      background: #e7f3e7;
+      color: #045e1b;
+    }
+
+    #pauseBtn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .fb-header-icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: #e4e6eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #050505;
+    }
+
+    .fb-header-icon-btn:hover {
+      background: #d8dadf;
     }
 
     .fb-header-profile {
@@ -105,37 +188,10 @@
       color: #050505;
     }
 
-    /* Pause-Button sichtbar im Header */
-    #pauseBtn {
-      border-radius: 999px;
-      border: 1px solid #f02849;
-      background: #ffffff;
-      color: #f02849;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 6px 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    #pauseBtn.paused {
-      border-color: #45bd62;
-      background: #e7f3e7;
-      color: #045e1b;
-    }
-
-    #pauseBtn:disabled {
-      opacity: 0.4;
-      cursor: default;
-    }
-
-    /* ======= MAIN EINSPALTIG ======= */
+    /* ======= MAIN EINSPALTIG – zentriert wie Feed ======= */
     .fb-main {
       width: 100%;
-      max-width: 720px;
+      max-width: 680px;
       margin: 12px auto 24px;
       padding: 0 12px;
       box-sizing: border-box;
@@ -316,6 +372,30 @@
       background: #fde7ec;
     }
 
+    /* Aktion-Zeile wie bei Facebook: Gefällt mir / Kommentieren / Teilen */
+    .post-actions {
+      border-top: 1px solid #dcdfe3;
+      margin-top: 6px;
+      padding-top: 4px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #65676b;
+    }
+
+    .post-action {
+      flex: 1;
+      text-align: center;
+      padding: 4px 0;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .post-action:hover {
+      background: #f2f2f2;
+    }
+
     /* COMMENTS */
     .comments {
       margin-top: 6px;
@@ -399,7 +479,7 @@
       margin-top: 4px;
     }
 
-    /* COMPOSER */
+    /* COMPOSER – wie „Was machst du gerade?“ */
     .composer {
       background: #ffffff;
       border-radius: 8px;
@@ -433,13 +513,13 @@
     }
 
     .composer textarea {
-      border-radius: 20px;
+      border-radius: 999px;
       border: 1px solid #dcdfe3;
       background: #f0f2f5;
       color: #050505;
       font: inherit;
       font-size: 0.95rem;
-      padding: 8px 10px;
+      padding: 8px 12px;
       min-height: 40px;
       max-height: 200px;
       resize: none;
@@ -529,15 +609,30 @@
       white-space: pre-wrap;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 720px) {
       .fb-header-inner {
-        gap: 4px;
+        max-width: 100%;
       }
+      .fb-header-center {
+        display: none;
+      }
+      .fb-search-box input {
+        width: 100px;
+      }
+      .fb-main {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 520px) {
       .fb-header-title {
         display: none;
       }
-      .fb-main {
-        margin-top: 8px;
+      .fb-search-box {
+        display: none;
+      }
+      .fb-header-inner {
+        gap: 6px;
       }
       #pauseBtn {
         padding-inline: 8px;
@@ -547,15 +642,27 @@
 </head>
 <body>
   <div class="fb-app">
-    <!-- HEADER (einspaltig, zentriert) -->
+    <!-- HEADER -->
     <header class="fb-header">
       <div class="fb-header-inner">
         <div class="fb-header-left">
           <div class="fb-logo">f</div>
-          <div class="fb-header-title">Shitstorm-Simulation</div>
+          <div class="fb-search-box">
+            🔍
+            <input type="text" placeholder="Facebook durchsuchen" disabled />
+          </div>
+        </div>
+        <div class="fb-header-center">
+          <div class="fb-header-center-icon active">🏠</div>
+          <div class="fb-header-center-icon">📺</div>
+          <div class="fb-header-center-icon">🛒</div>
+          <div class="fb-header-center-icon">👥</div>
+          <div class="fb-header-center-icon">🕹️</div>
         </div>
         <div class="fb-header-right">
           <button type="button" id="pauseBtn">⏸ Reaktionszeit pausieren</button>
+          <div class="fb-header-icon-btn">💬</div>
+          <div class="fb-header-icon-btn">🔔</div>
           <div class="fb-header-profile">
             <div class="fb-header-profile-avatar">
               <img src="images/company.jpg" alt="Unternehmen" />
@@ -974,7 +1081,7 @@
 
       const originMeta = document.createElement("span");
       originMeta.className = "post-meta";
-      originMeta.textContent = "hat einen Beitrag auf deiner Seite kommentiert · Auslöser";
+      originMeta.textContent = "1 Std. · Öffentlich · Auslöser";
 
       originHeader.appendChild(originName);
       originHeader.appendChild(originMeta);
@@ -1004,6 +1111,15 @@
       originBody.appendChild(originHeader);
       originBody.appendChild(originText);
       originBody.appendChild(originFooter);
+
+      const originActions = document.createElement("div");
+      originActions.className = "post-actions";
+      originActions.innerHTML = `
+        <span class="post-action">Gefällt mir</span>
+        <span class="post-action">Kommentieren</span>
+        <span class="post-action">Teilen</span>
+      `;
+      originBody.appendChild(originActions);
 
       if (simulation.initialComments && simulation.initialComments.length) {
         const commentsBlock = createCommentsBlock(
@@ -1045,7 +1161,7 @@
 
         const meta = document.createElement("span");
         meta.className = "post-meta";
-        meta.textContent = `Antwort des Unternehmens · Runde ${roundNumber}`;
+        meta.textContent = `vor wenigen Momenten · Antwort des Unternehmens · Runde ${roundNumber}`;
 
         header.appendChild(name);
         header.appendChild(meta);
@@ -1113,6 +1229,15 @@
         body.appendChild(header);
         body.appendChild(text);
         body.appendChild(footer);
+
+        const postActions = document.createElement("div");
+        postActions.className = "post-actions";
+        postActions.innerHTML = `
+          <span class="post-action">Gefällt mir</span>
+          <span class="post-action">Kommentieren</span>
+          <span class="post-action">Teilen</span>
+        `;
+        body.appendChild(postActions);
 
         const commentsBlock = createCommentsBlock(
           resp.comments || [],
@@ -1618,3 +1743,5 @@
   </script>
 </body>
 </html>
+```
+
