@@ -231,6 +231,13 @@
       padding: 8px;
     }
 
+    .fb-sidebar-post-title {
+      font-size: 0.8rem;
+      color: #b0b3b8;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
     .fb-sidebar-post button {
       width: 100%;
       border-radius: 999px;
@@ -249,6 +256,27 @@
 
     .fb-sidebar-post button:disabled {
       opacity: 0.5;
+      cursor: default;
+    }
+
+    /* Pause-Button spezieller Stil */
+    #pauseBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #3a3b3c;
+      border: 1px solid #f02849;
+      color: #fff;
+    }
+
+    #pauseBtn.paused {
+      border-color: #45bd62;
+      background: #213328;
+    }
+
+    #pauseBtn:disabled {
+      opacity: 0.4;
       cursor: default;
     }
 
@@ -771,8 +799,9 @@
         </section>
 
         <section class="fb-sidebar-post">
+          <div class="fb-sidebar-post-title">Shitstorm-Reaktionszeit</div>
           <!-- Pausiert / setzt Reaktionszeit fort -->
-          <button type="button" id="pauseBtn">Reaktionszeit pausieren</button>
+          <button type="button" id="pauseBtn">⏸ Reaktionszeit pausieren</button>
         </section>
       </aside>
 
@@ -845,7 +874,7 @@
           <div class="fb-card-title">Kurz notiert</div>
           <div class="fb-card-sub">
             • Likes reagieren auf die Shitstorm-Intensität.<br />
-            • Kommentare altern: neu, 1st, 2st, …<br />
+            • Kommentare altern: neu, 1 Std., 2 Std., …<br />
             • Reaktionszeitüberschreitungen verschärfen den Shitstorm.
           </div>
         </section>
@@ -1005,13 +1034,18 @@
       if (!pauseBtn) return;
       if (!maxWaitMs || finished || !waitingForAnswer) {
         pauseBtn.disabled = true;
-        pauseBtn.textContent = "Reaktionszeit pausieren";
+        pauseBtn.classList.remove("paused");
+        pauseBtn.textContent = "⏸ Reaktionszeit pausieren";
         return;
       }
       pauseBtn.disabled = false;
-      pauseBtn.textContent = reactionPaused
-        ? "Reaktionszeit fortsetzen"
-        : "Reaktionszeit pausieren";
+      if (reactionPaused) {
+        pauseBtn.classList.add("paused");
+        pauseBtn.textContent = "▶ Reaktionszeit fortsetzen";
+      } else {
+        pauseBtn.classList.remove("paused");
+        pauseBtn.textContent = "⏸ Reaktionszeit pausieren";
+      }
     }
 
     function toggleReactionPause() {
@@ -1106,11 +1140,16 @@
       return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
     }
 
+    // Alterslabel wie bei X:
+    // neu  → aktuelle Runde
+    // 1 Std. → letzte Runde
+    // 2 Std. → vorletzte Runde
     function getCommentAgeLabel(commentRound) {
       if (!commentRound || !currentRound) return "neu";
       const diff = currentRound - commentRound;
       if (diff <= 0) return "neu";
-      return diff + "st";
+      if (diff === 1) return "1 Std.";
+      return diff + " Std.";
     }
 
     function createCommentsBlock(comments, _label, shouldOpen) {
@@ -1238,7 +1277,7 @@
       if (causeLikesKnown) {
         originLikesText.textContent = `${likesForCause(simulation.initialIntensity)} Reaktionen`;
       } else {
-        originLikesText.textContent = "Gefällt das";
+        originLikesText.textContent = "–";
       }
       originLikes.appendChild(originLikesIcon);
       originLikes.appendChild(originLikesText);
@@ -1347,7 +1386,7 @@
         if (resp.likesKnown) {
           likesText.textContent = `${likesForResponse(resp)} Reaktionen`;
         } else {
-          likesText.textContent = "Gefällt das";
+          likesText.textContent = "–";
         }
         likesDiv.appendChild(likesIcon);
         likesDiv.appendChild(likesText);
@@ -1519,7 +1558,6 @@
         simulation.initialComments = [];
       }
 
-      // jetzt echte Intensität -> Likes anzeigen
       causeLikesKnown = true;
 
       renderFeed();
@@ -1578,7 +1616,6 @@
         resp.comments = resp.comments || [];
       }
 
-      // Ab jetzt „echte“ Likes anzeigen
       resp.likesKnown = true;
 
       if (state.status && state.status !== "running") {
@@ -1739,7 +1776,7 @@
         likesKnown: false
       };
       simulation.responses.push(resp);
-      renderFeed(); // zeigt Post schon, Likes ohne Zahl
+      renderFeed(); // Likes noch als Platzhalter „–“
 
       answerInputEl.value = "";
       autoResizeAnswer();
