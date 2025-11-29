@@ -1,16 +1,4 @@
-Hier ist deine **angepasste x.html**, in der der frühere **Post-Button jetzt die Reaktionszeit pausiert/fortsetzt**.
-Posten geht weiterhin über **Strg + Enter** (bzw. Cmd + Enter), der Button steuert nur noch den Timer.
 
-Änderungen im Überblick:
-
-* Button-Text: „Reaktionszeit pausieren“ / „Reaktionszeit fortsetzen“ (je nach Status)
-* Der Button pausiert/resumiert nur, wenn gerade eine Antwort von dir erwartet wird (`waitingForAnswer === true`)
-* Beim Pausieren wird die **Restzeit** gespeichert, beim Fortsetzen läuft genau diese Restzeit weiter
-* Beim Senden einer Antwort oder beim Timeout wird der Timer sauber zurückgesetzt und der Button deaktiviert
-
-> Du musst nur diese Datei als `x.html` speichern – `BASE_URL`, `ASSISTANT_ID` und `API_KEY` habe ich wie in deinem Code gelassen.
-
-```html
 <!doctype html>
 <html lang="de">
 <head>
