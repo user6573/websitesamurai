@@ -174,22 +174,8 @@
       box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
     }
 
-    .platform-pill span small {
-      font-size: 0.75rem;
-      opacity: 0.9;
-    }
-
     .platform-pill span strong {
       margin-right: 0.15rem;
-    }
-
-    .two-column {
-      display: flex;
-      gap: 0.6rem;
-    }
-
-    .two-column > * {
-      flex: 1;
     }
 
     .inline-number {
@@ -282,19 +268,11 @@
           <div class="platform-row">
             <label class="platform-pill">
               <input type="radio" name="platform" value="x" checked />
-              <span><strong>X</strong><small>/ Twitter</small></span>
-            </label>
-            <label class="platform-pill">
-              <input type="radio" name="platform" value="instagram" />
-              <span><strong>Instagram</strong></span>
+              <span><strong>X</strong>/ Twitter</span>
             </label>
             <label class="platform-pill">
               <input type="radio" name="platform" value="facebook" />
               <span><strong>Facebook</strong></span>
-            </label>
-            <label class="platform-pill">
-              <input type="radio" name="platform" value="youtube" />
-              <span><strong>YouTube</strong></span>
             </label>
           </div>
         </div>
@@ -314,7 +292,7 @@
           />
         </div>
 
-        <!-- Ursache (Standard-Plattformen) -->
+        <!-- Ursache -->
         <div class="field-group" id="causeGroup">
           <label for="cause">
             Ursache des Shitstorms
@@ -325,31 +303,6 @@
             name="cause"
             placeholder="Was ist passiert? Schreib es so, wie es im Post steht …"
           ></textarea>
-        </div>
-
-        <!-- YouTube-spezifische Felder -->
-        <div id="youtubeFields" style="display:none; flex-direction:column; gap:0.75rem;">
-          <div class="field-group">
-            <label for="ytTitle">
-              Titel des Videos
-            </label>
-            <input
-              type="text"
-              id="ytTitle"
-              name="ytTitle"
-              placeholder="z.B. „Unser neues Produkt – Behind the Scenes“"
-            />
-          </div>
-          <div class="field-group">
-            <label for="ytDescription">
-              Inhalt / Beschreibung des Videos
-            </label>
-            <textarea
-              id="ytDescription"
-              name="ytDescription"
-              placeholder="Beschreibe kurz den Inhalt des Videos …"
-            ></textarea>
-          </div>
         </div>
 
         <!-- Maximale Reaktionszeit -->
@@ -381,7 +334,7 @@
 
         <div class="note">
           <strong>Hinweis:</strong> Je nach Plattform landest du z.&nbsp;B. auf
-          <code>x.html</code> oder <code>youtube.html</code>.
+          <code>x.html</code> oder <code>facebook.html</code>.
         </div>
       </form>
     </div>
@@ -389,11 +342,7 @@
 
   <script>
     const form = document.getElementById("setupForm");
-    const causeGroup = document.getElementById("causeGroup");
     const causeTextarea = document.getElementById("cause");
-    const ytFields = document.getElementById("youtubeFields");
-    const ytTitleInput = document.getElementById("ytTitle");
-    const ytDescriptionTextarea = document.getElementById("ytDescription");
     const maxMinutesInput = document.getElementById("maxMinutes");
     const companyInput = document.getElementById("company");
 
@@ -405,21 +354,7 @@
       return "x";
     }
 
-    function updatePlatformUI() {
-      const platform = getSelectedPlatform();
-      if (platform === "youtube") {
-        causeGroup.style.display = "none";
-        ytFields.style.display = "flex";
-      } else {
-        causeGroup.style.display = "flex";
-        ytFields.style.display = "none";
-      }
-      // beim Wechsel auch Resize einmal ausführen
-      autoResize(causeTextarea);
-      autoResize(ytDescriptionTextarea);
-    }
-
-    // Auto-Resize für Textareas
+    // Auto-Resize für Textarea
     function autoResize(el) {
       if (!el) return;
       el.style.height = "auto";
@@ -427,35 +362,20 @@
     }
 
     causeTextarea.addEventListener("input", () => autoResize(causeTextarea));
-    ytDescriptionTextarea.addEventListener("input", () => autoResize(ytDescriptionTextarea));
-
-    document.querySelectorAll('input[name="platform"]').forEach((radio) => {
-      radio.addEventListener("change", updatePlatformUI);
-    });
 
     form.addEventListener("submit", (ev) => {
       ev.preventDefault();
 
       const platform = getSelectedPlatform();
       let targetPage = "x.html";
-      if (platform === "instagram") targetPage = "instagram.html";
-      else if (platform === "facebook") targetPage = "facebook.html";
-      else if (platform === "youtube") targetPage = "youtube.html";
+      if (platform === "facebook") targetPage = "facebook.html";
 
       const companyRaw = (companyInput.value || "").trim();
       const company = companyRaw || "Dein Unternehmen";
 
-      let causeText = "";
-      if (platform === "youtube") {
-        const title = (ytTitleInput.value || "").trim() || "Neues Video";
-        const desc = (ytDescriptionTextarea.value || "").trim() || "Dieses Video hat für Diskussionen gesorgt.";
-        causeText = `YouTube-Video: ${title}\n\n${desc}`;
-      } else {
-        const causeRaw = (causeTextarea.value || "").trim();
-        causeText =
-          causeRaw ||
-          "Ein unklarer Auslöser hat die Community verärgert.";
-      }
+      const causeRaw = (causeTextarea.value || "").trim();
+      const causeText =
+        causeRaw || "Ein unklarer Auslöser hat die Community verärgert.";
 
       let maxMinutes = parseInt(maxMinutesInput.value, 10);
       if (isNaN(maxMinutes) || maxMinutes <= 0) {
@@ -472,9 +392,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-      updatePlatformUI();
       autoResize(causeTextarea);
-      autoResize(ytDescriptionTextarea);
     });
   </script>
 </body>
