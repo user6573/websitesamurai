@@ -271,6 +271,10 @@
               <span><strong>X</strong>/ Twitter</span>
             </label>
             <label class="platform-pill">
+              <input type="radio" name="platform" value="instagram" />
+              <span><strong>Instagram</strong></span>
+            </label>
+            <label class="platform-pill">
               <input type="radio" name="platform" value="facebook" />
               <span><strong>Facebook</strong></span>
             </label>
@@ -334,7 +338,7 @@
 
         <div class="note">
           <strong>Hinweis:</strong> Je nach Plattform landest du z.&nbsp;B. auf
-          <code>x.html</code> oder <code>facebook.html</code>.
+          <code>x.html</code>, <code>instagram.html</code> oder <code>facebook.html</code>.
         </div>
       </form>
     </div>
@@ -368,7 +372,8 @@
 
       const platform = getSelectedPlatform();
       let targetPage = "x.html";
-      if (platform === "facebook") targetPage = "facebook.html";
+      if (platform === "instagram") targetPage = "instagram.html";
+      else if (platform === "facebook") targetPage = "facebook.html";
 
       const companyRaw = (companyInput.value || "").trim();
       const company = companyRaw || "Dein Unternehmen";
