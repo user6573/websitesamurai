@@ -7,128 +7,308 @@
   <style>
     :root {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color-scheme: dark;
+      color-scheme: light;
     }
 
     body {
       margin: 0;
-      background: #000;
-      color: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
+      background: radial-gradient(circle at top left, #fdfbfb 0%, #ebedee 40%, #f2f0ff 70%, #ffe9f0 100%);
+      color: #111;
     }
 
-    .app {
-      width: 100%;
-      max-width: 640px;
+    .ig-app {
       min-height: 100vh;
-      border-left: 1px solid #262626;
-      border-right: 1px solid #262626;
       display: flex;
       flex-direction: column;
-      background: #000;
     }
 
-    /* Header wie Instagram */
+    /* ======= HEADER – Instagram-like ======= */
     .ig-header {
+      background: #ffffffcc;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      justify-content: center;
+      padding: 6px 12px;
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 10;
+    }
+
+    .ig-header-inner {
+      width: 100%;
+      max-width: 900px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.6rem 1rem;
-      border-bottom: 1px solid #262626;
-      background: #000;
+      gap: 12px;
     }
 
-    .ig-logo {
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-    }
-
-    .ig-logo span {
-      font-family: "Segoe UI", system-ui, sans-serif;
-    }
-
-    .ig-actions {
+    .ig-header-left {
       display: flex;
       align-items: center;
-      gap: 0.9rem;
-      font-size: 1.15rem;
-      color: #f5f5f5;
+      gap: 10px;
     }
 
-    .ig-actions span {
+    .ig-logo-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: radial-gradient(circle at 0% 100%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+    }
+
+    .ig-logo-mark-inner {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 2px solid white;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .ig-logo-mark-inner::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: 999px;
+      border: 2px solid white;
+    }
+
+    .ig-logo-mark-inner::after {
+      content: "";
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: white;
+      top: 2px;
+      right: 2px;
+    }
+
+    .ig-logo-text {
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      font-size: 1.1rem;
+      background: linear-gradient(90deg, #f56040, #fd1d1d, #e1306c, #c13584, #5851db, #405de6);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .ig-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ig-header-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #222;
+    }
+
+    .ig-header-icon:hover {
+      background: #e9e9e9;
+    }
+
+    #pauseBtn {
+      border-radius: 999px;
+      border: 1px solid #e1306c;
+      background: #ffffff;
+      color: #e1306c;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 10px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
     }
 
-    .ig-actions span:hover {
-      opacity: 0.8;
+    #pauseBtn.paused {
+      border-color: #45bd62;
+      background: #e7f3e7;
+      color: #045e1b;
     }
 
-    /* Status-Zeile unter dem Header */
+    #pauseBtn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .ig-header-profile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px 2px 2px;
+      border-radius: 999px;
+      background: #f5f5f5;
+    }
+
+    .ig-header-profile-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .ig-header-profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .ig-header-profile-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #111;
+    }
+
+    /* ======= MAIN – zentrierte Feed-Spalte ======= */
+    .ig-main {
+      width: 100%;
+      max-width: 620px;
+      margin: 10px auto 24px;
+      padding: 0 12px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Stories-Leiste */
+    .stories {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 10px 10px 4px;
+      border: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      overflow-x: auto;
+      gap: 10px;
+    }
+
+    .stories::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .stories::-webkit-scrollbar-thumb {
+      background: #ddd;
+      border-radius: 999px;
+    }
+
+    .story {
+      flex: 0 0 auto;
+      width: 62px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      color: #555;
+    }
+
+    .story-ring {
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      padding: 2px;
+      background: conic-gradient(from 220deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .story-inner {
+      width: 48px;
+      height: 48px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #eee;
+    }
+
+    .story-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     .status-bar {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 6px 12px;
       font-size: 0.8rem;
-      color: #a3a3a3;
-      padding: 0.4rem 1rem;
-      border-bottom: 1px solid #262626;
+      color: #777;
       display: flex;
       justify-content: space-between;
       gap: 0.5rem;
-      background: #000;
-      position: sticky;
-      top: 48px;
-      z-index: 15;
+      border: 1px solid rgba(0,0,0,0.06);
     }
 
     .status-bar span {
       font-weight: 500;
-      color: #f5f5f5;
+      color: #111;
     }
 
     /* Feed */
-    .feed {
-      flex: 1;
+    .feed-wrapper {
       display: flex;
       flex-direction: column;
+      gap: 8px;
+    }
+
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: calc(100vh - 320px);
       overflow-y: auto;
-      background: #000;
+      padding-right: 4px;
     }
 
     .feed::-webkit-scrollbar {
       width: 6px;
     }
-    .feed::-webkit-scrollbar-track {
-      background: transparent;
-    }
     .feed::-webkit-scrollbar-thumb {
-      background: #4b5563;
+      background: #ccc;
       border-radius: 999px;
     }
 
-    /* Post-Karte (ähnlich IG-Post) */
     .post {
-      border-bottom: 1px solid #262626;
-      background: #000;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,0.08);
+      overflow: hidden;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.03);
     }
 
     .post-header {
-      padding: 0.6rem 1rem 0.4rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      padding: 8px 10px;
+      gap: 8px;
     }
 
     .avatar {
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       border-radius: 999px;
-      border: 1px solid #262626;
       overflow: hidden;
       flex-shrink: 0;
+      border: 2px solid transparent;
     }
 
     .avatar img {
@@ -139,128 +319,143 @@
     }
 
     .avatar.origin {
-      border-color: #f5f5f5;
+      border-color: #d62976;
     }
 
     .avatar.company {
-      border-color: #3897f0;
+      border-color: #4f5bd5;
+    }
+
+    .avatar.community {
+      border-color: #fa7e1e;
     }
 
     .avatar.coach {
-      border-color: #facc15;
+      border-color: #45bd62;
     }
 
     .post-user {
       display: flex;
       flex-direction: column;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
 
-    .post-user-name {
+    .post-username {
       font-weight: 600;
-    }
-
-    .post-user-handle {
-      color: #a3a3a3;
-      font-size: 0.8rem;
-    }
-
-    .post-handle-row {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
+      color: #111;
     }
 
     .post-meta {
-      margin-left: auto;
-      color: #a3a3a3;
-      font-size: 0.8rem;
-    }
-
-    .post-image-placeholder {
-      width: 100%;
-      background: radial-gradient(circle at top, #262626, #000);
-      aspect-ratio: 4 / 3;
+      color: #777;
+      font-size: 0.75rem;
     }
 
     .post-body {
-      padding: 0.5rem 1rem 0.25rem;
-      font-size: 0.92rem;
+      padding: 0 10px 8px;
+      font-size: 0.9rem;
+      color: #111;
       white-space: pre-wrap;
       word-wrap: break-word;
     }
 
-    /* Action-Leiste wie bei Instagram (Like, Kommentar etc.) */
-    .post-actions {
-      padding: 0.35rem 1rem 0.25rem;
+    .post-footer {
+      padding: 4px 10px 10px;
       display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      font-size: 1.2rem;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.82rem;
+      color: #555;
     }
 
-    .post-actions span {
+    .post-actions-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 4px 2px;
+      font-size: 1.1rem;
+    }
+
+    .post-actions-left {
+      display: flex;
+      gap: 12px;
+    }
+
+    .post-icon {
       cursor: pointer;
     }
 
-    .post-actions span:hover {
-      opacity: 0.8;
+    .post-icon:hover {
+      transform: translateY(-1px);
     }
 
-    .post-like-count {
-      padding: 0 1rem;
-      font-weight: 600;
-      font-size: 0.85rem;
-      margin-top: 0.15rem;
+    .bookmark-icon {
+      cursor: pointer;
     }
 
-    .post-stats {
-      padding: 0.2rem 1rem 0.4rem;
-      font-size: 0.78rem;
-      color: #a3a3a3;
+    .likes {
+      font-weight: 500;
+    }
+
+    .likes span.count-placeholder {
+      color: #aaa;
+      font-weight: 400;
+    }
+
+    .metrics {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.45rem;
+      gap: 4px;
+      font-size: 0.78rem;
     }
 
-    .stat-chip {
+    .metric-label {
       border-radius: 999px;
-      border: 1px solid #262626;
-      padding: 0.1rem 0.6rem;
+      border: 1px solid rgba(0,0,0,0.08);
+      padding: 1px 8px;
+      background: #f8f5ff;
+      color: #333;
     }
 
-    .stat-good {
-      color: #4ade80;
-      border-color: #16a34a;
+    .delta-good {
+      background: #e3fcec;
+      border-color: #0a8f35;
+      color: #0a8f35;
     }
 
-    .stat-bad {
-      color: #f97373;
-      border-color: #b91c1c;
+    .delta-bad {
+      background: #ffe6ef;
+      border-color: #e1306c;
+      color: #e1306c;
     }
 
-    /* Kommentare */
+    .post-caption {
+      margin-top: 2px;
+    }
+
+    /* Kommentare im IG-Stil */
     .comments {
-      padding: 0.25rem 1rem 0.6rem;
-      font-size: 0.84rem;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      margin-top: 4px;
+      padding-top: 4px;
+      font-size: 0.8rem;
     }
 
     .comments summary {
-      list-style: none;
       cursor: pointer;
-      color: #a3a3a3;
-      font-size: 0.8rem;
+      list-style: none;
+      color: #999;
+      margin-bottom: 4px;
     }
 
     .comments summary::-webkit-details-marker {
       display: none;
     }
 
-    .comment {
+    .comment-row {
       display: flex;
       align-items: flex-start;
-      gap: 0.45rem;
-      margin-top: 0.35rem;
+      gap: 6px;
+      margin-top: 3px;
     }
 
     .comment-avatar {
@@ -269,7 +464,6 @@
       border-radius: 999px;
       overflow: hidden;
       flex-shrink: 0;
-      border: 1px solid #262626;
     }
 
     .comment-avatar img {
@@ -282,98 +476,65 @@
     .comment-body {
       flex: 1;
       min-width: 0;
-    }
-
-    .comment-header {
       display: flex;
-      align-items: baseline;
-      gap: 0.3rem;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .comment-top-line {
       font-size: 0.8rem;
+      color: #111;
     }
 
-    .comment-name {
+    .comment-username {
       font-weight: 600;
-    }
-
-    .comment-meta {
-      color: #a3a3a3;
-      font-size: 0.75rem;
-      margin-left: auto;
+      margin-right: 4px;
     }
 
     .comment-text {
-      margin-top: 0.1rem;
-      font-size: 0.9rem;
-      color: #f5f5f5;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .comment-meta-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #aaa;
     }
 
     .comment-muted {
-      color: #737373;
-      font-size: 0.8rem;
-      margin-top: 0.25rem;
+      color: #999;
+      font-size: 0.78rem;
+      margin-top: 2px;
     }
 
-    /* Finale Auswertung */
-    .final-card {
-      border-top: 1px solid #262626;
-      padding-bottom: 0.6rem;
-    }
-
-    .final-header {
-      padding: 0.6rem 1rem 0.3rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .final-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .final-good {
-      color: #4ade80;
-    }
-
-    .final-bad {
-      color: #f97373;
-    }
-
-    .final-summary {
-      padding: 0.25rem 1rem 0.6rem;
-      font-size: 0.85rem;
-      color: #e5e5e5;
-      white-space: pre-wrap;
-    }
-
-    /* Composer unten (Antwort im Namen des Unternehmens) */
+    /* Composer – "Kommentiere als" */
     .composer {
-      border-top: 1px solid #262626;
-      padding: 0.5rem 1rem 0.7rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      background: #000;
-      position: sticky;
-      bottom: 0;
-      z-index: 20;
+      margin-top: 4px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 8px 10px 10px;
+      border: 1px solid rgba(0,0,0,0.08);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.03);
+    }
+
+    .composer.disabled {
+      opacity: 0.7;
     }
 
     .composer-top {
       display: flex;
-      gap: 0.5rem;
+      gap: 8px;
       align-items: center;
-    }
-
-    .composer.disabled {
-      opacity: 0.6;
     }
 
     .composer-row {
-      display: flex;
       flex: 1;
-      gap: 0.5rem;
+      display: flex;
       align-items: center;
+      gap: 8px;
     }
 
     .composer-row textarea {
@@ -383,14 +544,14 @@
 
     .composer textarea {
       border-radius: 999px;
-      border: 1px solid #262626;
-      background: #121212;
-      color: #f5f5f5;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: #fafafa;
+      color: #111;
       font: inherit;
       font-size: 0.9rem;
-      padding: 0.45rem 0.9rem;
+      padding: 8px 12px;
       min-height: 40px;
-      max-height: 180px;
+      max-height: 200px;
       resize: none;
       overflow-y: auto;
       outline: none;
@@ -398,30 +559,32 @@
     }
 
     .composer textarea:focus {
-      border-color: #3897f0;
-      box-shadow: 0 0 0 1px rgba(56, 151, 240, 0.4);
+      border-color: #e1306c;
+      box-shadow: 0 0 0 1px rgba(225,48,108,0.15);
     }
 
     .composer-hint {
+      margin-top: 4px;
       font-size: 0.72rem;
-      color: #a3a3a3;
+      color: #999;
       text-align: right;
     }
 
     .btn-primary {
       border-radius: 999px;
       border: none;
-      background: #3897f0;
-      color: #fff;
+      background: linear-gradient(135deg, #f77737, #c13584);
+      color: #ffffff;
       font-weight: 600;
-      padding: 0.45rem 0.9rem;
-      font-size: 0.86rem;
+      padding: 6px 14px;
+      font-size: 0.82rem;
       cursor: pointer;
       white-space: nowrap;
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: #2f82d3;
+      filter: brightness(1.05);
+      transform: translateY(-1px);
     }
 
     .btn-primary:disabled {
@@ -429,15 +592,16 @@
       cursor: default;
     }
 
-    /* Debug */
     .debug-card {
-      border-top: 1px solid #262626;
-      padding: 0.45rem 1rem 0.6rem;
-      font-size: 0.72rem;
-      color: #a3a3a3;
+      margin-top: 4px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 6px 10px 8px;
+      font-size: 0.75rem;
+      color: #777;
       max-height: 150px;
       overflow: hidden;
-      background: #000;
+      border: 1px solid rgba(0,0,0,0.06);
     }
 
     .debug-card details {
@@ -445,89 +609,202 @@
     }
 
     .debug-card pre {
-      margin: 0.25rem 0 0;
+      margin: 4px 0 0;
       max-height: 110px;
       overflow-y: auto;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 0.7rem;
-      color: #d4d4d4;
+      font-size: 0.72rem;
+      color: #111;
+    }
+
+    .final-card {
+      border-radius: 16px;
+    }
+
+    .final-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .final-good {
+      color: #0a8f35;
+    }
+
+    .final-bad {
+      color: #e1306c;
+    }
+
+    .final-summary {
+      margin-top: 4px;
+      font-size: 0.9rem;
+      color: #111;
+      white-space: pre-wrap;
+    }
+
+    @media (max-width: 640px) {
+      .ig-main {
+        max-width: 100%;
+      }
+      .ig-header-inner {
+        max-width: 100%;
+      }
+      .ig-header-right {
+        gap: 6px;
+      }
+      #pauseBtn {
+        padding-inline: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .ig-logo-text {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="ig-app">
+    <!-- HEADER -->
     <header class="ig-header">
-      <div class="ig-logo"><span>Instagram</span></div>
-      <div class="ig-actions">
-        <span>✚</span>
-        <span>❤</span>
-        <span>✉</span>
+      <div class="ig-header-inner">
+        <div class="ig-header-left">
+          <div class="ig-logo-mark">
+            <div class="ig-logo-mark-inner"></div>
+          </div>
+          <div class="ig-logo-text">Instagram</div>
+        </div>
+        <div class="ig-header-right">
+          <button type="button" id="pauseBtn">⏸ Timer pausieren</button>
+          <div class="ig-header-icon">♡</div>
+          <div class="ig-header-icon">✉</div>
+          <div class="ig-header-profile">
+            <div class="ig-header-profile-avatar">
+              <img src="images/company.jpg" alt="Unternehmen" />
+            </div>
+            <div class="ig-header-profile-name" id="headerProfileName">Unternehmen</div>
+          </div>
+        </div>
       </div>
     </header>
 
-    <div class="status-bar">
-      <div>Runde: <span id="roundText">–</span></div>
-      <div>Intensität: <span id="intensityText">–</span></div>
-    </div>
-
-    <main class="feed" id="feed"></main>
-
-    <div class="composer disabled" id="composer">
-      <div class="composer-top">
-        <div class="avatar company">
-          <img src="images/company.jpg" alt="Unternehmen" />
+    <!-- MAIN -->
+    <main class="ig-main">
+      <!-- Stories -->
+      <section class="stories">
+        <div class="story">
+          <div class="story-ring">
+            <div class="story-inner">
+              <img src="images/company.jpg" alt="Dein Unternehmen" />
+            </div>
+          </div>
+          <div>Dein Unternehmen</div>
         </div>
-        <div class="composer-row">
-          <textarea id="answerInput" placeholder="Antwort im Namen des Unternehmens verfassen …" disabled></textarea>
-          <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+        <div class="story">
+          <div class="story-ring">
+            <div class="story-inner">
+              <img src="images/2.png" alt="Story" />
+            </div>
+          </div>
+          <div>trendwatch</div>
+        </div>
+        <div class="story">
+          <div class="story-ring">
+            <div class="story-inner">
+              <img src="images/3.png" alt="Story" />
+            </div>
+          </div>
+          <div>newsflash</div>
+        </div>
+        <div class="story">
+          <div class="story-ring">
+            <div class="story-inner">
+              <img src="images/4.png" alt="Story" />
+            </div>
+          </div>
+          <div>brandecho</div>
+        </div>
+        <div class="story">
+          <div class="story-ring">
+            <div class="story-inner">
+              <img src="images/5.png" alt="Story" />
+            </div>
+          </div>
+          <div>community</div>
+        </div>
+      </section>
+
+      <!-- Status -->
+      <div class="status-bar">
+        <div>Runde: <span id="roundText">–</span></div>
+        <div>Intensität: <span id="intensityText">–</span></div>
+      </div>
+
+      <div class="feed-wrapper">
+        <div class="feed" id="feed"></div>
+
+        <div class="composer disabled" id="composer">
+          <div class="composer-top">
+            <div class="avatar company">
+              <img src="images/company.jpg" alt="Unternehmen" />
+            </div>
+            <div class="composer-row">
+              <textarea id="answerInput" placeholder="Antworte im Namen des Unternehmens …" disabled></textarea>
+              <button class="btn-primary" id="sendBtn" disabled>Posten</button>
+            </div>
+          </div>
+          <div class="composer-hint">
+            Strg + Enter zum Posten · Reaktionszeit kannst du oben pausieren.
+          </div>
+        </div>
+
+        <div class="debug-card">
+          <details>
+            <summary>Debug-Antwort vom Server anzeigen</summary>
+            <pre id="debugOutput"></pre>
+          </details>
         </div>
       </div>
-      <div class="composer-hint">
-        Höflich bleiben, Verantwortung übernehmen, konkrete Schritte anbieten.
-      </div>
-    </div>
-
-    <div class="debug-card">
-      <details>
-        <summary>Debug-Antwort vom Server anzeigen</summary>
-        <pre id="debugOutput"></pre>
-      </details>
-    </div>
+    </main>
   </div>
 
   <script>
     // ===================== KONFIGURATION ===========================
-const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";  // z.B. "https://xyz.eu.langgraph.app"
-const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";                  // Name aus langgraph.json
-const API_KEY = "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";       
+
+    const BASE_URL = "https://samurai-4052add29c79569e878dca6f88299760.eu.langgraph.app";
+    const ASSISTANT_ID = "6d8594ea-8b76-5f28-bdfc-948df3e6d711";
+    const API_KEY = "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";
 
     const COMPANY_AVATAR_SRC = "images/company.jpg";
     const CAUSE_AVATAR_SRC = "images/1.png";
     const USER_AVATAR_COUNT = 13;
-    let userAvatarIndex = 2; // 2..13 für Community-User
+    let userAvatarIndex = 2; // 2..13 für Kommentare
 
     // maximale Wartezeit (ms) bis automatische Community-Reaktion
     let maxWaitMs = null;
     let reactionTimerId = null;
+    let reactionDeadline = null;
+    let remainingWaitMs = null;
+    let reactionPaused = false;
 
-    // User, der den Shitstorm-Post absetzt
+    // Nutzer, der den ursprünglichen Shitstorm-Post absetzt
     const CAUSE_USER = {
-      name: "alex_miller",
-      handle: "alex.miller"
+      name: "Chris Wagner",
+      handle: "chris.wagner"
     };
 
     // Sinnvolle Profile für Community-Kommentare
     const COMMENT_PROFILES = [
-      { name: "lena.weber",   handle: "lena.weber" },
-      { name: "jonas.m",      handle: "jonas_m" },
-      { name: "sarahkoenig",  handle: "sarah.koenig" },
-      { name: "ali.demir",    handle: "ali.demir" },
-      { name: "mara_hoff",    handle: "mara_hoff" },
-      { name: "tom_richter",  handle: "tom.richter" },
-      { name: "julia.meier",  handle: "julia.meier" },
-      { name: "david_s",      handle: "david_s" },
-      { name: "nina.bauer",   handle: "nina.bauer" },
-      { name: "phil_lang",    handle: "phil.lang" }
+      { name: "lena.weber",    handle: "lena.weber" },
+      { name: "jonas.mueller", handle: "jonas.mueller" },
+      { name: "sarah.koenig",  handle: "sarah.koenig" },
+      { name: "ali.demir",     handle: "ali.demir" },
+      { name: "mara.hoffmann", handle: "mara.hoffmann" },
+      { name: "tom.richter",   handle: "tom.richter" },
+      { name: "julia.meier",   handle: "julia.meier" },
+      { name: "david.schulz",  handle: "david.schulz" },
+      { name: "nina.bauer",    handle: "nina.bauer" },
+      { name: "philipp.lang",  handle: "philipp.lang" }
     ];
 
     let commentProfileIndex = 0;
@@ -549,20 +826,27 @@ const API_KEY = "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";
     let waitingForAnswer = false;
     let finished = false;
 
+    // aktuelle Runde laut State
+    let currentRound = 0;
+    // ob die Likes des Auslöser-Posts schon „wirklich“ bekannt sind
+    let causeLikesKnown = false;
+
     const feedEl = document.getElementById("feed");
     const composerEl = document.getElementById("composer");
     const answerInputEl = document.getElementById("answerInput");
     const sendBtn = document.getElementById("sendBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
     const roundTextEl = document.getElementById("roundText");
     const intensityTextEl = document.getElementById("intensityText");
     const debugOutputEl = document.getElementById("debugOutput");
+    const headerProfileNameEl = document.getElementById("headerProfileName");
 
     const simulation = {
       company: "",
       cause: "",
       initialIntensity: 70,
-      initialComments: [],
-      responses: [],
+      initialComments: [],   // Array von { text, round }
+      responses: [],         // { answer, comments:[{text,round}], intensityAfter, deltaIntensity, timeoutDelta, likesKnown }
       finalOutcome: "",
       finalSummary: "",
       initialTimeoutDelta: 0
@@ -579,7 +863,7 @@ const API_KEY = "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";
     }
 
     function setStatus(_text) {
-      // aktuell keine sichtbare Statusanzeige; Hook falls du später was anzeigen willst
+      // aktuell keine sichtbare Statusanzeige
     }
 
     function setComposerEnabled(on) {
@@ -593,6 +877,7 @@ const API_KEY = "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";
         answerInputEl.disabled = true;
         sendBtn.disabled = true;
       }
+      updatePauseButton();
     }
 
     function clearReactionTimer() {
@@ -600,15 +885,75 @@ const API_KEY = "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";
         clearTimeout(reactionTimerId);
         reactionTimerId = null;
       }
+      reactionDeadline = null;
+      remainingWaitMs = null;
+      reactionPaused = false;
+      updatePauseButton();
+    }
+
+    function armReactionTimer() {
+      if (!remainingWaitMs || remainingWaitMs <= 0) {
+        handleReactionTimeout();
+        return;
+      }
+      reactionDeadline = Date.now() + remainingWaitMs;
+      reactionTimerId = setTimeout(() => {
+        reactionTimerId = null;
+        reactionDeadline = null;
+        remainingWaitMs = null;
+        if (!waitingForAnswer || finished) return;
+        handleReactionTimeout();
+      }, remainingWaitMs);
     }
 
     function scheduleReactionTimer() {
       clearReactionTimer();
       if (!maxWaitMs || maxWaitMs <= 0) return;
-      reactionTimerId = setTimeout(() => {
-        if (!waitingForAnswer || finished) return;
-        handleReactionTimeout();
-      }, maxWaitMs);
+      reactionPaused = false;
+      remainingWaitMs = maxWaitMs;
+      armReactionTimer();
+      updatePauseButton();
+    }
+
+    function updatePauseButton() {
+      if (!pauseBtn) return;
+      if (!maxWaitMs || finished || !waitingForAnswer) {
+        pauseBtn.disabled = true;
+        pauseBtn.classList.remove("paused");
+        pauseBtn.textContent = "⏸ Timer pausieren";
+        return;
+      }
+      pauseBtn.disabled = false;
+      if (reactionPaused) {
+        pauseBtn.classList.add("paused");
+        pauseBtn.textContent = "▶ Timer fortsetzen";
+      } else {
+        pauseBtn.classList.remove("paused");
+        pauseBtn.textContent = "⏸ Timer pausieren";
+      }
+    }
+
+    function toggleReactionPause() {
+      if (!pauseBtn || !waitingForAnswer || finished || !maxWaitMs) return;
+
+      if (!reactionPaused) {
+        // Pausieren
+        if (reactionTimerId !== null && reactionDeadline) {
+          const now = Date.now();
+          remainingWaitMs = Math.max(0, reactionDeadline - now);
+          clearTimeout(reactionTimerId);
+          reactionTimerId = null;
+        }
+        reactionPaused = true;
+      } else {
+        // Fortsetzen
+        if (!remainingWaitMs || remainingWaitMs <= 0) {
+          remainingWaitMs = maxWaitMs;
+        }
+        reactionPaused = false;
+        armReactionTimer();
+      }
+      updatePauseButton();
     }
 
     function resetSimulation() {
@@ -634,6 +979,8 @@ const API_KEY = "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";
       userAvatarIndex = 2;
       commentProfileIndex = 0;
       clearReactionTimer();
+      currentRound = 0;
+      causeLikesKnown = false;
 
       answerInputEl.value = "";
       autoResizeAnswer();
@@ -643,21 +990,20 @@ const API_KEY = "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";
     function autoResizeAnswer() {
       const el = answerInputEl;
       if (!el) return;
-      const max = 180;
+      const max = 200; // muss zu max-height in CSS passen
       el.style.height = "auto";
       const newHeight = Math.min(el.scrollHeight, max);
       el.style.height = newHeight + "px";
     }
 
     // ===================== RENDERING ===============================
-
     function clampLikes(n) {
       return Math.max(3, Math.min(999, Math.round(n)));
     }
 
     function likesForCause(intensity) {
-      const base = 40;
-      const scaled = typeof intensity === "number" ? intensity * 1.2 : 70;
+      const base = 30;
+      const scaled = typeof intensity === "number" ? intensity * 1.5 : 70;
       return clampLikes(base + scaled);
     }
 
@@ -665,21 +1011,30 @@ const API_KEY = "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";
       const intensity = typeof resp.intensityAfter === "number" ? resp.intensityAfter : prevIntensity;
       const overall = typeof resp.overall === "number" ? resp.overall : 50;
       const delta = typeof resp.deltaIntensity === "number" ? resp.deltaIntensity : 0;
-      const score = overall + (delta < 0 ? -delta * 1.5 : -delta);
-      const base = 25 + (100 - intensity) * 0.25;
+      const score = overall + (delta < 0 ? -delta * 2 : -delta);
+      const base = 15 + (100 - intensity) * 0.3;
       return clampLikes(base + score / 3);
     }
 
     function classifyOverall(overall) {
       if (typeof overall !== "number") return "Noch keine Bewertung verfügbar.";
-      if (overall >= 80) return "Reaktion sehr stark – deutlich deeskalierend.";
-      if (overall >= 65) return "Gute Reaktion – Stimmung bessert sich.";
-      if (overall >= 50) return "Durchwachsene Reaktion – nur leichte Entspannung.";
-      if (overall >= 35) return "Schwache Reaktion – Lage bleibt angespannt.";
-      return "Sehr schwache Reaktion – Shitstorm eskaliert.";
+      if (overall >= 80) return "Sehr gute Reaktion – starke Deeskalation.";
+      if (overall >= 65) return "Gute Reaktion – der Shitstorm beruhigt sich.";
+      if (overall >= 50) return "Durchwachsene Reaktion – leichte Entspannung.";
+      if (overall >= 35) return "Problematische Reaktion – die Lage bleibt kritisch.";
+      return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
     }
 
-    function createCommentsBlock(comments, shouldOpen) {
+    // Alterslabel: neu / 1 Std. / 2 Std. / ...
+    function getCommentAgeLabel(commentRound) {
+      if (!commentRound || !currentRound) return "neu";
+      const diff = currentRound - commentRound;
+      if (diff <= 0) return "neu";
+      if (diff === 1) return "1 Std.";
+      return diff + " Std.";
+    }
+
+    function createCommentsBlock(comments, _label, shouldOpen) {
       const details = document.createElement("details");
       details.className = "comments";
       if (shouldOpen) details.open = true;
@@ -688,297 +1043,314 @@ const API_KEY = "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";
       if (Array.isArray(comments) && comments.length) {
         summary.textContent =
           comments.length === 1
-            ? "1 Kommentar"
+            ? "1 Kommentar ansehen"
             : `Alle ${comments.length} Kommentare ansehen`;
       } else {
-        summary.textContent = "Noch keine Kommentare";
-        summary.style.color = "#737373";
+        summary.textContent = "Keine Kommentare";
+        summary.style.color = "#bbb";
       }
       details.appendChild(summary);
 
       if (Array.isArray(comments) && comments.length) {
         comments.forEach((c) => {
-          const row = document.createElement("div");
-          row.className = "comment";
+          const textValue =
+            c && typeof c === "object" && "text" in c ? String(c.text) : String(c);
+          const appearedRound =
+            c && typeof c === "object" && typeof c.round === "number"
+              ? c.round
+              : null;
+          const ageLabel = getCommentAgeLabel(appearedRound);
 
-          const cav = document.createElement("div");
-          cav.className = "comment-avatar";
+          const row = document.createElement("div");
+          row.className = "comment-row";
+
+          const avatar = document.createElement("div");
+          avatar.className = "comment-avatar";
           const img = document.createElement("img");
           img.src = nextUserAvatarSrc();
-          img.alt = "Community";
-          cav.appendChild(img);
+          img.alt = "Kommentarprofil";
+          avatar.appendChild(img);
 
           const body = document.createElement("div");
           body.className = "comment-body";
 
-          const header = document.createElement("div");
-          header.className = "comment-header";
+          const top = document.createElement("div");
+          top.className = "comment-top-line";
 
           const profile = nextCommentProfile();
+          const usernameSpan = document.createElement("span");
+          usernameSpan.className = "comment-username";
+          usernameSpan.textContent = profile.name;
 
-          const name = document.createElement("span");
-          name.className = "comment-name";
-          name.textContent = profile.name;
+          const textSpan = document.createElement("span");
+          textSpan.className = "comment-text";
+          textSpan.textContent = textValue;
 
-          const meta = document.createElement("span");
-          meta.className = "comment-meta";
-          meta.textContent = "neu";
+          top.appendChild(usernameSpan);
+          top.appendChild(textSpan);
 
-          header.appendChild(name);
-          header.appendChild(meta);
+          const metaRow = document.createElement("div");
+          metaRow.className = "comment-meta-row";
+          const timeSpan = document.createElement("span");
+          timeSpan.textContent = ageLabel;
+          const replySpan = document.createElement("span");
+          replySpan.textContent = "Antworten";
 
-          const text = document.createElement("div");
-          text.className = "comment-text";
-          text.textContent = c;
+          metaRow.appendChild(timeSpan);
+          metaRow.appendChild(replySpan);
 
-          body.appendChild(header);
-          body.appendChild(text);
+          body.appendChild(top);
+          body.appendChild(metaRow);
 
-          row.appendChild(cav);
+          row.appendChild(avatar);
           row.appendChild(body);
-
           details.appendChild(row);
         });
       } else {
         const info = document.createElement("div");
         info.className = "comment-muted";
-        info.textContent = "Noch keine Kommentare.";
+        info.textContent = "Noch keine Kommentare vorhanden.";
         details.appendChild(info);
       }
-
       return details;
     }
 
     function renderFeed() {
       feedEl.innerHTML = "";
-
       if (!simulation.cause) return;
 
       const newestIndex = simulation.responses.length;
 
-      // Ausgangspost (User)
-      const causePost = document.createElement("article");
-      causePost.className = "post";
+      // 1) Ursprungspost (Auslöser)
+      const originPost = document.createElement("article");
+      originPost.className = "post";
 
-      const header = document.createElement("div");
-      header.className = "post-header";
+      const originHeader = document.createElement("div");
+      originHeader.className = "post-header";
 
-      const av = document.createElement("div");
-      av.classList.add("avatar", "origin");
-      const img = document.createElement("img");
-      img.src = CAUSE_AVATAR_SRC;
-      img.alt = "User";
-      av.appendChild(img);
+      const originAvatar = document.createElement("div");
+      originAvatar.classList.add("avatar", "origin");
+      const originImg = document.createElement("img");
+      originImg.src = CAUSE_AVATAR_SRC;
+      originImg.alt = "Nutzer";
+      originAvatar.appendChild(originImg);
 
-      const userBox = document.createElement("div");
-      userBox.className = "post-user";
+      const originUser = document.createElement("div");
+      originUser.className = "post-user";
+      const originName = document.createElement("span");
+      originName.className = "post-username";
+      originName.textContent = CAUSE_USER.name;
+      const originMeta = document.createElement("span");
+      originMeta.className = "post-meta";
+      originMeta.textContent = "vor 1 Std. · Auslöser";
 
-      const nameEl = document.createElement("div");
-      nameEl.className = "post-user-name";
-      nameEl.textContent = CAUSE_USER.name;
+      originUser.appendChild(originName);
+      originUser.appendChild(originMeta);
 
-      const handleRow = document.createElement("div");
-      handleRow.className = "post-handle-row";
-      const handleEl = document.createElement("span");
-      handleEl.className = "post-user-handle";
-      handleEl.textContent = CAUSE_USER.handle;
+      originHeader.appendChild(originAvatar);
+      originHeader.appendChild(originUser);
 
-      handleRow.appendChild(handleEl);
-      userBox.appendChild(nameEl);
-      userBox.appendChild(handleRow);
+      const originBody = document.createElement("div");
+      originBody.className = "post-body";
+      originBody.textContent = simulation.cause;
 
-      const meta = document.createElement("div");
-      meta.className = "post-meta";
-      meta.textContent = "Auslöser des Shitstorms";
+      const originFooter = document.createElement("div");
+      originFooter.className = "post-footer";
 
-      header.appendChild(av);
-      header.appendChild(userBox);
-      header.appendChild(meta);
+      const originActionsTop = document.createElement("div");
+      originActionsTop.className = "post-actions-top";
+      originActionsTop.innerHTML = `
+        <div class="post-actions-left">
+          <span class="post-icon">♡</span>
+          <span class="post-icon">💬</span>
+          <span class="post-icon">✈</span>
+        </div>
+        <span class="bookmark-icon">🔖</span>
+      `;
 
-      const body = document.createElement("div");
-      body.className = "post-body";
-      body.textContent = simulation.cause;
-
-      const actions = document.createElement("div");
-      actions.className = "post-actions";
-      actions.innerHTML = "<span>♡</span><span>💬</span><span>↗</span>";
-
-      const likeCount = document.createElement("div");
-      likeCount.className = "post-like-count";
-      likeCount.textContent = `${likesForCause(simulation.initialIntensity)} Likes`;
-
-      const stats = document.createElement("div");
-      stats.className = "post-stats";
-
-      // Reaktionszeit-Überschreitungen ohne Unternehmenspost
-      if (typeof simulation.initialTimeoutDelta === "number" && simulation.initialTimeoutDelta > 0.05) {
-        const chip = document.createElement("span");
-        chip.className = "stat-chip stat-bad";
-        chip.textContent = `Reaktionszeit überschritten: +${simulation.initialTimeoutDelta.toFixed(1)} Intensität`;
-        stats.appendChild(chip);
+      const originLikes = document.createElement("div");
+      originLikes.className = "likes";
+      if (causeLikesKnown) {
+        originLikes.innerHTML = `Gefällt <span class="count">${likesForCause(simulation.initialIntensity)}</span> Personen`;
+      } else {
+        originLikes.innerHTML = `Gefällt <span class="count-placeholder">–</span> Personen`;
       }
+
+      originFooter.appendChild(originActionsTop);
+      originFooter.appendChild(originLikes);
+
+      originPost.appendChild(originHeader);
+      originPost.appendChild(originBody);
+      originPost.appendChild(originFooter);
 
       if (simulation.initialComments && simulation.initialComments.length) {
         const commentsBlock = createCommentsBlock(
           simulation.initialComments,
+          "Kommentare zum Auslöser",
           newestIndex === 0
         );
-        causePost.appendChild(header);
-        causePost.appendChild(body);
-        causePost.appendChild(actions);
-        causePost.appendChild(likeCount);
-        causePost.appendChild(stats);
-        causePost.appendChild(commentsBlock);
-      } else {
-        causePost.appendChild(header);
-        causePost.appendChild(body);
-        causePost.appendChild(actions);
-        causePost.appendChild(likeCount);
-        if (stats.childElementCount) causePost.appendChild(stats);
+        originPost.appendChild(commentsBlock);
       }
 
-      if (!simulation.initialComments || !simulation.initialComments.length) {
-        const commentsBlock = createCommentsBlock(
-          simulation.initialComments,
-          newestIndex === 0
-        );
-        causePost.appendChild(commentsBlock);
-      }
+      feedEl.appendChild(originPost);
 
-      feedEl.appendChild(causePost);
-
-      // Unternehmensposts
+      // 2) Unternehmensantworten
       simulation.responses.forEach((resp, index) => {
         const roundNumber = index + 1;
-        const isNewest = (roundNumber === newestIndex);
+        const isNewest = roundNumber === newestIndex;
 
         const post = document.createElement("article");
         post.className = "post";
 
-        const h = document.createElement("div");
-        h.className = "post-header";
+        const header = document.createElement("div");
+        header.className = "post-header";
 
-        const avC = document.createElement("div");
-        avC.classList.add("avatar", "company");
-        const imgC = document.createElement("img");
-        imgC.src = COMPANY_AVATAR_SRC;
-        imgC.alt = "Unternehmen";
-        avC.appendChild(imgC);
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "company");
+        const avatarImg = document.createElement("img");
+        avatarImg.src = COMPANY_AVATAR_SRC;
+        avatarImg.alt = "Unternehmen";
+        avatar.appendChild(avatarImg);
 
-        const userBoxC = document.createElement("div");
-        userBoxC.className = "post-user";
+        const userDiv = document.createElement("div");
+        userDiv.className = "post-user";
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "post-username";
+        nameSpan.textContent = simulation.company || "Unternehmen";
+        const metaSpan = document.createElement("span");
+        metaSpan.className = "post-meta";
+        metaSpan.textContent = `gerade eben · Antwort · Runde ${roundNumber}`;
+        userDiv.appendChild(nameSpan);
+        userDiv.appendChild(metaSpan);
 
-        const cname = document.createElement("div");
-        cname.className = "post-user-name";
-        cname.textContent = simulation.company || "Unternehmen";
+        header.appendChild(avatar);
+        header.appendChild(userDiv);
 
-        const chandleRow = document.createElement("div");
-        chandleRow.className = "post-handle-row";
-        const chandle = document.createElement("span");
-        chandle.className = "post-user-handle";
-        const rawHandle = (simulation.company || "brand")
-          .toLowerCase()
-          .replace(/\s+/g, "")
-          .replace(/[^a-z0-9_.]/g, "");
-        chandle.textContent = rawHandle || "brand.official";
-        chandleRow.appendChild(chandle);
+        const body = document.createElement("div");
+        body.className = "post-body";
+        body.textContent = resp.answer;
 
-        userBoxC.appendChild(cname);
-        userBoxC.appendChild(chandleRow);
+        const footer = document.createElement("div");
+        footer.className = "post-footer";
 
-        const cmeta = document.createElement("div");
-        cmeta.className = "post-meta";
-        cmeta.textContent = `Antwort · Runde ${roundNumber}`;
+        const actionsTop = document.createElement("div");
+        actionsTop.className = "post-actions-top";
+        actionsTop.innerHTML = `
+          <div class="post-actions-left">
+            <span class="post-icon">♡</span>
+            <span class="post-icon">💬</span>
+            <span class="post-icon">✈</span>
+          </div>
+          <span class="bookmark-icon">🔖</span>
+        `;
 
-        h.appendChild(avC);
-        h.appendChild(userBoxC);
-        h.appendChild(cmeta);
-
-        const b = document.createElement("div");
-        b.className = "post-body";
-        b.textContent = resp.answer;
-
-        const act = document.createElement("div");
-        act.className = "post-actions";
-        act.innerHTML = "<span>♡</span><span>💬</span><span>↗</span>";
-
-        const likes = document.createElement("div");
-        likes.className = "post-like-count";
-        likes.textContent = `${likesForResponse(resp)} Likes`;
-
-        const statsC = document.createElement("div");
-        statsC.className = "post-stats";
+        const metrics = document.createElement("div");
+        metrics.className = "metrics";
 
         if (typeof resp.intensityAfter === "number") {
-          const chip = document.createElement("span");
-          chip.className = "stat-chip";
-          chip.textContent = `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
-          statsC.appendChild(chip);
+          const intensitySpan = document.createElement("span");
+          intensitySpan.className = "metric-label";
+          intensitySpan.textContent =
+            `Intensität nach Antwort: ${resp.intensityAfter.toFixed(1)} / 100`;
+          metrics.appendChild(intensitySpan);
         }
 
         if (typeof resp.deltaIntensity === "number") {
+          const deltaSpan = document.createElement("span");
+          deltaSpan.className = "metric-label";
           const delta = resp.deltaIntensity;
-          const chip = document.createElement("span");
-          chip.className = "stat-chip";
           const deltaText = (delta >= 0 ? "+" : "") + delta.toFixed(1);
           if (delta < 0) {
-            chip.classList.add("stat-good");
-            chip.textContent = `Intensität-Veränderung: ${deltaText} (entschärft)`;
+            deltaSpan.classList.add("delta-good");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (entschärft)`;
           } else if (delta > 0) {
-            chip.classList.add("stat-bad");
-            chip.textContent = `Intensität-Veränderung: ${deltaText} (verschärft)`;
+            deltaSpan.classList.add("delta-bad");
+            deltaSpan.textContent = `Intensitätveränderung: ${deltaText} (verschärft)`;
           } else {
-            chip.textContent = "Intensität-Veränderung: ±0 (unverändert)";
+            deltaSpan.textContent = "Intensitätveränderung: ±0 (unverändert)";
           }
-          statsC.appendChild(chip);
+          metrics.appendChild(deltaSpan);
         }
 
         if (typeof resp.timeoutDelta === "number" && resp.timeoutDelta > 0.05) {
-          const chip = document.createElement("span");
-          chip.className = "stat-chip stat-bad";
-          chip.textContent = `Reaktionszeit überschritten: +${resp.timeoutDelta.toFixed(1)} Intensität`;
-          statsC.appendChild(chip);
+          const timeoutSpan = document.createElement("span");
+          timeoutSpan.className = "metric-label delta-bad";
+          timeoutSpan.textContent =
+            `Reaktionszeit-Überschreitung: +${resp.timeoutDelta.toFixed(1)} Intensität`;
+          metrics.appendChild(timeoutSpan);
         }
 
         if (typeof resp.overall === "number") {
-          const chip = document.createElement("span");
-          chip.className = "stat-chip";
+          const overallSpan = document.createElement("span");
+          overallSpan.className = "metric-label";
           const classification = classifyOverall(resp.overall);
-          chip.textContent = classification;
-          if (resp.overall >= 65) chip.classList.add("stat-good");
-          else if (resp.overall < 50) chip.classList.add("stat-bad");
-          statsC.appendChild(chip);
+          overallSpan.textContent = classification;
+          if (resp.overall >= 65) {
+            overallSpan.style.color = "#0a8f35";
+          } else if (resp.overall < 50) {
+            overallSpan.style.color = "#e1306c";
+          }
+          metrics.appendChild(overallSpan);
         }
+
+        const likesDiv = document.createElement("div");
+        likesDiv.className = "likes";
+        if (resp.likesKnown) {
+          likesDiv.innerHTML = `Gefällt <span class="count">${likesForResponse(resp)}</span> Personen`;
+        } else {
+          likesDiv.innerHTML = `Gefällt <span class="count-placeholder">–</span> Personen`;
+        }
+
+        footer.appendChild(actionsTop);
+        footer.appendChild(likesDiv);
+        footer.appendChild(metrics);
+
+        post.appendChild(header);
+        post.appendChild(body);
+        post.appendChild(footer);
 
         const commentsBlock = createCommentsBlock(
           resp.comments || [],
+          "Kommentare zur Antwort",
           isNewest
         );
-
-        post.appendChild(h);
-        post.appendChild(b);
-        post.appendChild(act);
-        post.appendChild(likes);
-        if (statsC.childElementCount) post.appendChild(statsC);
         post.appendChild(commentsBlock);
 
         feedEl.appendChild(post);
       });
 
-      // Finale Auswertung
+      // 3) Finale Karte
       if (simulation.finalOutcome) {
-        const final = document.createElement("article");
-        final.className = "post final-card";
+        const post = document.createElement("article");
+        post.className = "post final-card";
 
-        const fh = document.createElement("div");
-        fh.className = "final-header";
+        const header = document.createElement("div");
+        header.className = "post-header";
 
-        const fav = document.createElement("div");
-        fav.classList.add("avatar", "coach");
-        const fimg = document.createElement("img");
-        fimg.src = COMPANY_AVATAR_SRC;
-        fimg.alt = "Coach";
-        fav.appendChild(fimg);
+        const avatar = document.createElement("div");
+        avatar.classList.add("avatar", "coach");
+        const img = document.createElement("img");
+        img.src = COMPANY_AVATAR_SRC;
+        img.alt = "Coach";
+        avatar.appendChild(img);
+
+        const userDiv = document.createElement("div");
+        userDiv.className = "post-user";
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "post-username";
+        nameSpan.textContent = "Shitstorm-Coach";
+        const metaSpan = document.createElement("span");
+        metaSpan.className = "post-meta";
+        metaSpan.textContent = "Auswertung der Simulation";
+
+        userDiv.appendChild(nameSpan);
+        userDiv.appendChild(metaSpan);
+
+        header.appendChild(avatar);
+        header.appendChild(userDiv);
+
+        const body = document.createElement("div");
+        body.className = "post-body";
 
         const title = document.createElement("div");
         title.className = "final-title";
@@ -989,17 +1361,16 @@ const API_KEY = "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";
         }
         title.textContent = simulation.finalOutcome;
 
-        fh.appendChild(fav);
-        fh.appendChild(title);
+        const summary = document.createElement("div");
+        summary.className = "final-summary";
+        summary.textContent = simulation.finalSummary || "";
 
-        const sum = document.createElement("div");
-        sum.className = "final-summary";
-        sum.textContent = simulation.finalSummary || "";
+        body.appendChild(title);
+        if (simulation.finalSummary) body.appendChild(summary);
 
-        final.appendChild(fh);
-        if (simulation.finalSummary) final.appendChild(sum);
-
-        feedEl.appendChild(final);
+        post.appendChild(header);
+        post.appendChild(body);
+        feedEl.appendChild(post);
       }
     }
 
@@ -1086,6 +1457,7 @@ const API_KEY = "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";
 
     function updateStatusBar(state) {
       if (typeof state.round === "number") {
+        currentRound = state.round;
         roundTextEl.textContent = String(state.round);
       }
       if (typeof state.intensity === "number") {
@@ -1101,13 +1473,22 @@ const API_KEY = "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";
         typeof state.intensity === "number" ? state.intensity : 70;
       prevIntensity = simulation.initialIntensity;
 
+      updateStatusBar(state);
+
+      const roundForComments =
+        currentRound || (typeof state.round === "number" ? state.round : 1);
+
       if (Array.isArray(state.last_community_comments)) {
-        simulation.initialComments = state.last_community_comments.slice();
+        simulation.initialComments = state.last_community_comments.map((c) => ({
+          text: String(c),
+          round: roundForComments
+        }));
       } else {
         simulation.initialComments = [];
       }
 
-      updateStatusBar(state);
+      causeLikesKnown = true;
+
       renderFeed();
 
       if (hasInterrupt(result)) {
@@ -1150,13 +1531,21 @@ const API_KEY = "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";
 
       resp.feedback = extractLastCoachFeedback(state.history) || "";
 
+      updateStatusBar(state);
+
+      const roundForComments =
+        currentRound || (typeof state.round === "number" ? state.round : 0);
+
       if (Array.isArray(state.last_community_comments)) {
-        resp.comments = state.last_community_comments.slice();
+        resp.comments = state.last_community_comments.map((c) => ({
+          text: String(c),
+          round: roundForComments
+        }));
       } else {
         resp.comments = resp.comments || [];
       }
 
-      updateStatusBar(state);
+      resp.likesKnown = true;
 
       if (state.status && state.status !== "running") {
         finished = true;
@@ -1188,10 +1577,15 @@ const API_KEY = "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";
 
     function processTimeoutResult(result) {
       const state = findState(result) || {};
+      const roundForComments =
+        typeof state.round === "number" ? state.round : currentRound;
 
       let newComments = [];
       if (Array.isArray(state.last_community_comments)) {
-        newComments = state.last_community_comments.slice();
+        newComments = state.last_community_comments.map((c) => ({
+          text: String(c),
+          round: roundForComments
+        }));
       }
 
       if (newComments.length) {
@@ -1255,10 +1649,15 @@ const API_KEY = "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";
     async function startSimulation(companyParam, causeParam) {
       resetSimulation();
       simulation.company = (companyParam || "Dein Unternehmen").trim();
-      simulation.cause = (causeParam || "Kontroverse Instagram-Postings").trim();
+      simulation.cause =
+        (causeParam || "Unangemessene Kampagne auf Instagram").trim();
+
+      const companyName = simulation.company || "Dein Unternehmen";
+      if (headerProfileNameEl) headerProfileNameEl.textContent = companyName;
 
       setStatus("startet …");
       renderFeed();
+      causeLikesKnown = false;
 
       const initialState = {
         platform: "Instagram",
@@ -1300,10 +1699,11 @@ const API_KEY = "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";
         feedback: "",
         intensityAfter: null,
         deltaIntensity: null,
-        timeoutDelta: 0
+        timeoutDelta: 0,
+        likesKnown: false
       };
       simulation.responses.push(resp);
-      renderFeed();
+      renderFeed(); // Likes noch als Platzhalter „–“
 
       answerInputEl.value = "";
       autoResizeAnswer();
@@ -1350,32 +1750,26 @@ const API_KEY = "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";
       const header = document.createElement("div");
       header.className = "post-header";
 
-      const av = document.createElement("div");
-      av.className = "avatar";
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
       const img = document.createElement("img");
       img.src = COMPANY_AVATAR_SRC;
       img.alt = "System";
-      av.appendChild(img);
+      avatar.appendChild(img);
 
-      const userBox = document.createElement("div");
-      userBox.className = "post-user";
+      const userDiv = document.createElement("div");
+      userDiv.className = "post-user";
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "post-username";
+      nameSpan.textContent = "Systemfehler";
+      const metaSpan = document.createElement("span");
+      metaSpan.className = "post-meta";
+      metaSpan.textContent = "@simulation";
+      userDiv.appendChild(nameSpan);
+      userDiv.appendChild(metaSpan);
 
-      const name = document.createElement("div");
-      name.className = "post-user-name";
-      name.textContent = "Systemfehler";
-
-      const handleRow = document.createElement("div");
-      handleRow.className = "post-handle-row";
-      const handle = document.createElement("span");
-      handle.className = "post-user-handle";
-      handle.textContent = "sim.engine";
-
-      handleRow.appendChild(handle);
-      userBox.appendChild(name);
-      userBox.appendChild(handleRow);
-
-      header.appendChild(av);
-      header.appendChild(userBox);
+      header.appendChild(avatar);
+      header.appendChild(userDiv);
 
       const body = document.createElement("div");
       body.className = "post-body";
@@ -1383,7 +1777,6 @@ const API_KEY = "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";
 
       post.appendChild(header);
       post.appendChild(body);
-
       feedEl.appendChild(post);
       feedEl.scrollTop = feedEl.scrollHeight;
     }
@@ -1394,6 +1787,13 @@ const API_KEY = "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";
       ev.preventDefault();
       sendAnswer();
     });
+
+    if (pauseBtn) {
+      pauseBtn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        toggleReactionPause();
+      });
+    }
 
     answerInputEl.addEventListener("keydown", (ev) => {
       if ((ev.metaKey || ev.ctrlKey) && ev.key === "Enter") {
@@ -1407,7 +1807,8 @@ const API_KEY = "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";
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const companyParam = params.get("company") || "Dein Unternehmen";
-      const causeParam   = params.get("cause")   || "Kontroverser Instagram-Post";
+      const causeParam =
+        params.get("cause") || "Unangemessene Kampagne auf Instagram";
 
       const maxParam = parseInt(params.get("maxMinutes") || "15", 10);
       if (!isNaN(maxParam) && maxParam > 0) {
@@ -1417,6 +1818,7 @@ const API_KEY = "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";
       }
 
       autoResizeAnswer();
+      updatePauseButton();
 
       setTimeout(() => {
         startSimulation(companyParam, causeParam);
