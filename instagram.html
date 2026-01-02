@@ -12,7 +12,8 @@
 
     body {
       margin: 0;
-      background: radial-gradient(circle at top left, #fdfbfb 0%, #ebedee 40%, #f2f0ff 70%, #ffe9f0 100%);
+      background:
+        radial-gradient(circle at top left, #fdfbfb 0%, #ebedee 40%, #f2f0ff 70%, #ffe9f0 100%);
       color: #111;
     }
 
@@ -24,15 +25,15 @@
 
     /* ======= HEADER – Instagram-like ======= */
     .ig-header {
-      background: #ffffffcc;
-      backdrop-filter: blur(12px);
+      background: #ffffffee;
+      backdrop-filter: blur(14px);
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       display: flex;
       justify-content: center;
       padding: 6px 12px;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
     }
 
     .ig-header-inner {
@@ -51,20 +52,21 @@
     }
 
     .ig-logo-mark {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: radial-gradient(circle at 0% 100%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: radial-gradient(circle at 0% 100%,
+        #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
 
     .ig-logo-mark-inner {
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
+      width: 19px;
+      height: 19px;
+      border-radius: 7px;
       border: 2px solid white;
       position: relative;
       box-sizing: border-box;
@@ -92,8 +94,8 @@
     .ig-logo-text {
       font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       font-weight: 700;
-      letter-spacing: 0.02em;
-      font-size: 1.1rem;
+      letter-spacing: 0.03em;
+      font-size: 1.15rem;
       background: linear-gradient(90deg, #f56040, #fd1d1d, #e1306c, #c13584, #5851db, #405de6);
       -webkit-background-clip: text;
       color: transparent;
@@ -115,10 +117,12 @@
       justify-content: center;
       font-size: 1rem;
       color: #222;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
     }
 
     .ig-header-icon:hover {
-      background: #e9e9e9;
+      background: #ececec;
+      transform: translateY(-1px);
     }
 
     #pauseBtn {
@@ -128,12 +132,13 @@
       color: #e1306c;
       font-size: 0.78rem;
       font-weight: 600;
-      padding: 6px 10px;
+      padding: 6px 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
       white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
     }
 
     #pauseBtn.paused {
@@ -145,6 +150,7 @@
     #pauseBtn:disabled {
       opacity: 0.4;
       cursor: default;
+      box-shadow: none;
     }
 
     .ig-header-profile {
@@ -154,6 +160,7 @@
       padding: 2px 8px 2px 2px;
       border-radius: 999px;
       background: #f5f5f5;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
     }
 
     .ig-header-profile-avatar {
@@ -189,15 +196,16 @@
       gap: 10px;
     }
 
-    /* Stories-Leiste */
+    /* Stories */
     .stories {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 10px 10px 4px;
+      background: #ffffffee;
+      border-radius: 16px;
+      padding: 10px 10px 6px;
       border: 1px solid rgba(0,0,0,0.06);
       display: flex;
       overflow-x: auto;
       gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     }
 
     .stories::-webkit-scrollbar {
@@ -211,7 +219,7 @@
 
     .story {
       flex: 0 0 auto;
-      width: 62px;
+      width: 64px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -221,8 +229,8 @@
     }
 
     .story-ring {
-      width: 54px;
-      height: 54px;
+      width: 56px;
+      height: 56px;
       border-radius: 999px;
       padding: 2px;
       background: conic-gradient(from 220deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
@@ -246,9 +254,10 @@
       display: block;
     }
 
+    /* Status */
     .status-bar {
-      background: #ffffff;
-      border-radius: 12px;
+      background: #ffffffee;
+      border-radius: 16px;
       padding: 6px 12px;
       font-size: 0.8rem;
       color: #777;
@@ -256,6 +265,7 @@
       justify-content: space-between;
       gap: 0.5rem;
       border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.04);
     }
 
     .status-bar span {
@@ -273,7 +283,7 @@
     .feed {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       max-height: calc(100vh - 320px);
       overflow-y: auto;
       padding-right: 4px;
@@ -289,16 +299,34 @@
 
     .post {
       background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 20px;
+      border: 1px solid rgba(0,0,0,0.06);
       overflow: hidden;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.03);
+      box-shadow:
+        0 16px 30px rgba(0,0,0,0.05),
+        0 1px 3px rgba(0,0,0,0.08);
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+    }
+
+    .post:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 18px 40px rgba(0,0,0,0.07),
+        0 2px 6px rgba(0,0,0,0.12);
     }
 
     .post-header {
       display: flex;
       align-items: center;
-      padding: 8px 10px;
+      padding: 9px 12px;
+      gap: 8px;
+    }
+
+    .post-header-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
       gap: 8px;
     }
 
@@ -350,8 +378,14 @@
       font-size: 0.75rem;
     }
 
+    .post-more {
+      margin-left: auto;
+      font-size: 1.2rem;
+      color: #777;
+    }
+
     .post-body {
-      padding: 0 10px 8px;
+      padding: 0 12px 8px;
       font-size: 0.9rem;
       color: #111;
       white-space: pre-wrap;
@@ -359,7 +393,7 @@
     }
 
     .post-footer {
-      padding: 4px 10px 10px;
+      padding: 4px 12px 10px;
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -371,25 +405,28 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 4px 2px;
+      padding: 4px 2px 4px;
       font-size: 1.1rem;
     }
 
     .post-actions-left {
       display: flex;
       gap: 12px;
+      align-items: center;
     }
 
     .post-icon {
       cursor: pointer;
+      transition: transform 0.08s ease-out;
     }
 
     .post-icon:hover {
-      transform: translateY(-1px);
+      transform: translateY(-1px) scale(1.03);
     }
 
     .bookmark-icon {
       cursor: pointer;
+      font-size: 1rem;
     }
 
     .likes {
@@ -410,7 +447,7 @@
 
     .metric-label {
       border-radius: 999px;
-      border: 1px solid rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.06);
       padding: 1px 8px;
       background: #f8f5ff;
       color: #333;
@@ -428,15 +465,11 @@
       color: #e1306c;
     }
 
-    .post-caption {
-      margin-top: 2px;
-    }
-
     /* Kommentare im IG-Stil */
     .comments {
       border-top: 1px solid rgba(0,0,0,0.06);
       margin-top: 4px;
-      padding-top: 4px;
+      padding: 4px 12px 8px;
       font-size: 0.8rem;
     }
 
@@ -510,14 +543,16 @@
       margin-top: 2px;
     }
 
-    /* Composer – "Kommentiere als" */
+    /* Composer */
     .composer {
       margin-top: 4px;
       background: #ffffff;
-      border-radius: 16px;
-      padding: 8px 10px 10px;
-      border: 1px solid rgba(0,0,0,0.08);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.03);
+      border-radius: 20px;
+      padding: 8px 12px 10px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow:
+        0 16px 30px rgba(0,0,0,0.05),
+        0 1px 3px rgba(0,0,0,0.08);
     }
 
     .composer.disabled {
@@ -550,7 +585,7 @@
       font: inherit;
       font-size: 0.9rem;
       padding: 8px 12px;
-      min-height: 40px;
+      min-height: 44px;
       max-height: 200px;
       resize: none;
       overflow-y: auto;
@@ -560,7 +595,7 @@
 
     .composer textarea:focus {
       border-color: #e1306c;
-      box-shadow: 0 0 0 1px rgba(225,48,108,0.15);
+      box-shadow: 0 0 0 1px rgba(225,48,108,0.18);
     }
 
     .composer-hint {
@@ -573,35 +608,40 @@
     .btn-primary {
       border-radius: 999px;
       border: none;
-      background: linear-gradient(135deg, #f77737, #c13584);
+      background: linear-gradient(135deg, #f77737, #e1306c);
       color: #ffffff;
       font-weight: 600;
       padding: 6px 14px;
       font-size: 0.82rem;
       cursor: pointer;
       white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
     }
 
     .btn-primary:hover:not(:disabled) {
       filter: brightness(1.05);
       transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
     }
 
     .btn-primary:disabled {
       opacity: 0.5;
       cursor: default;
+      box-shadow: none;
     }
 
     .debug-card {
       margin-top: 4px;
-      background: #ffffff;
-      border-radius: 12px;
+      background: #ffffffee;
+      border-radius: 16px;
       padding: 6px 10px 8px;
       font-size: 0.75rem;
       color: #777;
       max-height: 150px;
       overflow: hidden;
       border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.04);
     }
 
     .debug-card details {
@@ -618,7 +658,7 @@
     }
 
     .final-card {
-      border-radius: 16px;
+      border-radius: 20px;
     }
 
     .final-title {
@@ -698,7 +738,7 @@
               <img src="images/company.jpg" alt="Dein Unternehmen" />
             </div>
           </div>
-          <div>Dein Unternehmen</div>
+          <div>Dein Profil</div>
         </div>
         <div class="story">
           <div class="story-ring">
@@ -787,13 +827,11 @@
     let remainingWaitMs = null;
     let reactionPaused = false;
 
-    // Nutzer, der den ursprünglichen Shitstorm-Post absetzt
     const CAUSE_USER = {
-      name: "Chris Wagner",
+      name: "chris.wagner",
       handle: "chris.wagner"
     };
 
-    // Sinnvolle Profile für Community-Kommentare
     const COMMENT_PROFILES = [
       { name: "lena.weber",    handle: "lena.weber" },
       { name: "jonas.mueller", handle: "jonas.mueller" },
@@ -826,9 +864,7 @@
     let waitingForAnswer = false;
     let finished = false;
 
-    // aktuelle Runde laut State
     let currentRound = 0;
-    // ob die Likes des Auslöser-Posts schon „wirklich“ bekannt sind
     let causeLikesKnown = false;
 
     const feedEl = document.getElementById("feed");
@@ -845,8 +881,8 @@
       company: "",
       cause: "",
       initialIntensity: 70,
-      initialComments: [],   // Array von { text, round }
-      responses: [],         // { answer, comments:[{text,round}], intensityAfter, deltaIntensity, timeoutDelta, likesKnown }
+      initialComments: [],
+      responses: [],
       finalOutcome: "",
       finalSummary: "",
       initialTimeoutDelta: 0
@@ -863,7 +899,7 @@
     }
 
     function setStatus(_text) {
-      // aktuell keine sichtbare Statusanzeige
+      // optional
     }
 
     function setComposerEnabled(on) {
@@ -937,7 +973,6 @@
       if (!pauseBtn || !waitingForAnswer || finished || !maxWaitMs) return;
 
       if (!reactionPaused) {
-        // Pausieren
         if (reactionTimerId !== null && reactionDeadline) {
           const now = Date.now();
           remainingWaitMs = Math.max(0, reactionDeadline - now);
@@ -946,7 +981,6 @@
         }
         reactionPaused = true;
       } else {
-        // Fortsetzen
         if (!remainingWaitMs || remainingWaitMs <= 0) {
           remainingWaitMs = maxWaitMs;
         }
@@ -990,7 +1024,7 @@
     function autoResizeAnswer() {
       const el = answerInputEl;
       if (!el) return;
-      const max = 200; // muss zu max-height in CSS passen
+      const max = 200;
       el.style.height = "auto";
       const newHeight = Math.min(el.scrollHeight, max);
       el.style.height = newHeight + "px";
@@ -1016,16 +1050,6 @@
       return clampLikes(base + score / 3);
     }
 
-    function classifyOverall(overall) {
-      if (typeof overall !== "number") return "Noch keine Bewertung verfügbar.";
-      if (overall >= 80) return "Sehr gute Reaktion – starke Deeskalation.";
-      if (overall >= 65) return "Gute Reaktion – der Shitstorm beruhigt sich.";
-      if (overall >= 50) return "Durchwachsene Reaktion – leichte Entspannung.";
-      if (overall >= 35) return "Problematische Reaktion – die Lage bleibt kritisch.";
-      return "Sehr schlechte Reaktion – der Shitstorm eskaliert.";
-    }
-
-    // Alterslabel: neu / 1 Std. / 2 Std. / ...
     function getCommentAgeLabel(commentRound) {
       if (!commentRound || !currentRound) return "neu";
       const diff = currentRound - commentRound;
@@ -1121,12 +1145,15 @@
 
       const newestIndex = simulation.responses.length;
 
-      // 1) Ursprungspost (Auslöser)
+      // Ursprungspost
       const originPost = document.createElement("article");
       originPost.className = "post";
 
       const originHeader = document.createElement("div");
       originHeader.className = "post-header";
+
+      const originHeaderMain = document.createElement("div");
+      originHeaderMain.className = "post-header-main";
 
       const originAvatar = document.createElement("div");
       originAvatar.classList.add("avatar", "origin");
@@ -1147,8 +1174,14 @@
       originUser.appendChild(originName);
       originUser.appendChild(originMeta);
 
-      originHeader.appendChild(originAvatar);
-      originHeader.appendChild(originUser);
+      const originMore = document.createElement("div");
+      originMore.className = "post-more";
+      originMore.textContent = "⋯";
+
+      originHeaderMain.appendChild(originAvatar);
+      originHeaderMain.appendChild(originUser);
+      originHeaderMain.appendChild(originMore);
+      originHeader.appendChild(originHeaderMain);
 
       const originBody = document.createElement("div");
       originBody.className = "post-body";
@@ -1194,7 +1227,7 @@
 
       feedEl.appendChild(originPost);
 
-      // 2) Unternehmensantworten
+      // Unternehmensantworten
       simulation.responses.forEach((resp, index) => {
         const roundNumber = index + 1;
         const isNewest = roundNumber === newestIndex;
@@ -1204,6 +1237,9 @@
 
         const header = document.createElement("div");
         header.className = "post-header";
+
+        const headerMain = document.createElement("div");
+        headerMain.className = "post-header-main";
 
         const avatar = document.createElement("div");
         avatar.classList.add("avatar", "company");
@@ -1223,8 +1259,14 @@
         userDiv.appendChild(nameSpan);
         userDiv.appendChild(metaSpan);
 
-        header.appendChild(avatar);
-        header.appendChild(userDiv);
+        const more = document.createElement("div");
+        more.className = "post-more";
+        more.textContent = "⋯";
+
+        headerMain.appendChild(avatar);
+        headerMain.appendChild(userDiv);
+        headerMain.appendChild(more);
+        header.appendChild(headerMain);
 
         const body = document.createElement("div");
         body.className = "post-body";
@@ -1243,6 +1285,14 @@
           </div>
           <span class="bookmark-icon">🔖</span>
         `;
+
+        const likesDiv = document.createElement("div");
+        likesDiv.className = "likes";
+        if (resp.likesKnown) {
+          likesDiv.innerHTML = `Gefällt <span class="count">${likesForResponse(resp)}</span> Personen`;
+        } else {
+          likesDiv.innerHTML = `Gefällt <span class="count-placeholder">–</span> Personen`;
+        }
 
         const metrics = document.createElement("div");
         metrics.className = "metrics";
@@ -1280,27 +1330,6 @@
           metrics.appendChild(timeoutSpan);
         }
 
-        if (typeof resp.overall === "number") {
-          const overallSpan = document.createElement("span");
-          overallSpan.className = "metric-label";
-          const classification = classifyOverall(resp.overall);
-          overallSpan.textContent = classification;
-          if (resp.overall >= 65) {
-            overallSpan.style.color = "#0a8f35";
-          } else if (resp.overall < 50) {
-            overallSpan.style.color = "#e1306c";
-          }
-          metrics.appendChild(overallSpan);
-        }
-
-        const likesDiv = document.createElement("div");
-        likesDiv.className = "likes";
-        if (resp.likesKnown) {
-          likesDiv.innerHTML = `Gefällt <span class="count">${likesForResponse(resp)}</span> Personen`;
-        } else {
-          likesDiv.innerHTML = `Gefällt <span class="count-placeholder">–</span> Personen`;
-        }
-
         footer.appendChild(actionsTop);
         footer.appendChild(likesDiv);
         footer.appendChild(metrics);
@@ -1319,13 +1348,16 @@
         feedEl.appendChild(post);
       });
 
-      // 3) Finale Karte
+      // finale Karte
       if (simulation.finalOutcome) {
         const post = document.createElement("article");
         post.className = "post final-card";
 
         const header = document.createElement("div");
         header.className = "post-header";
+
+        const headerMain = document.createElement("div");
+        headerMain.className = "post-header-main";
 
         const avatar = document.createElement("div");
         avatar.classList.add("avatar", "coach");
@@ -1342,12 +1374,17 @@
         const metaSpan = document.createElement("span");
         metaSpan.className = "post-meta";
         metaSpan.textContent = "Auswertung der Simulation";
-
         userDiv.appendChild(nameSpan);
         userDiv.appendChild(metaSpan);
 
-        header.appendChild(avatar);
-        header.appendChild(userDiv);
+        const more = document.createElement("div");
+        more.className = "post-more";
+        more.textContent = "⋯";
+
+        headerMain.appendChild(avatar);
+        headerMain.appendChild(userDiv);
+        headerMain.appendChild(more);
+        header.appendChild(headerMain);
 
         const body = document.createElement("div");
         body.className = "post-body";
@@ -1372,6 +1409,9 @@
         post.appendChild(body);
         feedEl.appendChild(post);
       }
+
+      // Scroll zum neuesten Post
+      feedEl.scrollTop = feedEl.scrollHeight;
     }
 
     // ===================== HTTP / UTILS ============================
@@ -1703,7 +1743,7 @@
         likesKnown: false
       };
       simulation.responses.push(resp);
-      renderFeed(); // Likes noch als Platzhalter „–“
+      renderFeed();
 
       answerInputEl.value = "";
       autoResizeAnswer();
@@ -1750,6 +1790,9 @@
       const header = document.createElement("div");
       header.className = "post-header";
 
+      const headerMain = document.createElement("div");
+      headerMain.className = "post-header-main";
+
       const avatar = document.createElement("div");
       avatar.className = "avatar";
       const img = document.createElement("img");
@@ -1768,8 +1811,14 @@
       userDiv.appendChild(nameSpan);
       userDiv.appendChild(metaSpan);
 
-      header.appendChild(avatar);
-      header.appendChild(userDiv);
+      const more = document.createElement("div");
+      more.className = "post-more";
+      more.textContent = "⋯";
+
+      headerMain.appendChild(avatar);
+      headerMain.appendChild(userDiv);
+      headerMain.appendChild(more);
+      header.appendChild(headerMain);
 
       const body = document.createElement("div");
       body.className = "post-body";
@@ -1827,3 +1876,4 @@
   </script>
 </body>
 </html>
+
