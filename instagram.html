@@ -1,3 +1,18 @@
+Alles klar, das kriegen wir sauber hin 🙂
+Wahrscheinlich waren es zwei Dinge:
+
+1. **Der Feed hatte eine eigene Scrollbox mit `max-height`**, dadurch fühlte es sich an, als würden Kommentare abgeschnitten / verschwinden.
+2. **Die Posts hatten `overflow: hidden`**, dadurch konnte Text bei geöffneten Kommentaren visuell „hinter“ der runden Ecke verschwinden.
+
+Ich habe deshalb:
+
+* die **innere Scrollbox entfernt** (die ganze Seite scrollt wieder normal)
+* **`overflow: hidden` beim Post entfernt**, damit nichts mehr abgeschnitten wird
+* die Kommentare leicht entzerrt, damit sie sauber im Card-Look bleiben
+
+Hier ist die **vollständige, korrigierte `instagram.html`**:
+
+```html
 <!doctype html>
 <html lang="de">
 <head>
@@ -189,7 +204,7 @@
       width: 100%;
       max-width: 620px;
       margin: 10px auto 24px;
-      padding: 0 12px;
+      padding: 0 12px 40px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -273,35 +288,26 @@
       color: #111;
     }
 
-    /* Feed */
     .feed-wrapper {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
+    /* Feed – Seite scrollt, kein inneres max-height mehr */
     .feed {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: calc(100vh - 320px);
-      overflow-y: auto;
       padding-right: 4px;
-    }
-
-    .feed::-webkit-scrollbar {
-      width: 6px;
-    }
-    .feed::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border-radius: 999px;
     }
 
     .post {
       background: #ffffff;
       border-radius: 20px;
       border: 1px solid rgba(0,0,0,0.06);
-      overflow: hidden;
+      /* kein overflow mehr, damit nichts abgeschnitten wird */
+      overflow: visible;
       box-shadow:
         0 16px 30px rgba(0,0,0,0.05),
         0 1px 3px rgba(0,0,0,0.08);
@@ -469,7 +475,7 @@
     .comments {
       border-top: 1px solid rgba(0,0,0,0.06);
       margin-top: 4px;
-      padding: 4px 12px 8px;
+      padding: 6px 12px 10px;
       font-size: 0.8rem;
     }
 
@@ -477,7 +483,7 @@
       cursor: pointer;
       list-style: none;
       color: #999;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .comments summary::-webkit-details-marker {
@@ -488,7 +494,7 @@
       display: flex;
       align-items: flex-start;
       gap: 6px;
-      margin-top: 3px;
+      margin-top: 5px;
     }
 
     .comment-avatar {
@@ -535,6 +541,7 @@
       align-items: center;
       font-size: 0.7rem;
       color: #aaa;
+      margin-top: 2px;
     }
 
     .comment-muted {
@@ -1410,8 +1417,8 @@
         feedEl.appendChild(post);
       }
 
-      // Scroll zum neuesten Post
-      feedEl.scrollTop = feedEl.scrollHeight;
+      // Seite nach unten scrollen, damit man neue Posts immer sieht
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
 
     // ===================== HTTP / UTILS ============================
@@ -1827,7 +1834,7 @@
       post.appendChild(header);
       post.appendChild(body);
       feedEl.appendChild(post);
-      feedEl.scrollTop = feedEl.scrollHeight;
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
 
     // ===================== EVENTS / AUTOSTART ======================
@@ -1876,4 +1883,6 @@
   </script>
 </body>
 </html>
+```
 
+Wenn auf der Seite jetzt noch irgendwo etwas „abschneidet“, sag mir kurz, bei welchem Element (Post, Kommentar, Composer), dann passe ich es gezielt an.
