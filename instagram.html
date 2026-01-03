@@ -1,18 +1,4 @@
-Alles klar, das kriegen wir sauber hin 🙂
-Wahrscheinlich waren es zwei Dinge:
 
-1. **Der Feed hatte eine eigene Scrollbox mit `max-height`**, dadurch fühlte es sich an, als würden Kommentare abgeschnitten / verschwinden.
-2. **Die Posts hatten `overflow: hidden`**, dadurch konnte Text bei geöffneten Kommentaren visuell „hinter“ der runden Ecke verschwinden.
-
-Ich habe deshalb:
-
-* die **innere Scrollbox entfernt** (die ganze Seite scrollt wieder normal)
-* **`overflow: hidden` beim Post entfernt**, damit nichts mehr abgeschnitten wird
-* die Kommentare leicht entzerrt, damit sie sauber im Card-Look bleiben
-
-Hier ist die **vollständige, korrigierte `instagram.html`**:
-
-```html
 <!doctype html>
 <html lang="de">
 <head>
