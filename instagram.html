@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="de">
 <head>
@@ -119,6 +118,12 @@
       font-size: 1rem;
       color: #222;
       box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    }
+
+    .ig-header-icon img {
+      width: 18px;
+      height: 18px;
+      display: block;
     }
 
     .ig-header-icon:hover {
@@ -280,7 +285,6 @@
       gap: 8px;
     }
 
-    /* Feed – Seite scrollt, kein inneres max-height mehr */
     .feed {
       display: flex;
       flex-direction: column;
@@ -292,7 +296,6 @@
       background: #ffffff;
       border-radius: 20px;
       border: 1px solid rgba(0,0,0,0.06);
-      /* kein overflow mehr, damit nichts abgeschnitten wird */
       overflow: visible;
       box-shadow:
         0 16px 30px rgba(0,0,0,0.05),
@@ -410,6 +413,15 @@
     .post-icon {
       cursor: pointer;
       transition: transform 0.08s ease-out;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post-icon img {
+      width: 18px;
+      height: 18px;
+      display: block;
     }
 
     .post-icon:hover {
@@ -457,7 +469,7 @@
       color: #e1306c;
     }
 
-    /* Kommentare im IG-Stil */
+    /* Kommentare */
     .comments {
       border-top: 1px solid rgba(0,0,0,0.06);
       margin-top: 4px;
@@ -709,8 +721,12 @@
         </div>
         <div class="ig-header-right">
           <button type="button" id="pauseBtn">⏸ Timer pausieren</button>
-          <div class="ig-header-icon">♡</div>
-          <div class="ig-header-icon">✉</div>
+          <div class="ig-header-icon">
+            <img src="images/herzicon.png" alt="Benachrichtigungen" />
+          </div>
+          <div class="ig-header-icon">
+            <img src="images/sendeicon.png" alt="Direktnachrichten" />
+          </div>
           <div class="ig-header-profile">
             <div class="ig-header-profile-avatar">
               <img src="images/company.jpg" alt="Unternehmen" />
@@ -1187,9 +1203,9 @@
       originActionsTop.className = "post-actions-top";
       originActionsTop.innerHTML = `
         <div class="post-actions-left">
-          <span class="post-icon">♡</span>
-          <span class="post-icon">💬</span>
-          <span class="post-icon">✈</span>
+          <span class="post-icon"><img src="images/herzicon.png" alt="Gefällt mir" /></span>
+          <span class="post-icon"><img src="images/kommentierenicon.png" alt="Kommentieren" /></span>
+          <span class="post-icon"><img src="images/sendeicon.png" alt="Teilen" /></span>
         </div>
         <span class="bookmark-icon">🔖</span>
       `;
@@ -1272,9 +1288,9 @@
         actionsTop.className = "post-actions-top";
         actionsTop.innerHTML = `
           <div class="post-actions-left">
-            <span class="post-icon">♡</span>
-            <span class="post-icon">💬</span>
-            <span class="post-icon">✈</span>
+            <span class="post-icon"><img src="images/herzicon.png" alt="Gefällt mir" /></span>
+            <span class="post-icon"><img src="images/kommentierenicon.png" alt="Kommentieren" /></span>
+            <span class="post-icon"><img src="images/sendeicon.png" alt="Teilen" /></span>
           </div>
           <span class="bookmark-icon">🔖</span>
         `;
@@ -1403,7 +1419,6 @@
         feedEl.appendChild(post);
       }
 
-      // Seite nach unten scrollen, damit man neue Posts immer sieht
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
 
@@ -1869,6 +1884,3 @@
   </script>
 </body>
 </html>
-```
-
-Wenn auf der Seite jetzt noch irgendwo etwas „abschneidet“, sag mir kurz, bei welchem Element (Post, Kommentar, Composer), dann passe ich es gezielt an.
